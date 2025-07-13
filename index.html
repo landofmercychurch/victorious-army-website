@@ -45,12 +45,12 @@
       <p>Visionary leader and spiritual father over Land of Mercy.</p>
     </div>
     <div class="minister-card">
-      <h3>Pastor Grace Ayeni</h3>
+      <h3>Mrs. Ifemide L. Adeola</h3>
       <p><strong>Women Ministry</strong></p>
       <p>Guiding women in the power and purity of Christ.</p>
     </div>
     <div class="minister-card">
-      <h3>Pastor Samuel Olatunji</h3>
+      <h3>Evangelist Elvis Esemado</h3>
       <p><strong>Youth & Discipleship</strong></p>
       <p>Raising the next generation for God's purpose.</p>
     </div>
@@ -94,7 +94,7 @@
     <div class="social-box">
       <h3>📘 Join Our Facebook Group</h3>
       <p>Be part of the Victorious Army family on Facebook! Stay connected, share testimonies, and support each other.</p>
-      <a href="https://facebook.com/groups/yourchurchgroup" target="_blank" class="btn">Join Facebook Group</a>
+      <a href="https://facebook.com/groups/3414603545324694/" target="_blank" class="btn">Join Facebook Group</a>
     </div>
     <div class="social-box">
       <h3>🎥 Stream Our Sermons</h3>
@@ -122,7 +122,7 @@
 
 <section id="contact" class="section fade-in">
   <h2>📞 Contact Us</h2>
-  <p><strong>Address:</strong> 22, Olaoluwasamuel Avenue</p>
+  <p><strong>Address:</strong> NO. 24, Olaoluwa Street, Araromi, Akesan, Lagos.</p>
   <p><strong>WhatsApp:</strong> 08169282908</p>
   <p><strong>Email:</strong> victoriousarmy2007movement@yahoo.com</p>
   <p><strong>Phone:</strong> 08154188630</p>
@@ -186,16 +186,19 @@
       });
     });
 
-  // Daily Verse (randomly rotate some static verses)
-  const verses = [
-    "The Lord is my shepherd; I shall not want. – Psalm 23:1",
-    "Without faith it is impossible to please God. – Hebrews 11:6",
-    "Call unto me and I will answer thee. – Jeremiah 33:3",
-    "Blessed are the pure in heart, for they shall see God. – Matthew 5:8"
-  ];
-  const verseEl = document.getElementById("verse");
-  const today = new Date().getDate();
-  verseEl.innerText = verses[today % verses.length];
+   // Fetch daily verse from verses.json file
+  fetch('verses.json')
+    .then(response => response.json())
+    .then(verses => {
+      const verseEl = document.getElementById("verse");
+      const dayIndex = (new Date().getDate() - 1) % verses.length; // Safe for 1–31
+      verseEl.innerText = verses[dayIndex];
+    })
+    .catch(error => {
+      document.getElementById("verse").innerText = "Unable to load today's verse.";
+      console.error("Daily verse loading error:", error);
+    });
+
 
   // Image slider animation
   let slideIndex = 0;
