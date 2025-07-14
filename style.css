@@ -205,10 +205,11 @@ section {
 
 .ebook-card img {
   width: 100%;
-  height: auto;
+  max-height: 240px;   /* 👈 LIMIT height */
+  object-fit: cover;   /* 👈 Crop and scale properly */
   border-radius: 6px;
   margin-bottom: 10px;
-  object-fit: cover;
+  display: block;
 }
 
 .ebook-card h3 {
