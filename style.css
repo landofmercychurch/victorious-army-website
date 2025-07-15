@@ -112,9 +112,10 @@ footer {
   overflow: hidden;
 }
 .slider img {
-  width: 100%;
+  width: 300px;
   display: none;
   border-radius: 8px;
+  height:400px;
 }
 .slider img.active {
   display: block;
@@ -257,7 +258,7 @@ section {
 
 .popup-content {
   background: white;
-  max-width: 400px;
+  max-width: 200px;
   margin: 10% auto;
   padding: 20px;
   border-radius: 8px;
