@@ -194,7 +194,7 @@ section {
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 300px;
+  max-width: 250px;
   padding: 15px;
   text-align: left;
   transition: transform 0.2s ease-in-out;
@@ -205,8 +205,8 @@ section {
 }
 
 .ebook-card img {
-  width: 50px;
-  max-height: 80px;   /* 👈 LIMIT height */
+  max-width: 50px;
+  max-height: 50px;   /* 👈 LIMIT height */
   object-fit: cover;   /* 👈 Crop and scale properly */
   border-radius: 6px;
   margin-bottom: 10px;
