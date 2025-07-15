@@ -180,6 +180,7 @@ section {
   margin: 0 auto 30px;
 }
 
+/* === BOOK LIST FLEX CONTAINER === */
 .ebook-list {
   display: flex;
   flex-wrap: wrap;
@@ -187,14 +188,14 @@ section {
   gap: 20px;
 }
 
-/* EBOOK CARD */
+/* === EBOOK CARD === */
 .ebook-card {
   background-color: #ffffff;
   border-radius: 10px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 250px;
+  max-width: 280px;
   padding: 15px;
   text-align: left;
   transition: transform 0.2s ease-in-out;
@@ -204,15 +205,17 @@ section {
   transform: translateY(-5px);
 }
 
+/* === COVER IMAGE (Responsive & Balanced) === */
 .ebook-card img {
-  max-width: 100px;
-  max-height: 100px;   /* 👈 LIMIT height */
-  object-fit: cover;   /* 👈 Crop and scale properly */
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
   border-radius: 6px;
   margin-bottom: 10px;
   display: block;
 }
 
+/* === TEXT STYLING === */
 .ebook-card h3 {
   font-size: 18px;
   margin: 8px 0 4px;
@@ -226,7 +229,7 @@ section {
   line-height: 1.5;
 }
 
-/* BUTTON */
+/* === DOWNLOAD BUTTON === */
 .ebook-btn {
   display: inline-block;
   margin-top: 10px;
@@ -243,7 +246,6 @@ section {
 .ebook-btn:hover {
   background-color: #0056b3;
 }
-
 /* Announcement Popup */
 .popup {
   position: fixed;
