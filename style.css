@@ -205,8 +205,8 @@ section {
 }
 
 .ebook-card img {
-  width: 100px;
-  max-height: 100px;   /* 👈 LIMIT height */
+  width: 50px;
+  max-height: 80px;   /* 👈 LIMIT height */
   object-fit: cover;   /* 👈 Crop and scale properly */
   border-radius: 6px;
   margin-bottom: 10px;
