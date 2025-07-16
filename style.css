@@ -190,13 +190,14 @@ section {
 
 /* === EBOOK CARD === */
 .ebook-card {
-  background-color: #ffffff;
-  border-radius: 10px;
+  background-color: #fff;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
   width: 100%;
   max-width: 280px;
   padding: 15px;
+  margin: 10px auto;
   text-align: left;
   transition: transform 0.2s ease-in-out;
 }
@@ -207,12 +208,12 @@ section {
 
 /* === COVER IMAGE (Responsive & Balanced) === */
 .ebook-card img {
-  width: 100%;
-  max-height: 240px;
-  object-fit: cover;
+  max-width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
   margin-bottom: 10px;
-  display: block;
-  border-radius: 10px;
+  border-radius:6px;
 }
 
 /* === TEXT STYLING === */
