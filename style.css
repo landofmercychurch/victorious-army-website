@@ -281,16 +281,16 @@ section {
   box-sizing: border-box;
 }
 
-/* Popup box */
 .popup-content {
-  width: 90%;
-  max-width: 300px; /* SMALL size */
-  background: #fff;
+  width: 90vw;               /* Responsive width */
+  max-width: 360px;          /* Make sure it stays small on laptop too */
+  background: white;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   text-align: center;
   position: relative;
+  box-sizing: border-box;
 }
 
 /* Close (×) button */
