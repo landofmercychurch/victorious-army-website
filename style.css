@@ -287,7 +287,7 @@ section {
     font-size: 0.75rem;
     padding: 4px;
   }
-  /* Popup container (overlay) */
+  /* Fullscreen Popup Overlay */
 .popup {
   position: fixed;
   top: 0; left: 0;
@@ -298,26 +298,29 @@ section {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 10px;
+  padding: 20px;
   box-sizing: border-box;
+  overflow: auto; /* Allow scroll if needed */
 }
 
-/* Popup content box */
+/* Popup Content Box */
 .popup-content {
   width: 100%;
-  max-width: 500px; /* or adjust to 90vw if you prefer fluid layout */
-  background: white;
+  max-width: 400px;  /* 👈 Now limited to 400px width */
+  background: #fff;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   text-align: center;
-  overflow: hidden;
+  padding: 15px;
+  box-sizing: border-box;
 }
 
-/* Image inside the popup */
+/* Image inside the Popup */
 .popup-content img {
   width: 100%;
   height: auto;
-  display: block;
-  border-radius: 0; /* Remove border radius on image for full fit */
-  margin: 0;
+  max-height: 300px;  /* 👈 Limits image height */
+  border-radius: 8px;
+  margin-top: 10px;
+  object-fit: contain;
 }
