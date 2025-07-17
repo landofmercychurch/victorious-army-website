@@ -284,7 +284,7 @@ section {
 /* Popup content container */
 .popup-content {
   width: 100%;
-  max-width: 360px; /* mobile-friendly size */
+  max-width: 180px; /* mobile-friendly size */
   background: white;
   border-radius: 12px;
   padding: 15px;
