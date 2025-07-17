@@ -266,50 +266,31 @@ section {
     font-size: 0.75rem;
     padding: 4px;
   }
-/* Dim background overlay */
 
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;   /* Vertical centering */
-  justify-content: center;  /* Horizontal centering */
-  z-index: 1000;
-  padding: 10px;
-  box-sizing: border-box;
-  overflow-y: auto;   /* Allow scroll if needed */
-}
 
+  
 .popup-content {
-  width: 90vw;               /* Responsive width */
-  max-width: 360px;          /* Make sure it stays small on laptop too */
+  width: 90vw;
+  max-width: 500px;
+  max-height: 90vh;
   background: white;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   text-align: center;
   position: relative;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* Close (×) button */
-.close-btn {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 20px;
-  color: #333;
-  cursor: pointer;
-}
-
-/* Flyer image */
+/* Image inside the popup */
 .popup-content img {
   width: 100%;
   height: auto;
+  max-height: 300px; /* ✅ Limits flyer height to avoid overflow */
+  object-fit: contain; /* Keeps full image visible */
   border-radius: 8px;
   margin-top: 10px;
 }
