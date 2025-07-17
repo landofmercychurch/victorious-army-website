@@ -287,4 +287,37 @@ section {
     font-size: 0.75rem;
     padding: 4px;
   }
+  /* Popup container (overlay) */
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Popup content box */
+.popup-content {
+  width: 100%;
+  max-width: 500px; /* or adjust to 90vw if you prefer fluid layout */
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Image inside the popup */
+.popup-content img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0; /* Remove border radius on image for full fit */
+  margin: 0;
 }
