@@ -266,7 +266,7 @@ section {
     font-size: 0.75rem;
     padding: 4px;
   }
-/* Fullscreen Overlay */
+/* Dim background overlay */
 .popup {
   position: fixed;
   top: 0; left: 0;
@@ -277,34 +277,36 @@ section {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 15px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
-/* Popup Content Box */
+/* Popup content container */
 .popup-content {
   width: 100%;
-  max-width: 400px;
+  max-width: 360px; /* mobile-friendly size */
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  text-align: center;
+  border-radius: 12px;
   padding: 15px;
   box-sizing: border-box;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 90vh; /* prevents overflow on small screens */
   position: relative;
 }
 
-/* Close Button */
+/* Close (×) button */
 .close-btn {
   position: absolute;
   top: 10px;
   right: 15px;
-  font-size: 24px;
-  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
   color: #555;
+  cursor: pointer;
 }
 
-/* Image Styling */
+/* Image inside popup */
 .popup-content img {
   width: 100%;
   height: auto;
@@ -312,5 +314,3 @@ section {
   margin-top: 10px;
   display: block;
 }
-  
-
