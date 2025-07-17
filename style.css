@@ -283,7 +283,7 @@ section {
 
 .popup-content {
   width: 90vw;               /* Responsive width */
-  max-width: 360px;          /* Make sure it stays small on laptop too */
+  max-width: 160px;          /* Make sure it stays small on laptop too */
   background: white;
   padding: 15px;
   border-radius: 10px;
