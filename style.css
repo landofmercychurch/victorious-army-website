@@ -325,3 +325,46 @@ section {
   font-size: 14px;
   color: #444;
 }
+.hero h1 {
+  font-size: 2.5rem; /* Adjusts for desktop */
+  text-align: center;
+  font-weight: bold;
+  color: #ffffff;
+  animation: pulseGlowZoom 2s infinite;
+  transition: transform 0.3s ease-in-out;
+  margin: 0 auto;
+}
+
+/* Responsive font sizes */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem; /* Tablet and mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.5rem; /* Small phones */
+  }
+}
+
+/* Combined pulse + glow + zoom animation */
+@keyframes pulseGlowZoom {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    text-shadow:
+      0 0 10px #ffffff,
+      0 0 20px #a66cff,
+      0 0 30px #4db8ff;
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.05); /* Slight zoom in */
+    text-shadow:
+      0 0 5px #ffffff,
+      0 0 10px #a66cff,
+      0 0 15px #4db8ff;
+  }
+}
+  
