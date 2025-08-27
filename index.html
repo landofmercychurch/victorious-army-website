@@ -1,17 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Victorious Army Revival Movement – Land of Mercy</title>
-  <meta name="description" content="Explore our digital auditorium. Meet pastors, view events, join livestreams, and feed your soul with daily scriptures at Victorious Army Revival Movement." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Victorious Army Revival Movement – Land of Mercy</title>
+<meta name="description" content="Explore our digital auditorium. Meet pastors, view events, join livestreams, and feed your soul with daily scriptures at Victorious Army Revival Movement." />
 <meta name="keywords" content="Church, Christianity, Revival, Victorious Army, Land of Mercy"/>
-  <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="popup.css" />
+<link rel="stylesheet" href="events-verse.css" />
+
+
 </head>
 <body>
 
- <!--Start of Tawk.to Script-->
+<!-- Tawk.to Script -->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
@@ -23,10 +26,6 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-<!--End of Tawk.to Script-->
-  </script>
-
-  
 
 <nav class="navbar">
   <ul>
@@ -38,7 +37,7 @@ s0.parentNode.insertBefore(s1,s0);
     <li><a href="#live">🔴 Live</a></li>
     <li><a href="#contact">📞 Contact</a></li>
     <li><a href="#gifter">💝 Gifter</a></li>
-<li><a href="#ebooks">📚 Church eBooks</a></li>
+    <li><a href="#ebooks">📚 Church eBooks</a></li>
   </ul>
 </nav>
 
@@ -91,9 +90,7 @@ s0.parentNode.insertBefore(s1,s0);
 
 <section id="events" class="section fade-in">
   <h2>📅 Upcoming Church Events</h2>
-  <div id="event-list" class="event-gallery">
-    <p>Loading events...</p>
-  </div>
+  <div id="event-list" class="event-gallery"></div>
 </section>
 
 <section id="live" class="section fade-in">
@@ -149,7 +146,6 @@ s0.parentNode.insertBefore(s1,s0);
   <p>If God is leading you to support the ministry, kindly reach out via WhatsApp or Email above.</p>
 </section>
 
-  
 <section id="ebooks" class="section fade-in">
   <h2>📚 Church eBooks & Handouts</h2>
   <p>Explore life-changing teachings and downloadable materials from our pastor and church leaders.</p>
@@ -401,71 +397,90 @@ s0.parentNode.insertBefore(s1,s0);
    <!-- Add more books below by duplicating the book-card block -->    
   </div>
 </section>
-  
 
-  
+
 <!-- 📢 Popup Announcement -->
 <div id="announcementPopup" class="popup">
   <div class="popup-content">
     <span class="close-btn" onclick="document.getElementById('announcementPopup').style.display='none'">&times;</span>
     <h3>📢 Announcement</h3>
-    <img src="flyer.png" alt="" class="popup-image">
-    <p class="PAGE UNDER MAINTENANCE">!</p>
+    <p id="announcementText"></p>
   </div>
 </div>
 
-  
+
 <footer>
   <p>&copy; 2025 Victorious Army Revival Movement. Built for the Kingdom.</p>
 </footer>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 <script>
-  // Load events
-  fetch('events.json')
-    .then(response => response.json())
-    .then(events => {
-      const container = document.getElementById('event-list');
-      container.innerHTML = '';
-      events.forEach(event => {
-        const div = document.createElement('div');
-        div.className = 'event-card';
-        div.innerHTML = `
-          <h3>${event.title}</h3>
-          <p>Date: ${event.date}</p>
-          <div class="event-img">
-            <img src="${event.image}" alt="${event.title}" style="width:100%; max-height:200px; object-fit:cover;" />
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    });
+const firebaseConfig = {
+  apiKey: "AIzaSyAHBsQzYjY-rnIZ55GnJbJIx9GCr5-5DKY",
+  authDomain: "victoriousarmyrevivalmovement.firebaseapp.com",
+  projectId: "victoriousarmyrevivalmovement",
+  storageBucket: "victoriousarmyrevivalmovement.firebasestorage.app",
+  messagingSenderId: "761907561585",
+  appId: "1:761907561585:web:cc317ff63990955697c7d0",
+  measurementId: "G-1JC97GHR23"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-   // Fetch daily verse from verses.json file
-  fetch('verses.json')
-    .then(response => response.json())
-    .then(verses => {
-      const verseEl = document.getElementById("verse");
-      const dayIndex = (new Date().getDate() - 1) % verses.length; // Safe for 1–31
-      verseEl.innerText = verses[dayIndex];
-    })
-    .catch(error => {
-      document.getElementById("verse").innerText = "Unable to load today's verse.";
-      console.error("Daily verse loading error:", error);
-    });
-
-
-  // Image slider animation
-  let slideIndex = 0;
-  const slides = document.querySelectorAll(".slide");
-  function showSlide() {
-    slides.forEach((img, i) => {
-      img.classList.remove("active");
-      if (i === slideIndex) img.classList.add("active");
-    });
-    slideIndex = (slideIndex + 1) % slides.length;
+// ====== EVENTS ======
+const eventList = document.getElementById('event-list');
+db.collection("events").onSnapshot(snapshot => {
+  const slots = { event1: null, event2: null };
+  snapshot.forEach(doc => {
+    if(slots.hasOwnProperty(doc.id)) slots[doc.id] = doc.data();
+  });
+  eventList.innerHTML = '';
+  for(let slot in slots){
+    const data = slots[slot];
+    const div = document.createElement('div');
+    div.className = 'event-card';
+    if(data){
+      div.innerHTML = `<h3>${data.title}</h3><p>Date: ${data.date}</p><p>${data.desc}</p>`;
+    } else {
+      div.innerHTML = `<h3>${slot}</h3><p>No event scheduled</p>`;
+    }
+    eventList.appendChild(div);
   }
-  setInterval(showSlide, 4000);
-</script>
+});
 
+// ====== DAILY VERSE ======
+const verseEl = document.getElementById("verse");
+db.collection("dailyVerses").orderBy("timestamp", "desc").limit(1)
+  .onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      verseEl.innerText = doc.data().text;
+    });
+  });
+
+// ====== IMAGE SLIDER ======
+let slideIndex = 0;
+const slides = document.querySelectorAll(".slide");
+function showSlide() {
+  slides.forEach((img,i)=>img.classList.remove("active"));
+  slides[slideIndex].classList.add("active");
+  slideIndex = (slideIndex+1)%slides.length;
+}
+setInterval(showSlide,4000);
+
+// ====== ANNOUNCEMENT POPUP ======// // 
+db.collection("announcements")
+  .orderBy("timestamp", "desc")
+  .limit(1)
+  .onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const announcement = doc.data().text;
+      document.getElementById('announcementText').innerText = announcement;
+      document.getElementById('announcementPopup').style.display = 'block';
+    });
+  });
+
+</script>
 </body>
 </html>
