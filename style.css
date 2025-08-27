@@ -1,3 +1,4 @@
+/* ===== GLOBAL STYLES ===== */
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
@@ -5,8 +6,21 @@ body {
   background: #fffaf4;
   color: #333;
   scroll-behavior: smooth;
+  line-height: 1.6;
 }
 
+h1, h2, h3, h4, h5 {
+  margin: 0.5em 0;
+  font-weight: 600;
+  color: #2c2a4a;
+}
+
+p {
+  margin: 0.5em 0 1em 0;
+  color: #555;
+}
+
+/* ===== NAVBAR ===== */
 .navbar {
   background: #2c2a4a;
   padding: 10px;
@@ -19,7 +33,7 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  flex-wrap: wrap; /* 🔥 Important: allows items to wrap on small screens */
+  flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
 }
@@ -27,26 +41,68 @@ body {
   color: white;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.9rem; /* Reduce font slightly */
-  white-space: nowrap; /* Prevent breaking into two lines */
+  font-size: 0.95rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+.navbar a:hover {
+  background: #4b3f72;
 }
 
+/* ===== HERO ===== */
 .hero {
-  background: linear-gradient(#2c2a4a, #4b3f72);
+  background: linear-gradient(135deg,#2c2a4a,#4b3f72);
   color: white;
   text-align: center;
   padding: 60px 20px;
 }
-.tagline {
+.hero h1 {
+  font-size: 2.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px #fff, 0 0 20px #a66cff, 0 0 30px #4db8ff;
+  animation: pulseGlowZoom 2s infinite;
+}
+.hero p.tagline {
   font-size: 1.2rem;
   font-style: italic;
+  color: #e0e8ff;
+  margin-top: 10px;
 }
 
-.section {
+/* Pulse + Glow + Zoom Animation */
+@keyframes pulseGlowZoom {
+  0%,100%{opacity:1;transform:scale(1);text-shadow:0 0 10px #fff,0 0 20px #a66cff,0 0 30px #4db8ff;}
+  50%{opacity:0.3;transform:scale(1.05);text-shadow:0 0 5px #fff,0 0 10px #a66cff,0 0 15px #4db8ff;}
+}
+
+/* ===== SECTIONS ===== */
+.section, .about, .services, #contact {
   padding: 40px 20px;
   max-width: 1000px;
-  margin: auto;
+  margin: 30px auto;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s forwards;
 }
+.section:hover, .about:hover, .services:hover, #contact:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* Fade In Up Animation */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== MINISTER GRID ===== */
 .minister-grid {
   display: flex;
   flex-wrap: wrap;
@@ -54,73 +110,62 @@ body {
 }
 .minister-card {
   flex: 1 1 220px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   padding: 20px;
   background: #f8f5ff;
-  border-radius: 8px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.minister-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.1);
 }
 
-.event-gallery {
+/* ===== ABOUT, CONTACT, SERVICE TIMES STYLING ===== */
+.about h2, .services h2, #contact h2 {
+  color: #2c2a4a;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.services ul {
+  list-style: none;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
 }
-.event-card {
-  border: 1px solid #ccc;
-  padding: 20px;
-  background: #fff0f0;
-  border-radius: 8px;
-}
-.event-img {
-  background: #ddd;
-  height: 200px;
-  margin-top: 10px;
+.services li {
+  flex: 1 1 220px;
+  background: #f0f8ff;
+  border: 1px solid #90cdf4;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 500;
   text-align: center;
-  line-height: 200px;
-  font-weight: bold;
-  color: #555;
 }
-
-.live-video iframe {
-  width: 100%;
-  max-width: 800px;
-  height: 315px;
+.services li strong {
   display: block;
-  margin: auto;
+  margin-bottom: 8px;
 }
 
-footer {
-  background: #2c2a4a;
-  color: white;
-  text-align: center;
-  padding: 20px;
+#contact p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #f0f8ff;
+  border: 1px solid #90cdf4;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+#contact p strong {
+  min-width: 100px;
 }
 
-.fade-in {
-  animation: fadeIn 1.2s ease-in;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.slider-container {
-  max-width: 800px;
-  margin: auto;
-  position: relative;
-  overflow: hidden;
-}
-.slider img {
-  width: 300px;
-  display: none;
-  border-radius: 8px;
-  height:400px;
-}
-.slider img.active {
-  display: block;
-  transition: opacity 1s ease-in-out;
-}
-
+/* ===== SOCIAL MEDIA ===== */
 .social-area {
   display: flex;
   flex-wrap: wrap;
@@ -151,220 +196,31 @@ footer {
 .btn:hover {
   background: #005fa3;
 }
-section {
-  padding: 20px;
-  margin: 15px auto;
-  max-width: 800px;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-}
-/* === EBOOK SECTION STYLES === */
-#ebooks {
-  padding: 40px 20px;
-  background-color: #f8f9fa; /* light background */
-  font-family: 'Segoe UI', sans-serif;
-  text-align: center;
+
+/* ===== FOOTER ===== */
+footer {
+  background:#2c2a4a;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+  font-size:0.9rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
-#ebooks h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px){
+  .hero h1{font-size:2rem;}
+  .hero p.tagline{font-size:1rem;}
+  .navbar a{font-size:0.85rem;}
+  .section, .about, .services, #contact {padding:25px 15px;}
+  .services ul {flex-direction: column;}
+  .services li {flex: 1 1 100%;}
+  #contact p {flex-direction: column; align-items: flex-start;}
 }
-
-#ebooks p {
-  font-size: 15px;
-  color: #555;
-  max-width: 600px;
-  margin: 0 auto 30px;
+@media (max-width: 480px){
+  .hero h1{font-size:1.5rem;}
+  .hero p.tagline{font-size:0.9rem;}
+  .navbar a{font-size:0.75rem; padding:4px 6px;}
+  .section, .about, .services, #contact {padding:20px 10px;}
 }
-
-/* === BOOK LIST FLEX CONTAINER === */
-.ebook-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-/* === EBOOK CARD === */
-.ebook-card {
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
-  width: 100%;
-  max-width: 280px;
-  padding: 15px;
-  margin: 10px auto;
-  text-align: left;
-  transition: transform 0.2s ease-in-out;
-}
-
-.ebook-card:hover {
-  transform: translateY(-5px);
-}
-
-/* === COVER IMAGE (Responsive & Balanced) === */
-.ebook-card img {
-  max-width: 100%;
-  height: auto;
-  max-height: 200px;
-  object-fit: contain;
-  margin-bottom: 10px;
-  border-radius:6px;
-}
-
-/* === TEXT STYLING === */
-.ebook-card h3 {
-  font-size: 18px;
-  margin: 8px 0 4px;
-  color: #333;
-}
-
-.ebook-card p {
-  font-size: 14px;
-  color: #444;
-  margin: 4px 0;
-  line-height: 1.5;
-}
-
-/* === DOWNLOAD BUTTON === */
-.ebook-btn {
-  display: inline-block;
-  margin-top: 10px;
-  background-color: #007bff;
-  color: #fff;
-  padding: 8px 14px;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
-}
-
-.ebook-btn:hover {
-  background-color: #0056b3;
-}
-
-.close-btn {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  font-size: 24px;
-  cursor: pointer;
-}
-.ebook-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 15px;
-}
-@media (max-width: 600px) {
-  .navbar a {
-    font-size: 0.75rem;
-    padding: 4px;
-  }
-
-
-  
-/* Popup Overlay */
-.popup {
-  position: fixed;
-  top: 0; 
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-/* Popup Content Box */
-.popup-content {
-  background: #fff;
-  width: 95%;
-  max-width: 340px;  /* Controls width on large screens */
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
-  box-sizing: border-box;
-}
-
-/* Close Button */
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #333;
-}
-
-/* Image inside Popup */
-.popup-image {
-  width: 90%;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 10px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Message Paragraph */
-.popup-message {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #444;
-}
-.hero h1 {
-  font-size: 2.5rem; /* Adjusts for desktop */
-  text-align: center;
-  font-weight: bold;
-  color: #ffffff;
-  animation: pulseGlowZoom 2s infinite;
-  transition: transform 0.3s ease-in-out;
-  margin: 0 auto;
-}
-
-/* Responsive font sizes */
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 2rem; /* Tablet and mobile */
-  }
-}
-
-@media (max-width: 480px) {
-  .hero h1 {
-    font-size: 1.5rem; /* Small phones */
-  }
-}
-
-/* Combined pulse + glow + zoom animation */
-@keyframes pulseGlowZoom {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-    text-shadow:
-      0 0 10px #ffffff,
-      0 0 20px #a66cff,
-      0 0 30px #4db8ff;
-  }
-  50% {
-    opacity: 0.3;
-    transform: scale(1.05); /* Slight zoom in */
-    text-shadow:
-      0 0 5px #ffffff,
-      0 0 10px #a66cff,
-      0 0 15px #4db8ff;
-  }
-}
-  
