@@ -1,0 +1,139 @@
+/* ===== DAILY VERSE ===== */
+#dailyverse blockquote {
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, #e0f7ff, #f0f9ff);
+  border-left: 6px solid #0077cc;
+  padding: 20px 25px;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-style: italic;
+  margin: 25px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+#dailyverse blockquote:hover {
+  transform: translateY(-3px);
+}
+
+/* ===== EVENT CARDS ===== */
+.event-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  padding: 10px 0;
+}
+.event-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  padding: 25px 20px;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.event-card h3 {
+  color: #2c2a4a;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* ===== SLIDER / MEMORIES ===== */
+.slider-container {
+  max-width: 900px;
+  margin: 30px auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+.slider img {
+  width: 100%;
+  display: none;
+  border-radius: 12px;
+  height: auto;
+  object-fit: cover;
+}
+.slider img.active {
+  display: block;
+  transition: opacity 1s ease-in-out;
+}
+
+/* ===== EBOOK CARDS ===== */
+.ebook-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  padding: 10px 0;
+}
+.ebook-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  text-align: left;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.ebook-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+.ebook-card img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.ebook-card h3 {
+  font-size: 1.1rem;
+  margin: 8px 0;
+  color: #2c2a4a;
+}
+.ebook-card p {
+  font-size: 0.9rem;
+  margin: 5px 0;
+  color: #444;
+  line-height: 1.4;
+}
+.ebook-btn {
+  display: inline-block;
+  margin-top: 12px;
+  background: #0077cc;
+  color: #fff;
+  padding: 10px 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+.ebook-btn:hover {
+  background: #005fa3;
+  transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  #dailyverse blockquote { font-size: 1.1rem; padding: 18px 20px; }
+  .event-card { padding: 20px 15px; }
+  .ebook-card { padding: 18px 15px; }
+  .ebook-card h3 { font-size: 1rem; }
+  .ebook-card p { font-size: 0.85rem; }
+  .ebook-btn { padding: 8px 14px; font-size: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+  #dailyverse blockquote { font-size: 1rem; padding: 15px 15px; }
+  .event-card { padding: 18px 12px; }
+  .event-card h3 { font-size: 1rem; }
+  .ebook-card { padding: 15px 12px; }
+  .ebook-card h3 { font-size: 0.95rem; }
+  .ebook-card p { font-size: 0.8rem; }
+  .ebook-btn { padding: 7px 12px; font-size: 0.8rem; }
+}
