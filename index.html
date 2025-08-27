@@ -460,14 +460,40 @@ db.collection("dailyVerses").orderBy("timestamp", "desc").limit(1)
   });
 
 // ====== IMAGE SLIDER ======
-let slideIndex = 0;
-const slides = document.querySelectorAll(".slide");
-function showSlide() {
-  slides.forEach((img,i)=>img.classList.remove("active"));
-  slides[slideIndex].classList.add("active");
-  slideIndex = (slideIndex+1)%slides.length;
+const slides = document.querySelectorAll('.slider img');
+let current = 0;
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.classList.remove('active');
+    if(i === index) slide.classList.add('active');
+  });
 }
-setInterval(showSlide,4000);
+
+// Auto slide every 3 seconds
+setInterval(() => {
+  current = (current + 1) % slides.length;
+  showSlide(current);
+}, 3000);
+
+// Optional: Swipe support for mobile
+let startX = 0;
+const sliderContainer = document.querySelector('.slider-container');
+
+sliderContainer.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+});
+
+sliderContainer.addEventListener('touchend', e => {
+  let endX = e.changedTouches[0].clientX;
+  if(startX - endX > 50) { // swipe left
+    current = (current + 1) % slides.length;
+  } else if(endX - startX > 50) { // swipe right
+    current = (current - 1 + slides.length) % slides.length;
+  }
+  showSlide(current);
+});
+
 
 // ====== ANNOUNCEMENT POPUP ======// // 
 db.collection("announcements")
