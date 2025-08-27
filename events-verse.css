@@ -41,26 +41,58 @@
   margin-bottom: 10px;
 }
 
-/* ===== SLIDER / MEMORIES ===== */
+/* ===== SLIDER / MEMORIES (Modern & Responsive) ===== */
 .slider-container {
   max-width: 900px;
-  margin: 30px auto;
+  margin: 20px auto;
   position: relative;
   overflow: hidden;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  perspective: 1000px; /* for 3D effect */
 }
+
 .slider img {
   width: 100%;
   display: none;
   border-radius: 12px;
-  height: auto;
+  height: 200px; /* smaller height for mobile */
   object-fit: cover;
+  transition: transform 0.6s ease, box-shadow 0.6s ease, opacity 1s ease-in-out;
+  transform: scale(0.98) rotateY(0deg);
 }
+
 .slider img.active {
   display: block;
-  transition: opacity 1s ease-in-out;
+  transform: scale(1) rotateY(0deg); /* subtle zoom in */
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+  opacity: 1;
 }
+
+/* Hover 3D tilt effect for desktop */
+@media (min-width: 768px) {
+  .slider img.active:hover {
+    transform: scale(1.02) rotateY(5deg);
+    box-shadow: 0 16px 30px rgba(0,0,0,0.25);
+  }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .slider-container {
+    max-width: 100%;
+  }
+  .slider img {
+    height: 150px; 
+    border-radius: 10px;
+  }
+}
+@media (max-width: 480px) {
+  .slider img {
+    height: 120px; 
+  }
+}
+
 
 
 /* ===== EBOOK CARDS ===== */
