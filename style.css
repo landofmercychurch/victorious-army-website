@@ -175,63 +175,95 @@ p {
 .social-area {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
+  padding: 12px;
 }
 
 .social-box {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px;
-  border-radius: 12px;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 10px;
   color: #fff;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-  transition: transform 0.3s, box-shadow 0.3s;
-  min-width: 260px;
-  max-width: 480px;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-/* Fade-in animation */
-.section.fade-in .social-box {
-  animation: fadeInUp 0.6s forwards;
-}
-@keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
+  min-width: 220px;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background-color: #333; /* fallback */
 }
 
 .social-box:hover {
-  transform: translateY(-6px) rotateX(2deg);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+  transform: translateY(-6px) rotateX(3deg);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.35);
 }
 
-.social-box .icon {
-  flex-shrink: 0;
-  transition: transform 0.3s, filter 0.3s;
+.social-box .icon svg {
+  width: 36px;
+  height: 36px;
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
 .social-box:hover .icon svg {
-  transform: scale(1.2) rotate(5deg);
+  transform: scale(1.2);
   filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
 }
 
-.social-box .social-text { text-align: left; }
+.social-box .social-text {
+  text-align: left;
+}
 
+.social-box .social-text h3,
+.social-box .social-text p {
+  color: #fff; /* force white text */
+  margin: 2px 0;
+  font-size: 0.9rem;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.25s;
+}
+
+.btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+/* Brand colors */
 .social-box.facebook { background: #1877f2; }
 .social-box.youtube { background: #ff0000; }
 .social-box.whatsapp { background: #25D366; }
-.social-box.tiktok {
-  background: #000;
-  border: 2px solid transparent;
+.social-box.tiktok { 
+  background: #000; 
   position: relative;
 }
-.social-box.tiktok::before {
-  content:"";
-  position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;
-  border-radius:12px;
-  background: linear-gradient
+.social-box.tiktok svg {
+  fill: #fff;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 500px) {
+  .social-box {
+    flex-direction: column;
+    text-align: center;
+    min-width: 160px;
+    max-width: 300px;
+    padding: 12px;
+  }
+  .social-box .social-text h3 { font-size: 0.85rem; }
+  .social-box .social-text p { font-size: 0.8rem; }
+  .social-box .icon svg { width: 30px; height: 30px; }
+  .btn { font-size: 0.8rem; padding: 5px 10px; }
+}
+
 
 
 /* ===== FOOTER ===== */
@@ -304,7 +336,7 @@ footer {
   .services ul {flex-direction: column;}
   .services li {flex: 1 1 100%; max-width: none;}
   .minister-card {flex: 1 1 45%;}
-  .social-box {flex: 1 1 45%;}
+  
   #contact p {flex-direction: column; align-items: flex-start;}
 }
 
