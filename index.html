@@ -463,36 +463,24 @@ db.collection("dailyVerses").orderBy("timestamp", "desc").limit(1)
 const slides = document.querySelectorAll('.slider img');
 let current = 0;
 
-function showSlide(index) {
-  slides.forEach((slide, i) => {
+function updateCarousel() {
+  slides.forEach((slide, index) => {
     slide.classList.remove('active');
-    if(i === index) slide.classList.add('active');
+    let offset = index - current;
+    slide.style.transform = `translateX(${offset * 60}px) translateZ(${Math.max(0, 50 - Math.abs(offset) * 30)}px) scale(${1 - Math.abs(offset) * 0.1})`;
+    slide.style.zIndex = `${slides.length - Math.abs(offset)}`;
   });
+  slides[current].classList.add('active');
 }
 
-// Auto slide every 3 seconds
+// Initialize
+updateCarousel();
+
+// Auto-slide every 3s
 setInterval(() => {
   current = (current + 1) % slides.length;
-  showSlide(current);
+  updateCarousel();
 }, 3000);
-
-// Optional: Swipe support for mobile
-let startX = 0;
-const sliderContainer = document.querySelector('.slider-container');
-
-sliderContainer.addEventListener('touchstart', e => {
-  startX = e.touches[0].clientX;
-});
-
-sliderContainer.addEventListener('touchend', e => {
-  let endX = e.changedTouches[0].clientX;
-  if(startX - endX > 50) { // swipe left
-    current = (current + 1) % slides.length;
-  } else if(endX - startX > 50) { // swipe right
-    current = (current - 1 + slides.length) % slides.length;
-  }
-  showSlide(current);
-});
 
 
 // ====== ANNOUNCEMENT POPUP ======// // 
