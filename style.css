@@ -102,32 +102,29 @@ p {
   }
 }
 
-/* ===== MINISTER GRID ===== */
+/* ===== MINISTER GRID (3D Modern) ===== */
 .minister-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 }
 .minister-card {
   flex: 1 1 220px;
-  border: 1px solid #ddd;
+  max-width: 300px;
+  border-radius: 12px;
   padding: 20px;
-  background: #f8f5ff;
-  border-radius: 10px;
   text-align: center;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background: #f8f5ff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 6px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .minister-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.1);
 }
 
-/* ===== ABOUT, CONTACT, SERVICE TIMES STYLING ===== */
-.about h2, .services h2, #contact h2 {
-  color: #2c2a4a;
-  margin-bottom: 15px;
-  text-align: center;
-}
+/* ===== SERVICES (3D Modern) ===== */
 .services ul {
   list-style: none;
   padding: 0;
@@ -138,18 +135,25 @@ p {
 }
 .services li {
   flex: 1 1 220px;
+  max-width: 280px;
   background: #f0f8ff;
-  border: 1px solid #90cdf4;
+  border-radius: 12px;
   padding: 15px;
-  border-radius: 10px;
   font-weight: 500;
   text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 6px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.services li:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.1);
 }
 .services li strong {
   display: block;
   margin-bottom: 8px;
 }
 
+/* ===== CONTACT ===== */
 #contact p {
   display: flex;
   align-items: center;
@@ -165,7 +169,7 @@ p {
   min-width: 100px;
 }
 
-/* ===== SOCIAL MEDIA ===== */
+/* ===== SOCIAL MEDIA (3D Modern) ===== */
 .social-area {
   display: flex;
   flex-wrap: wrap;
@@ -173,12 +177,18 @@ p {
   justify-content: center;
 }
 .social-box {
-  flex: 1 1 300px;
+  flex: 1 1 250px;
+  max-width: 300px;
   background: #f0f9ff;
-  border: 1px solid #90cdf4;
+  border-radius: 12px;
   padding: 20px;
-  border-radius: 10px;
   text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 6px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.social-box:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.1);
 }
 .social-box h3 {
   margin-bottom: 10px;
@@ -213,14 +223,18 @@ footer {
   .hero h1{font-size:2rem;}
   .hero p.tagline{font-size:1rem;}
   .navbar a{font-size:0.85rem;}
-  .section, .about, .services, #contact {padding:25px 15px;}
+  .section, .about, .services, #contact {padding:25px 15px; width: 95%;}
   .services ul {flex-direction: column;}
-  .services li {flex: 1 1 100%;}
+  .services li {flex: 1 1 100%; max-width: none;}
+  .minister-card {flex: 1 1 45%;}
+  .social-box {flex: 1 1 45%;}
   #contact p {flex-direction: column; align-items: flex-start;}
 }
+
 @media (max-width: 480px){
   .hero h1{font-size:1.5rem;}
   .hero p.tagline{font-size:0.9rem;}
   .navbar a{font-size:0.75rem; padding:4px 6px;}
-  .section, .about, .services, #contact {padding:20px 10px;}
+  .section, .about, .services, #contact {padding:20px 10px; width: 98%;}
+  .minister-card, .services li, .social-box {flex: 1 1 100%; padding: 15px;}
 }
