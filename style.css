@@ -307,34 +307,40 @@ footer {
 /* ---- Chorister Gateway ---- */
 .chorister-gateway {
   background: linear-gradient(135deg, #2c3e50, #3498db);
-  padding: 80px 20px;
+  padding: 50px 15px; /* smaller padding for mobile */
   text-align: center;
   color: white;
 }
 .chorister-gateway h2 {
-  font-size: 2rem;
-  margin-bottom: 15px;
+  font-size: 1.8rem;
+  margin-bottom: 12px;
   color: #ffeb3b;
 }
 .chorister-gateway p {
-  font-size: 1.1rem;
-  margin-bottom: 30px;
+  font-size: 1rem;
+  margin-bottom: 20px;
   color: #eee;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .chorister-card {
   position: relative;
   display: inline-block;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  max-width: 320px; /* ✅ mobile default */
+  width: 100%;
   text-decoration: none;
   color: inherit;
   transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 .chorister-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  filter: brightness(1.08);
 }
 .chorister-card img {
   width: 100%;
@@ -346,36 +352,65 @@ footer {
   left: 0;
   right: 0;
   background: rgba(0,0,0,0.6);
-  padding: 20px;
+  padding: 15px;
 }
 .chorister-card .overlay h3 {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
   color: #ffdd59;
 }
-.coming-soon {
-  display: inline-block;
-  background: #ff4757;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.95rem;
+.hint {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 6px;
 }
 .coming-soon {
   display: inline-block;
   background: #ff4757;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: 6px;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   animation: pulse 1.5s infinite;
 }
 
+/* Pulse Animation */
 @keyframes pulse {
   0% { box-shadow: 0 0 0px rgba(255, 71, 87, 0.7); }
-  50% { box-shadow: 0 0 15px rgba(255, 71, 87, 1); }
+  50% { box-shadow: 0 0 10px rgba(255, 71, 87, 1); }
   100% { box-shadow: 0 0 0px rgba(255, 71, 87, 0.7); }
 }
 
+/* ===== Responsive Breakpoints ===== */
+
+/* Tablet (min 600px) */
+@media (min-width: 600px) {
+  .chorister-card {
+    max-width: 400px;
+  }
+  .chorister-gateway h2 {
+    font-size: 2rem;
+  }
+  .chorister-gateway p {
+    font-size: 1.05rem;
+  }
+}
+
+/* Desktop (min 992px) */
+@media (min-width: 992px) {
+  .chorister-card {
+    max-width: 500px; /* expands on larger screens */
+  }
+  .chorister-gateway {
+    padding: 80px 20px; /* more breathing space */
+  }
+  .chorister-gateway h2 {
+    font-size: 2.3rem;
+  }
+  .chorister-gateway p {
+    font-size: 1.1rem;
+  }
+}
 
 
 
