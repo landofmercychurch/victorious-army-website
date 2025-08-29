@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Victorious Army Choir</title>
+  <link rel="stylesheet" href="music.css">
+</head>
+<body>
+
+  <!-- 🎵 Hero Section -->
+  <header class="hero">
+    <h1>🎶 Victorious Army Choir</h1>
+    <p>Worship the Lord with us through songs of praise and the power of the Holy Spirit.</p>
+  </header>
+
+  <!-- 🎵 Chorister Section -->
+  <section id="chorister" class="section chorister-section">
+    <h2>Music Ministry</h2>
+    <p>Listen and sing along with the Victorious Army Choir.</p>
+
+    <div class="music-playlist">
+
+      <!-- Song 1 -->
+      <div class="music-card" id="card-song1">
+        <h3>Victory Song <span class="now-playing"></span></h3>
+        <audio controls id="song1">
+          <source src="audio/victory-song.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="lyrics" data-audio="song1">
+          <h4>Lyrics</h4>
+          <p data-time="0">🎵 We have victory in Christ,</p>
+          <p data-time="5">Through His power we overcome.</p>
+          <p data-time="10">We lift our voices high,</p>
+          <p data-time="15">Singing glory to His Name! 🎵</p>
+        </div>
+      </div>
+
+      <!-- Song 2 -->
+      <div class="music-card" id="card-song2">
+        <h3>Holy Spirit Come <span class="now-playing"></span></h3>
+        <audio controls id="song2">
+          <source src="audio/holy-spirit-come.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="lyrics" data-audio="song2">
+          <h4>Lyrics</h4>
+          <p data-time="0">🎵 Holy Spirit, we welcome You,</p>
+          <p data-time="6">Fill this place with Your fire.</p>
+          <p data-time="12">We bow in worship before You,</p>
+          <p data-time="18">Our hearts are Yours forevermore. 🎵</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 🎤 Choir Leaders Section -->
+  <section class="leaders">
+    <h2>Meet Our Choir Leaders</h2>
+    <p class="intro">Our leaders guide us with passion, discipline, and anointed worship to glorify God.</p>
+    <div class="leader-cards">
+
+      <div class="leader-card">
+        <img src="images/leader1.jpg" alt="Choir Leader">
+        <h3>Brother John Doe</h3>
+        <p>Choir Master</p>
+      </div>
+
+      <div class="leader-card">
+        <img src="images/leader2.jpg" alt="Choir Leader">
+        <h3>Sister Mary Faith</h3>
+        <p>Assistant Choir Leader</p>
+      </div>
+
+      <div class="leader-card">
+        <img src="images/leader3.jpg" alt="Choir Leader">
+        <h3>Brother Samuel Praise</h3>
+        <p>Music Director</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 🎵 JS for lyrics sync + Now Playing effect -->
+  <script>
+  const audios = document.querySelectorAll("audio");
+
+  audios.forEach(audio => {
+    audio.addEventListener("play", () => {
+      audios.forEach(other => {
+        let otherCard = document.getElementById(`card-${other.id}`);
+        let nowPlaying = otherCard.querySelector(".now-playing");
+
+        if (other !== audio) {
+          other.pause();
+          other.currentTime = 0;
+          // Reset lyrics
+          let otherLyrics = document.querySelector(`.lyrics[data-audio="${other.id}"]`);
+          if (otherLyrics) {
+            otherLyrics.querySelectorAll("p").forEach(line => line.classList.remove("active"));
+          }
+          // Remove glow
+          otherCard.classList.remove("playing");
+          nowPlaying.textContent = "";
+        } else {
+          // Add glow + 🎶
+          otherCard.classList.add("playing");
+          nowPlaying.textContent = " 🎶 Now Playing";
+        }
+      });
+    });
+
+    audio.addEventListener("pause", () => {
+      let card = document.getElementById(`card-${audio.id}`);
+      card.classList.remove("playing");
+      card.querySelector(".now-playing").textContent = "";
+    });
+  });
+
+  // Lyrics synchronizer
+  document.querySelectorAll(".lyrics").forEach(section => {
+    const audioId = section.getAttribute("data-audio");
+    const audio = document.getElementById(audioId);
+    const lines = section.querySelectorAll("p");
+
+    audio.addEventListener("timeupdate", () => {
+      let currentTime = audio.currentTime;
+
+      lines.forEach((line, index) => {
+        let start = parseFloat(line.getAttribute("data-time"));
+        let next = index < lines.length - 1 
+          ? parseFloat(lines[index + 1].getAttribute("data-time")) 
+          : audio.duration;
+
+        if (currentTime >= start && currentTime < next) {
+          line.classList.add("active");
+          line.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          line.classList.remove("active");
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>
