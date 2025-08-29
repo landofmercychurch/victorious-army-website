@@ -303,6 +303,87 @@ footer {
   border-radius: 12px;
 }
 
+
+/* ---- Chorister Gateway ---- */
+.chorister-gateway {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  padding: 80px 20px;
+  text-align: center;
+  color: white;
+}
+.chorister-gateway h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #ffeb3b;
+}
+.chorister-gateway p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  color: #eee;
+}
+.chorister-card {
+  position: relative;
+  display: inline-block;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  max-width: 500px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.chorister-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+.chorister-card img {
+  width: 100%;
+  display: block;
+}
+.chorister-card .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.6);
+  padding: 20px;
+}
+.chorister-card .overlay h3 {
+  margin: 0 0 10px;
+  color: #ffdd59;
+}
+.coming-soon {
+  display: inline-block;
+  background: #ff4757;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+.coming-soon {
+  display: inline-block;
+  background: #ff4757;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0px rgba(255, 71, 87, 0.7); }
+  50% { box-shadow: 0 0 15px rgba(255, 71, 87, 1); }
+  100% { box-shadow: 0 0 0px rgba(255, 71, 87, 0.7); }
+}
+
+
+
+
+
+
+
+
+
 /* ===== RESPONSIVE FOR MOBILE ===== */
 @media (max-width: 768px) {
   .live-stream {
