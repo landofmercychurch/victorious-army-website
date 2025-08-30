@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Insights Hub — FB + Quora Style</title>
+
+  <!-- ====== STYLES (FB blue + Quora red, mobile-friendly, 3D cards) ====== -->
+<style>
+/* ====== Global Reset & Base ====== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",system-ui,Arial,sans-serif}
+body{background:#f4f6f9;color:#222;line-height:1.6;font-size:16px}
+
+/* ====== Header ====== */
+header{
+  position:sticky; top:0; z-index:10;
+  text-align:center; padding:1.4rem 1rem;
+  background:linear-gradient(135deg,#1877f2,#a21d1d);
+  color:#fff; box-shadow:0 6px 14px rgba(0,0,0,.25)
+}
+header h1{font-size:1.8rem; font-weight:700; letter-spacing:-.3px}
+header p{font-size:.95rem; opacity:.95}
+
+/* ====== Top bar actions ====== */
+.top-actions{
+  position:absolute; right:12px; top:12px; display:flex; gap:.5rem
+}
+.btn{
+  border:none; padding:.5rem .9rem; border-radius:50px; cursor:pointer;
+  font-weight:600; transition: all 0.2s ease
+}
+.btn-white{background:#fff;color:#1877f2}
+.btn-red{background:#a21d1d;color:#fff}
+.btn-blue{background:#1877f2;color:#fff}
+.btn-ghost{background:#f4f6f9;color:#1877f2}
+.btn:disabled{opacity:.6; cursor:not-allowed}
+
+/* ====== Button Hover & Focus Effects ====== */
+.btn-blue:hover, .btn-blue:focus{
+  background:linear-gradient(135deg,#165acf,#a21d1d);
+  transform:translateY(-1px);
+}
+.btn-white:hover, .btn-white:focus{
+  background:#e4e6eb; color:#1877f2; transform:translateY(-1px);
+}
+.btn-red:hover, .btn-red:focus{
+  background:#91171a; transform:translateY(-1px);
+}
+.btn-ghost:hover, .btn-ghost:focus{
+  background:#e4e6eb; transform:translateY(-1px);
+}
+
+/* ====== Main Feed ====== */
+main{width:95%; max-width:860px; margin:1.4rem auto}
+
+/* Feed cards */
+.insights-feed{display:flex; flex-direction:column; gap:1rem}
+.card{
+  background:#fff; border-radius:14px; padding:1.1rem;
+  box-shadow:0 6px 14px rgba(0,0,0,.1);
+  transition:transform .18s ease, box-shadow .18s ease
+}
+.card:hover{transform:translateY(-2px); box-shadow:0 12px 22px rgba(0,0,0,.14)}
+.card h3{color:#1877f2; margin-bottom:.35rem; font-size:1.1rem}
+.meta{display:flex; gap:.6rem; align-items:center; color:#666; font-size:.85rem; margin-bottom:.4rem}
+.avatar{
+  width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
+  font-size:.8rem; font-weight:700; color:#fff; background:#1877f2
+}
+.preview{color:#333}
+.actions{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.7rem}
+.actions .chip{
+  background:#f4f6f9; border:none; border-radius:999px; padding:.45rem .8rem; cursor:pointer
+}
+.actions .chip:hover{background:#e4e6eb}
+.owner-actions{margin-left:auto; display:flex; gap:.4rem}
+
+/* Floating Add Post Button */
+#fab{
+  position:fixed; bottom:18px; right:18px; width:60px; height:60px;
+  border-radius:50%; display:grid; place-items:center; font-size:2rem;
+  font-weight:700; cursor:pointer; border:none;
+  color:#fff; background:linear-gradient(135deg,#1877f2,#a21d1d);
+  box-shadow:0 10px 24px rgba(0,0,0,.28); transition:transform .15s ease, box-shadow .15s ease
+}
+#fab:hover{transform:scale(1.07); box-shadow:0 12px 28px rgba(0,0,0,.32)}
+
+/* ====== Common Modal Styles (Login, Post, Read) ====== */
+.modal{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.6); z-index:1000; padding:1rem;
+  align-items:center; justify-content:center
+}
+.modal-content{
+  background:#fff; border-radius:14px; width:100%; max-width:650px;
+  padding:1.2rem; position:relative; box-shadow:0 8px 24px rgba(0,0,0,.24);
+  animation:fadeIn .22s ease; display:flex; flex-direction:column; overflow:hidden
+}
+.close{
+  position:absolute; right:14px; top:10px; font-size:1.6rem; color:#666; cursor:pointer
+}
+
+/* ====== Login Modal Specific ====== */
+#loginModal .modal-content{
+  max-width:650px; display:flex; flex-direction:column; gap:.6rem; overflow:visible
+}
+#loginModal h2{font-size:1.5rem; font-weight:700; color:#1877f2; margin-bottom:.3rem}
+#loginModal .muted{color:#555; font-size:.95rem; margin-bottom:.8rem; line-height:1.4}
+#loginModal .field{
+  width:100%; padding:.85rem; border:1px solid #e3e6ea; border-radius:10px;
+  margin:.45rem 0; font-size:1rem
+}
+#loginModal .field:focus{outline:none; border-color:#1877f2; box-shadow:0 0 0 3px rgba(24,119,242,.12)}
+#loginModal .row{display:flex; gap:.5rem; flex-wrap:wrap}
+#loginModal .btn-blue{background:linear-gradient(135deg,#1877f2,#a21d1d); color:#fff}
+#loginModal .btn-ghost{background:#f4f6f9; color:#1877f2}
+
+/* ====== Post Modal Specific ====== */
+#postModal .modal-content{max-width:650px; display:flex; flex-direction:column; gap:.6rem}
+
+/* ====== Read Modal Specific ====== */
+#readModal .modal-content{
+  max-height:90vh; max-width:700px; display:flex; flex-direction:column; overflow:hidden; padding:1rem
+}
+#readModal h2{flex-shrink:0}
+#readModal .muted{flex-shrink:0; color:#888; font-size:.9rem; margin-bottom:.6rem}
+#readModal .close{flex-shrink:0; cursor:pointer}
+#readBody{
+  flex:1 1 auto; overflow-y:auto; margin:.4rem 0 .6rem; white-space:pre-wrap; padding-right:.5rem
+}
+#commentsBox{
+  flex-shrink:0; max-height:200px; overflow-y:auto;
+  margin-top:.5rem; border-top:1px solid #edf0f4; padding-top:.5rem
+}
+#readBody::-webkit-scrollbar, #commentsBox::-webkit-scrollbar{width:8px}
+#readBody::-webkit-scrollbar-thumb, #commentsBox::-webkit-scrollbar-thumb{
+  background-color: rgba(24,119,242,0.5); border-radius:4px
+}
+#readBody::-webkit-scrollbar-track, #commentsBox::-webkit-scrollbar-track{
+  background: rgba(0,0,0,0.05); border-radius:4px
+}
+
+/* ====== Comments ====== */
+.comment{background:#f6f7fb; border:1px solid #eff1f5; border-radius:10px; padding:.6rem .7rem; margin:.45rem 0}
+.comment .who{font-weight:700;color:#444}
+.empty{color:#777; font-size:.92rem}
+
+/* ====== Notification ====== */
+#notification{
+  position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+  display:none; align-items:center; gap:.6rem; background:#1877f2; color:#fff;
+  padding:.6rem .9rem; border-radius:10px; box-shadow:0 6px 14px rgba(0,0,0,.25); z-index:1100
+}
+
+/* ====== Animations ====== */
+@keyframes fadeIn{from{opacity:0; transform:scale(.97)} to{opacity:1; transform:scale(1)}}
+
+/* ====== Mobile tweaks ====== */
+@media(max-width:600px){
+  header h1{font-size:1.4rem}
+  .modal-content{padding:1rem}
+}
+</style>
+
+  <!-- ====== Firebase (compat for simplicity) ====== -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="top-actions">
+      <button id="loginBtn" class="btn btn-white">Login</button>
+      <button id="logoutBtn" class="btn btn-red" style="display:none;">Logout</button>
+    </div>
+    <h1>Insights Hub</h1>
+    <p>Let’s share & discover <strong>ideas</strong> — thoughtful insights, deep discussions</p>
+  </header>
+
+  <!-- Feed -->
+  <main>
+    <section id="feed" class="insights-feed"></section>
+  </main>
+
+  <!-- Floating add post -->
+  <button id="fab" title="Write Insight">+</button>
+
+  <!-- Notification -->
+  <div id="notification"><span id="notifText"></span><button id="notifClose" class="btn btn-ghost">✖</button></div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" data-close="#loginModal">&times;</span>
+      <h2>Welcome back</h2>
+      <p class="muted">Login or create an account to like, comment, and post.</p>
+      <div class="stack">
+        <input id="authEmail" class="field" type="email" placeholder="Email" required>
+        <input id="authPassword" class="field" type="password" placeholder="Password" required>
+        <div class="row">
+          <button id="loginSubmit" class="btn btn-blue">Login</button>
+          <button id="signupSubmit" class="btn btn-ghost">Create Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Post Modal -->
+  <div id="postModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" data-close="#postModal">&times;</span>
+      <h2 id="postModalTitle">Share your insight</h2>
+      <div class="stack">
+        <input id="postAuthor" class="field" type="text" placeholder="Your name" required>
+        <input id="postTitle" class="field" type="text" placeholder="Title" required>
+        <textarea id="postContent" class="field" rows="6" placeholder="Write your insight..." required></textarea>
+        <div class="row">
+          <button id="postSave" class="btn btn-blue">Post</button>
+          <button id="postCancel" class="btn btn-ghost" data-close="#postModal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Read (Full Post) Modal -->
+  <div id="readModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" data-close="#readModal">&times;</span>
+      <h2 id="readTitle"></h2>
+      <div class="muted" id="readMeta"></div>
+      <div id="readBody" style="white-space:pre-wrap;margin:.4rem 0 0.6rem;"></div>
+
+      <div class="divider"></div>
+      <h3 style="color:#a21d1d;margin:.2rem 0 .4rem;">Comments</h3>
+      <div id="commentsBox" class="stack"></div>
+
+      <div id="commentFormWrap" class="stack" style="margin-top:.4rem;">
+        <input id="commenter" class="field" type="text" placeholder="Your name" required>
+        <textarea id="commentText" class="field" rows="3" placeholder="Write a comment..." required></textarea>
+        <button id="commentPost" class="btn btn-blue">Add Comment</button>
+      </div>
+      <div id="commentHint" class="empty" style="display:none;">Login to write a comment.</div>
+    </div>
+  </div>
+
+
+
+  <script>
+    // ========= Firebase config (yours) =========
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHBsQzYjY-rnIZ55GnJbJIx9GCr5-5DKY",
+      authDomain: "victoriousarmyrevivalmovement.firebaseapp.com",
+      projectId: "victoriousarmyrevivalmovement",
+      storageBucket: "victoriousarmyrevivalmovement.firebasestorage.app",
+      messagingSenderId: "761907561585",
+      appId: "1:761907561585:web:cc317ff63990955697c7d0",
+      measurementId: "G-1JC97GHR23"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ========= Elements =========
+    const feed = document.getElementById('feed');
+    const fab = document.getElementById('fab');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginModal = document.getElementById('loginModal');
+    const postModal = document.getElementById('postModal');
+    const readModal = document.getElementById('readModal');
+
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const loginSubmit = document.getElementById('loginSubmit');
+    const signupSubmit = document.getElementById('signupSubmit');
+
+    const postAuthor = document.getElementById('postAuthor');
+    const postTitle = document.getElementById('postTitle');
+    const postContent = document.getElementById('postContent');
+    const postSave = document.getElementById('postSave');
+
+    const readTitle = document.getElementById('readTitle');
+    const readMeta  = document.getElementById('readMeta');
+    const readBody  = document.getElementById('readBody');
+    const commentsBox = document.getElementById('commentsBox');
+    const commenter = document.getElementById('commenter');
+    const commentText = document.getElementById('commentText');
+    const commentPost = document.getElementById('commentPost');
+    const commentFormWrap = document.getElementById('commentFormWrap');
+    const commentHint = document.getElementById('commentHint');
+
+    const notif = document.getElementById('notification');
+    const notifText = document.getElementById('notifText');
+    const notifClose = document.getElementById('notifClose');
+
+    let currentUser = null;
+    let editingPostId = null;    // if set, Post modal acts as "Edit"
+    let openReadPostId = null;   // currently opened post in Read modal
+    let firstFeedLoad = true;
+    let newCount = 0;
+
+    // ========= Helpers =========
+    const initials = name => (name||'U N').split(' ').map(n=>n[0]?.toUpperCase()).join('').slice(0,2);
+    const timeAgo = ts => {
+      if (!ts) return '';
+      const diff = (Date.now() - ts.toDate())/1000;
+      if (diff < 60) return `${Math.floor(diff)}s ago`;
+      if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+      return `${Math.floor(diff/86400)}d ago`;
+    };
+    const openModal = el => el.style.display = 'flex';
+    const closeModal = el => el.style.display = 'none';
+    document.querySelectorAll('.close').forEach(x=>{
+      x.addEventListener('click',()=> closeModal(document.querySelector(x.dataset.close)));
+    });
+    document.querySelectorAll('.modal').forEach(m=>{
+      m.addEventListener('click',e=>{ if(e.target===m) closeModal(m); });
+    });
+    notifClose.onclick = ()=> notif.style.display='none';
+
+    // ========= Auth UI =========
+    loginBtn.onclick = ()=> openModal(loginModal);
+    logoutBtn.onclick = ()=> auth.signOut();
+
+    loginSubmit.onclick = async ()=>{
+      try {
+        await auth.signInWithEmailAndPassword(authEmail.value, authPassword.value);
+        closeModal(loginModal);
+      } catch(e){ alert(e.message); }
+    };
+    signupSubmit.onclick = async ()=>{
+      try {
+        await auth.createUserWithEmailAndPassword(authEmail.value, authPassword.value);
+        closeModal(loginModal);
+      } catch(e){ alert(e.message); }
+    };
+
+    auth.onAuthStateChanged(user=>{
+      currentUser = user;
+      loginBtn.style.display = user ? 'none' : 'inline-block';
+      logoutBtn.style.display = user ? 'inline-block' : 'none';
+      // Show/hide comment box in read modal
+      if (readModal.style.display === 'flex') {
+        commentFormWrap.style.display = user ? 'flex' : 'none';
+        commentHint.style.display = user ? 'none' : 'block';
+      }
+    });
+
+    // ========= Create / Edit Post =========
+    fab.onclick = ()=>{
+      if (!currentUser) return openModal(loginModal);
+      editingPostId = null;
+      document.getElementById('postModalTitle').textContent = 'Share your insight';
+      postAuthor.value = '';
+      postTitle.value = '';
+      postContent.value = '';
+      openModal(postModal);
+    };
+
+    postSave.onclick = async ()=>{
+      if (!currentUser) return openModal(loginModal);
+      const data = {
+        author: postAuthor.value.trim(),
+        title: postTitle.value.trim(),
+        content: postContent.value.trim(),
+        uid: currentUser.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      if (!data.author || !data.title || !data.content) return alert('All fields are required.');
+      try{
+        if (editingPostId) {
+          await db.collection('personalInsights').doc(editingPostId).update({
+            author: data.author, title: data.title, content: data.content
+          });
+        } else {
+          await db.collection('personalInsights').add({...data});
+        }
+        closeModal(postModal);
+      }catch(e){ alert(e.message); }
+    };
+
+    // ========= Feed (live) =========
+    db.collection('personalInsights').orderBy('timestamp','desc').onSnapshot(snap=>{
+      // notification on new additions after first load
+      if (!firstFeedLoad) {
+        snap.docChanges().forEach(ch=>{
+          if (ch.type==='added') newCount++;
+        });
+        if (newCount>0){
+          notifText.textContent = `${newCount} new post${newCount>1?'s':''} added`;
+          notif.style.display='flex';
+          newCount=0;
+        }
+      }
+      firstFeedLoad = false;
+
+      feed.innerHTML = '';
+      snap.forEach(doc=>{
+        const p = doc.data();
+        const id = doc.id;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        // meta
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.textContent = initials(p.author);
+        const who = document.createElement('div');
+        who.textContent = `${p.author || 'Unknown'} • ${timeAgo(p.timestamp)}`;
+        meta.append(av, who);
+
+        // title + preview
+        const h3 = document.createElement('h3');
+        h3.textContent = p.title || 'Untitled';
+
+        const preview = document.createElement('div');
+        preview.className = 'preview';
+        const text = (p.content || '').trim();
+        const short = text.length > 180 ? text.slice(0,180) + '…' : text;
+        preview.textContent = short;
+
+        // actions
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        // like
+        const likeBtn = document.createElement('button');
+        likeBtn.className = 'chip';
+        likeBtn.textContent = '🤍 Like';
+
+        const likeCount = document.createElement('span');
+        likeCount.className = 'chip';
+        likeCount.textContent = '0 ❤️';
+
+        // read more
+        const readBtn = document.createElement('button');
+        readBtn.className = 'chip';
+        readBtn.textContent = '📖 Read more';
+
+        // owner actions
+        const ownerWrap = document.createElement('span');
+        ownerWrap.className = 'owner-actions';
+
+        const canEdit = currentUser && currentUser.uid === p.uid;
+        if (canEdit) {
+          const editBtn = document.createElement('button');
+          editBtn.className = 'chip';
+          editBtn.textContent = '✏️ Edit';
+          editBtn.onclick = ()=>{
+            editingPostId = id;
+            document.getElementById('postModalTitle').textContent = 'Edit your insight';
+            postAuthor.value = p.author || '';
+            postTitle.value = p.title || '';
+            postContent.value = p.content || '';
+            openModal(postModal);
+          };
+          const delBtn = document.createElement('button');
+          delBtn.className = 'chip';
+          delBtn.textContent = '🗑️ Delete';
+          delBtn.onclick = async ()=>{
+            if (confirm('Delete this post?')) {
+              await db.collection('personalInsights').doc(id).delete();
+            }
+          };
+          ownerWrap.append(editBtn, delBtn);
+        }
+
+        // attach
+        actions.append(likeBtn, likeCount, readBtn, ownerWrap);
+        card.append(meta, h3, preview, actions);
+        feed.append(card);
+
+        // like live state + toggle
+        const likeDoc = uid => db.collection('personalInsights').doc(id).collection('likes').doc(uid);
+        db.collection('personalInsights').doc(id).collection('likes')
+          .onSnapshot(likeSnap=>{
+            const count = likeSnap.size;
+            likeCount.textContent = `${count} ❤️`;
+            if (currentUser) {
+              const liked = likeSnap.docs.some(d=>d.id === currentUser.uid);
+              likeBtn.textContent = liked ? '💖 Unlike' : '🤍 Like';
+            } else {
+              likeBtn.textContent = '🤍 Like';
+            }
+          });
+
+        likeBtn.onclick = async ()=>{
+          if (!currentUser) return openModal(loginModal);
+          const ref = likeDoc(currentUser.uid);
+          const docNow = await ref.get();
+          if (docNow.exists) await ref.delete();
+          else await ref.set({ uid: currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+        };
+
+        // read more → open full post modal
+        readBtn.onclick = ()=> openReadModal(id, p);
+      });
+    });
+
+    // ========= Read Modal (full post + comments) =========
+    function openReadModal(id, p){
+      openReadPostId = id;
+      readTitle.textContent = p.title || 'Untitled';
+      readMeta.textContent = `${p.author || 'Unknown'} • ${timeAgo(p.timestamp)}`;
+      readBody.textContent = p.content || '';
+      commentsBox.innerHTML = '';
+      commentText.value = '';
+      commenter.value = '';
+
+      // show/hide comment form by auth
+      commentFormWrap.style.display = currentUser ? 'flex' : 'none';
+      commentHint.style.display = currentUser ? 'none' : 'block';
+
+      // owner can delete/edit from inside modal too (optional: keep from card for simplicity)
+
+      // live comments
+      db.collection('personalInsights').doc(id).collection('comments')
+        .orderBy('timestamp','asc').onSnapshot(s=>{
+          commentsBox.innerHTML = '';
+          if (s.empty) {
+            const empty = document.createElement('div');
+            empty.className = 'empty';
+            empty.textContent = 'No comments yet — be the first!';
+            commentsBox.append(empty);
+          }
+          s.forEach(c=>{
+            const cd = c.data();
+            const row = document.createElement('div');
+            row.className = 'comment';
+            const who = document.createElement('div');
+            who.className = 'who';
+            who.textContent = cd.name || 'Anonymous';
+            const text = document.createElement('div');
+            text.textContent = cd.text || '';
+
+            row.append(who, text);
+
+            if (currentUser && cd.uid === currentUser.uid) {
+              const del = document.createElement('button');
+              del.className = 'btn btn-ghost';
+              del.style.marginTop = '.4rem';
+              del.textContent = 'Delete';
+              del.onclick = ()=> db.collection('personalInsights').doc(id).collection('comments').doc(c.id).delete();
+              row.append(del);
+            }
+            commentsBox.append(row);
+          });
+        });
+
+      // add comment
+      commentPost.onclick = async ()=>{
+        if (!currentUser) return openModal(loginModal);
+        const name = commenter.value.trim();
+        const text = commentText.value.trim();
+        if (!name || !text) return alert('Please enter your name and comment.');
+        await db.collection('personalInsights').doc(id).collection('comments').add({
+          name, text, uid: currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        commentText.value = '';
+      };
+
+      openModal(readModal);
+    }
+  </script>
+</body>
+</html>
