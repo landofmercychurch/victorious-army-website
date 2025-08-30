@@ -417,6 +417,28 @@ footer {
 
 
 
+.navbar { background: #2c2a4a; padding: 10px 20px; }
+.nav-list { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
+.nav-list li { position: relative; }
+.nav-list a { color: white; text-decoration: none; padding: 8px 12px; display: block; }
+.nav-list li:hover > a { background: #4b3f72; border-radius: 6px; }
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #4b3f72;
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 180px;
+}
+.dropdown-menu li a { padding: 10px 15px; }
+.dropdown:hover .dropdown-menu { display: block; }
+.dropdown-menu li a:hover { background: #2c2a4a; }
+
+
+
 
 
 /* ===== RESPONSIVE FOR MOBILE ===== */
