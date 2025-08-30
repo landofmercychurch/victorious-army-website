@@ -1,0 +1,258 @@
+/* ===================== Reset & Basics ===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f9f9f9;
+  color: #333;
+  line-height: 1.5;
+  padding: 0 10px;
+}
+
+/* ===================== Header ===================== */
+header {
+  text-align: center;
+  padding: 20px 0;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+header p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* ===================== Forms ===================== */
+#insight-section,
+#auth-section {
+  background: #fff;
+  margin: 15px auto;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#insight-form input,
+#insight-form textarea,
+#authForm input,
+.comment-form input,
+.comment-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+#insight-form button,
+#authForm button,
+.comment-form button,
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+#insight-form button:hover,
+#authForm button:hover,
+.comment-form button:hover,
+button:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* ===================== Insights Container ===================== */
+#insights-container {
+  margin: 20px 0;
+}
+
+.insight-card {
+  background: linear-gradient(135deg, #ffffff, #e6f0ff);
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInCard 0.5s forwards;
+}
+
+.insight-card::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 120%;
+  height: 120%;
+  background: url('https://i.ibb.co/2F8Qx8H/light-texture.png') repeat;
+  opacity: 0.05;
+  z-index: 0;
+  pointer-events: none;
+  transform: rotate(-10deg);
+  border-radius: 15px;
+}
+
+.insight-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===================== Insight Meta ===================== */
+.insight-meta-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  background: #007bff;
+  color: #fff;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+/* Insight Title */
+.insight-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #004080;
+}
+
+/* ===================== Insight Content Scroll ===================== */
+.insight-content-scroll {
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.8);
+  padding: 10px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.scroll-inner {
+  display: inline-block;
+  white-space: pre-wrap;
+  animation: scrollContent 15s linear infinite;
+}
+
+@keyframes scrollContent {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-30%); }
+  100% { transform: translateY(0); }
+}
+
+/* ===================== Insight Actions ===================== */
+.insight-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.insight-actions button {
+  background: rgba(0, 123, 255, 0.85);
+  border-radius: 12px;
+  padding: 6px 12px;
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.insight-actions button:hover {
+  background: rgba(0, 123, 255, 1);
+  transform: translateY(-2px);
+}
+
+/* ===================== Comments ===================== */
+.comments-section {
+  margin-top: 10px;
+}
+
+.comment-card,
+.comment {
+  background: rgba(255,255,255,0.9);
+  margin-bottom: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* ===================== Notification ===================== */
+#notification {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ===================== Modal ===================== */
+#login-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#login-modal .modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* ===================== Animations ===================== */
+@keyframes fadeInCard {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================== Mobile Adjustments ===================== */
+@media(max-width: 600px){
+  header h1 { font-size: 1.5rem; }
+  .insight-card { padding: 12px; border-radius: 12px; }
+  .avatar { width: 35px; height: 35px; font-size: 0.8rem; }
+  .insight-card h3 { font-size: 1rem; }
+  .insight-content-scroll { max-height: 100px; padding: 8px; }
+}

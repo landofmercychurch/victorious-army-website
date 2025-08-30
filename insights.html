@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Church Personal Insights</title>
+<link rel="stylesheet" href="new-insights.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>Personal Insights</h1>
+  <p>Sharing reflections and revelations from God’s Word</p>
+</header>
+
+<main>
+  <!-- Insight submission -->
+  <section id="insight-section">
+    <h2>Add Your Insight</h2>
+    <form id="insight-form">
+      <input type="text" id="insight-title" placeholder="Title" required>
+      <textarea id="insight-content" placeholder="Write your insight here..." rows="5" required></textarea>
+      <input type="text" id="insight-author" placeholder="Your Name" required>
+      <button type="submit">Submit Insight</button>
+    </form>
+  </section>
+
+  <!-- Insights list -->
+  <section id="insights-container"></section>
+</main>
+
+<!-- Notification for new insights -->
+<div id="notification" style="display:none;">
+  <span id="notif-text"></span>
+  <button id="close-notif">✖</button>
+</div>
+
+<!-- Auth Section -->
+<section id="auth-section">
+  <h2>Sign Up / Login</h2>
+  <form id="authForm">
+    <input type="email" id="authEmail" placeholder="Email" required>
+    <input type="password" id="authPassword" placeholder="Password" required>
+    <button type="submit">Sign Up / Login</button>
+  </form>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+</section>
+
+<!-- Login modal for visitors -->
+<div id="login-modal" style="display:none;">
+  <div class="modal-content">
+    <p>You must be logged in to perform this action.</p>
+    <button id="modal-close-btn">Close</button>
+  </div>
+</div>
+
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAHBsQzYjY-rnIZ55GnJbJIx9GCr5-5DKY",
+  authDomain: "victoriousarmyrevivalmovement.firebaseapp.com",
+  projectId: "victoriousarmyrevivalmovement",
+  storageBucket: "victoriousarmyrevivalmovement.firebasestorage.app",
+  messagingSenderId: "761907561585",
+  appId: "1:761907561585:web:cc317ff63990955697c7d0"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// DOM elements
+const insightForm = document.getElementById('insight-form');
+const insightsContainer = document.getElementById('insights-container');
+const authForm = document.getElementById('authForm');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginModal = document.getElementById('login-modal');
+const modalCloseBtn = document.getElementById('modal-close-btn');
+const notification = document.getElementById('notification');
+const notifText = document.getElementById('notif-text');
+
+// State
+let firstLoad = true;
+let newInsightsCount = 0;
+
+// Utilities
+function getInitials(name) {
+  return name.split(' ').map(n => n[0].toUpperCase()).join('').slice(0,2);
+}
+function timeAgo(timestamp) {
+  if (!timestamp) return '';
+  const now = new Date();
+  const diff = (now - timestamp.toDate()) / 1000;
+  if(diff < 60) return `${Math.floor(diff)}s ago`;
+  if(diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if(diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return `${Math.floor(diff/86400)}d ago`;
+}
+function autoScrollContent(container) {
+  const inner = container.querySelector('.scroll-inner');
+  if(!inner) return;
+  let scrollTop = 0;
+  setInterval(()=>{
+    if(inner.scrollHeight > container.clientHeight){
+      scrollTop++;
+      if(scrollTop > inner.scrollHeight - container.clientHeight) scrollTop=0;
+      inner.style.transform = `translateY(-${scrollTop}px)`;
+    }
+  },50);
+}
+
+// Close login modal
+modalCloseBtn.addEventListener('click', ()=> loginModal.style.display='none');
+notification.querySelector('#close-notif').addEventListener('click', ()=> {
+  notification.style.display='none';
+  newInsightsCount=0;
+});
+
+// ===== AUTH =====
+authForm.addEventListener('submit', async e=>{
+  e.preventDefault();
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+  try{
+    let userCredential;
+    try{ userCredential = await auth.signInWithEmailAndPassword(email,password); }
+    catch(err){ userCredential = await auth.createUserWithEmailAndPassword(email,password); }
+    authForm.style.display='none';
+    logoutBtn.style.display='inline-block';
+  }catch(err){ alert("Error: "+err.message); }
+});
+logoutBtn.addEventListener('click', ()=> auth.signOut());
+
+// ===== INSIGHT SUBMISSION =====
+insightForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const user = auth.currentUser;
+  if(!user){ loginModal.style.display='flex'; return; }
+  const title = document.getElementById('insight-title').value;
+  const content = document.getElementById('insight-content').value;
+  const author = document.getElementById('insight-author').value;
+  db.collection('personalInsights').add({
+    title, content, author, uid: user.uid,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    likes:0
+  }).then(()=> insightForm.reset());
+});
+
+
+
+
+// ===== DYNAMIC AUTO-SCROLL FUNCTION =====
+function autoScrollContent(container) {
+  const inner = container.querySelector('.scroll-inner');
+  if (!inner) return;
+
+  let scrollTop = 0;
+  const scrollHeight = inner.scrollHeight - container.clientHeight;
+  if (scrollHeight <= 0) return; // no scrolling needed
+
+  const scrollSpeed = 1; // pixels per interval
+  const intervalTime = 30; // ms
+  let direction = 1; // 1 = down, -1 = up
+
+  setInterval(() => {
+    scrollTop += scrollSpeed * direction;
+    if (scrollTop >= scrollHeight) direction = -1;
+    if (scrollTop <= 0) direction = 1;
+    inner.style.transform = `translateY(-${scrollTop}px)`;
+  }, intervalTime);
+}
+
+// ===== FETCH & DISPLAY INSIGHTS =====
+db.collection('personalInsights').orderBy('timestamp','desc')
+.onSnapshot(snapshot => {
+  snapshot.docChanges().forEach(change => {
+    if (change.type === 'added' && !firstLoad) {
+      newInsightsCount++;
+      notifText.textContent = `${newInsightsCount} new insight${newInsightsCount > 1 ? 's' : ''} added!`;
+      notification.style.display = 'flex';
+    }
+  });
+
+  firstLoad = false;
+  insightsContainer.innerHTML = '';
+
+  snapshot.forEach(doc => {
+    const insight = doc.data();
+    const card = document.createElement('div');
+    card.className = 'insight-card';
+    card.dataset.id = doc.id;
+
+    card.innerHTML = `
+      <div class="insight-meta-container">
+        <div class="avatar">${getInitials(insight.author)}</div>
+        <div><strong>${insight.author}</strong></div>
+        <div class="time-ago">${timeAgo(insight.timestamp)}</div>
+      </div>
+      <h3>${insight.title}</h3>
+      <div class="insight-content-scroll"><div class="scroll-inner">${insight.content}</div></div>
+      <div class="insight-actions">
+        <button class="like-btn">❤️ ${insight.likes}</button>
+        ${auth.currentUser && auth.currentUser.uid === insight.uid ? `<button class="edit-btn">✏️ Edit</button><button class="delete-btn">🗑️ Delete</button>` : ''}
+      </div>
+      <div class="comments-section">
+        <h4>Comments</h4>
+        <div class="comments-list" id="comments-${doc.id}"></div>
+        ${auth.currentUser ? `<form class="comment-form" data-id="${doc.id}">
+          <input type="text" name="commenter" placeholder="Your Name" required>
+          <textarea name="comment" placeholder="What do you think?" rows="2" required></textarea>
+          <button type="submit">Comment</button>
+        </form>` : ''}
+      </div>
+    `;
+
+    insightsContainer.appendChild(card);
+
+    // Start auto-scroll for this card
+    autoScrollContent(card.querySelector('.insight-content-scroll'));
+  });
+});
+
+
+
+
+
+    // Like
+    card.querySelector('.like-btn').addEventListener('click', ()=> {
+      db.collection('personalInsights').doc(doc.id).update({likes: firebase.firestore.FieldValue.increment(1)});
+    });
+
+    // Edit
+    const editBtn=card.querySelector('.edit-btn');
+    if(editBtn) editBtn.addEventListener('click', ()=>{
+      const newTitle=prompt('Edit Title:', insight.title);
+      const newContent=prompt('Edit Content:', insight.content);
+      if(newTitle && newContent){
+        db.collection('personalInsights').doc(doc.id).update({title:newTitle, content:newContent});
+      }
+    });
+
+    // Delete
+    const deleteBtn=card.querySelector('.delete-btn');
+    if(deleteBtn) deleteBtn.addEventListener('click', ()=>{
+      if(confirm('Delete your insight?')) db.collection('personalInsights').doc(doc.id).delete();
+    });
+
+    // Comments
+    const commentsList=card.querySelector(`#comments-${doc.id}`);
+    db.collection('personalInsights').doc(doc.id).collection('comments')
+      .orderBy('timestamp','asc').onSnapshot(commentSnapshot=>{
+        commentsList.innerHTML='';
+        commentSnapshot.forEach(commentDoc=>{
+          const comment=commentDoc.data();
+          const div=document.createElement('div');
+          div.innerHTML=`<b>${comment.name}</b>: ${comment.text}
+            ${auth.currentUser && auth.currentUser.uid===comment.uid?`<button onclick="deleteComment('${commentDoc.ref.path}')">Delete</button>`:''}`;
+          commentsList.appendChild(div);
+        });
+      });
+
+    // Comment submit
+    const commentForm=card.querySelector('.comment-form');
+    if(commentForm) commentForm.addEventListener('submit', e=>{
+      e.preventDefault();
+      const user=auth.currentUser;
+      if(!user){ loginModal.style.display='flex'; return; }
+      const name=commentForm.commenter.value;
+      const text=commentForm.comment.value;
+      db.collection('personalInsights').doc(doc.id).collection('comments').add({
+        name, text, uid:user.uid, timestamp:firebase.firestore.FieldValue.serverTimestamp()
+      });
+      commentForm.reset();
+    });
+  });
+});
+
+// Delete comment function
+function deleteComment(path){ if(confirm('Delete your comment?')) db.doc(path).delete(); }
+
+// Auth state
+auth.onAuthStateChanged(user=>{
+  if(user){
+    authForm.style.display='none';
+    logoutBtn.style.display='inline-block';
+  } else {
+    authForm.style.display='block';
+    logoutBtn.style.display='none';
+  }
+});
+</script>
+</body>
+</html>
