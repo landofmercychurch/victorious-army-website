@@ -33,15 +33,13 @@ s0.parentNode.insertBefore(s1,s0);
     <li><a href="#ministers">🧍‍♂️ Ministers</a></li>
     <li><a href="#chorister">Chorister</a></li>
 
-    <!-- Community dropdown -->
-    <li class="has-dropdown">
-      <a href="#">Community</a>
-      <ul class="dropdown-menu">
-        <li><a href="insights.html">Personal Insights</a></li>
-        <li><a href="marriage-discussions.html">Marriage Discussions</a></li>
-        <!-- Add more community topics here -->
-      </ul>
-    </li>
+   <li class="has-dropdown">
+  <a href="#">Community</a>
+  <ul class="dropdown-menu">
+    <li><a href="insights.html">Personal Insights</a></li>
+  
+  </ul>
+</li>
 
     <li><a href="#dailyverse">📖 Daily Verse</a></li>
     <li><a href="#memories">🎞️ Memories</a></li>
@@ -593,6 +591,34 @@ db.collection("announcements")
     });
   });
 
+
+
+// ====== NAV DROPDOWN ======// // 
+  document.addEventListener('DOMContentLoaded', () => {
+  const dropdowns = document.querySelectorAll('.navbar li.has-dropdown > a');
+
+  dropdowns.forEach(drop => {
+    drop.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
+        e.preventDefault();
+        const menu = drop.parentElement.querySelector('.dropdown-menu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      dropdowns.forEach(drop => {
+        const parent = drop.parentElement;
+        const menu = parent.querySelector('.dropdown-menu');
+        if (!parent.contains(e.target)) {
+          menu.style.display = 'none';
+        }
+      });
+    }
+  });
+});
 </script>
 </body>
 </html>
