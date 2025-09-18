@@ -263,7 +263,7 @@
   const notifClose = document.getElementById('notifClose');
 
   let currentUser=null, editingPostId=null, openReadPostId=null;
-  const API=https://insight-backend-gubm.onrender.com // Replace with your backend
+  const API = 'https://insight-backend-gubm.onrender.com'; // Replace with your backend
 
   const initials = name => (name||'U N').split(' ').map(n=>n[0]?.toUpperCase()).join('').slice(0,2);
   const openModal = el => el.style.display='flex';
