@@ -1,5 +1,5 @@
 // ============================
-// Insight Hub Full Frontend JS (Complete & Safe)
+// Insight Hub Full Frontend JS (Complete & Safe, No WebSocket)
 // ============================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -101,35 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModal(m); }));
     document.getElementById('notifClose')?.addEventListener('click', () => { if (notif) notif.style.display = 'none'; });
 
-    // ==== WebSocket ====
-   // let socket;
-  //  function connectSocket() {
-  //      socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
- //       socket.onopen = () => console.log('WebSocket connected');
- //       socket.onmessage = event => {
-  //          const data = JSON.parse(event.data);
- //           switch (data.type) {
- //               case 'new_post':
-     //           case 'update_post':
-        //        case 'delete_post':
-            //        loadFeed(); break;
-         //       case 'new_comment':
-          //          if (openReadPostId === data.post_id) appendComment(data.comment); break;
-          //      case 'new_question':
-          //      case 'update_question':
-          //          loadQuestionsFeed(); break;
-     //  //         case 'new_answer':
-      //              if (openQuestionId === data.question_id) appendAnswer(data.answer); break;
-        //        case 'new_like': showNotification('Someone liked your content'); break;
-      //          case 'new_follow': showNotification('You have a new follower'); break;
-     //           case 'new_notification':
-    //                if (currentUser && data.user_id === currentUser.id) showNotification(data.message); break;
-    //        }
-   //     };
- //       socket.onclose = () => setTimeout(connectSocket, 5000);
-//    }
- //   connectSocket();
-
     // ==== Auth Functions ====
     async function login(email, password) {
         try {
@@ -206,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await res.json(); if (!res.ok) throw new Error(data.error);
             closeModal(postModal); loadFeed();
-            if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: editingPostId ? 'update_post' : 'new_post', post: data.post }));
         } catch (err) { showNotification(err.message); }
     };
 
@@ -244,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('Delete this post?')) {
                     await fetch(`${API}/posts/${p.id}`, { method: 'DELETE', headers: getAuthHeaders() });
                     loadFeed();
-                    if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'delete_post', post_id: p.id }));
                 }
             };
             ownerWrap.append(editBtn, delBtn);
@@ -279,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch(`${API}/comments`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
                 if (!res.ok) throw new Error(await res.text());
                 commentText.value = ''; openReadModal(openReadPostId, post);
-                if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'new_comment', post_id: openReadPostId, comment: { ...payload, user: currentUser } }));
             } catch (err) { showNotification(err.message); }
         };
         openModal(readModal);
@@ -298,8 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         commentsBox.append(row);
     }
-
-    function appendComment(c) { renderComment(c, openReadPostId); }
 
     // ============================
     // Questions / Answers
@@ -353,7 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch(`${API}/answers`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
                 if (!res.ok) throw new Error(await res.text());
                 answerText.value = ''; openQuestionModal(openQuestionId, question);
-                if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'new_answer', question_id: openQuestionId, answer: { ...payload, user: currentUser } }));
             } catch (err) { showNotification(err.message); }
         };
         openModal(questionModal);
@@ -372,8 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         answersBox.append(row);
     }
-
-    function appendAnswer(a) { renderAnswer(a, openQuestionId); }
 
     // ============================
     // Communities
