@@ -3,7 +3,7 @@
 // ============================
 
 // ==== Global Variables ====
-const API = 'https://insight-backend-gubm.onrender.com';
+const API = 'https://insight-backend-gubm.onrender.com/api';
 let currentUser = null;
 let editingPostId = null;
 let openReadPostId = null;
@@ -84,43 +84,57 @@ document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e =
 document.getElementById('notifClose')?.addEventListener('click', () => notif.style.display = 'none');
 const showNotification = msg => { notifText.textContent = msg; notif.style.display = 'flex'; setTimeout(() => notif.style.display = 'none', 4000); };
 
-// ==== WebSocket ====
-let socket;
-function connectSocket() {
-    socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
-    socket.onopen = () => console.log('WebSocket connected');
-    socket.onmessage = event => {
-        const data = JSON.parse(event.data);
-        switch (data.type) {
-            case 'new_post': case 'update_post': case 'delete_post': loadFeed(); break;
-            case 'new_comment':
-                if (openReadPostId === data.post_id) appendComment(data.comment);
-                break;
-            case 'new_question': case 'update_question': loadQuestionsFeed(); break;
-            case 'new_answer':
-                if (openQuestionId === data.question_id) appendAnswer(data.answer);
-                break;
-            case 'new_like': showNotification('Someone liked your content'); break;
-            case 'new_follow': showNotification('You have a new follower'); break;
-            case 'new_notification': if (currentUser && data.user_id === currentUser.id) showNotification(data.message); break;
-        }
-    };
-    socket.onclose = () => setTimeout(connectSocket, 5000);
-}
-connectSocket();
+// ==== Socket.IO ====
+const socket = io(API, {
+    path: '/ws',           // Must match the backend path
+    transports: ['websocket']  // Force WebSocket transport
+});
+
+socket.on('connect', () => console.log('Socket.IO connected:', socket.id));
+
+socket.on('new_post', () => loadFeed());
+socket.on('update_post', () => loadFeed());
+socket.on('delete_post', () => loadFeed());
+
+socket.on('new_comment', data => {
+    if (openReadPostId === data.post_id) appendComment(data.comment);
+});
+
+socket.on('new_question', () => loadQuestionsFeed());
+socket.on('update_question', () => loadQuestionsFeed());
+
+socket.on('new_answer', data => {
+    if (openQuestionId === data.question_id) appendAnswer(data.answer);
+});
+
+socket.on('new_like', () => showNotification('Someone liked your content'));
+socket.on('new_follow', () => showNotification('You have a new follower'));
+
+socket.on('new_notification', data => {
+    if (currentUser && data.user_id === currentUser.id) showNotification(data.message);
+});
+
+socket.on('disconnect', reason => console.log('Socket.IO disconnected:', reason));
 
 // ==== Auth ====
 async function login(email, password) {
     try {
-        const res = await fetch(`${API}/auth/login`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password })
+        const res = await fetch(`${API}/auth/login`, { // API already includes /api
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
-        localStorage.setItem('jwt', data.token); currentUser = data.user;
-        loginBtn.style.display = 'none'; logoutBtn.style.display = 'inline-block';
-        closeModal(loginModal); loadAll();
-    } catch (err) { showNotification(err.message); }
+        localStorage.setItem('jwt', data.token);
+        currentUser = data.user;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        closeModal(loginModal);
+        loadAll(); // keep your existing load function
+    } catch (err) {
+        showNotification(err.message);
+    }
 }
 
 async function signup() {
@@ -132,19 +146,28 @@ async function signup() {
             password: authPassword.value.trim()
         };
         const res = await fetch(`${API}/auth/signup`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
+        // Automatically login after signup
         await login(payload.email, payload.password);
-    } catch (err) { showNotification(err.message); }
+    } catch (err) {
+        showNotification(err.message);
+    }
 }
 
+// ==== Event Listeners ====
 loginBtn.onclick = () => openModal(loginModal);
 logoutBtn.onclick = () => {
-    localStorage.removeItem('jwt'); currentUser = null;
-    loginBtn.style.display = 'inline-block'; logoutBtn.style.display = 'none';
-    commentFormWrap.style.display = 'none'; commentHint.style.display = 'block';
+    localStorage.removeItem('jwt');
+    currentUser = null;
+    loginBtn.style.display = 'inline-block';
+    logoutBtn.style.display = 'none';
+    commentFormWrap.style.display = 'none';
+    commentHint.style.display = 'block';
 };
 loginSubmit.onclick = () => login(authEmail.value, authPassword.value);
 signupSubmit.onclick = () => signup();
