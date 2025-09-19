@@ -3,16 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Insights Hub </title>
+  <title>Insight Hub — FB + Quora Style</title>
   <link rel="stylesheet" href="insight.css" />
-
-<script src="app.js"></script>
-  
 </head>
 <body>
 
 <header>
-  <h1>Insights Hub</h1>
+  <h1>Insight Hub</h1>
   <p>Share knowledge like FB + Quora</p>
   <div class="top-actions">
     <button id="loginBtn" class="btn btn-white">Login</button>
@@ -66,7 +63,6 @@
     <div id="readBody"></div>
     <div id="commentsBox"></div>
     <div id="commentFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
-      <input id="commenter" class="field" type="text" placeholder="Your name" style="display:none;">
       <textarea id="commentText" class="field" placeholder="Write a comment..."></textarea>
       <button id="commentPost" class="btn btn-blue">Post Comment</button>
     </div>
@@ -83,7 +79,6 @@
     <div id="questionBody"></div>
     <div id="answersBox"></div>
     <div id="answerFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
-      <input id="answerer" class="field" type="text" placeholder="Your name" style="display:none;">
       <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
       <button id="answerPost" class="btn btn-blue">Post Answer</button>
     </div>
@@ -117,6 +112,6 @@
   <button id="notifClose" class="btn btn-ghost">✖</button>
 </div>
 
-
+<script src="app.js"></script>
 </body>
 </html>
