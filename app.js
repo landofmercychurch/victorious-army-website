@@ -1,14 +1,14 @@
 // ============================
-// Insight Hub Full Frontend JS (Complete & Safe, No WebSocket)
+// Insight Hub Full Frontend JS (Clean & Safe)
 // ============================
 
 document.addEventListener('DOMContentLoaded', () => {
     // ==== Global Variables ====
     const API = 'https://insight-backend-gubm.onrender.com';
     let currentUser = null;
-    let editingPostId = null;
-    let openReadPostId = null;
-    let openQuestionId = null;
+    let editingPost = null;
+    let openReadPost = null;
+    let openQuestion = null;
 
     // ==== DOM Elements ====
     const feed = document.getElementById('feed');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notif = document.getElementById('notification');
     const notifText = document.getElementById('notifText');
 
-    // Auth elements
+    // Auth
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const loginModal = document.getElementById('loginModal');
@@ -53,21 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const readMeta = document.getElementById('readMeta');
     const readBody = document.getElementById('readBody');
     const commentsBox = document.getElementById('commentsBox');
-    const commenter = document.getElementById('commenter');
     const commentText = document.getElementById('commentText');
     const commentPost = document.getElementById('commentPost');
 
-    // Question modal
+    // Questions modal
     const questionModal = document.getElementById('questionModal');
     const questionTitle = document.getElementById('questionTitle');
     const questionMeta = document.getElementById('questionMeta');
     const questionBody = document.getElementById('questionBody');
     const answersBox = document.getElementById('answersBox');
     const answerText = document.getElementById('answerText');
-    const answerer = document.getElementById('answerer');
+    const answerPost = document.getElementById('answerPost');
     const answerFormWrap = document.getElementById('answerFormWrap');
     const answerHint = document.getElementById('answerHint');
-    const answerPost = document.getElementById('answerPost');
 
     // Communities modal
     const communityModal = document.getElementById('communityModal');
@@ -82,8 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==== Utility Functions ====
     const getAuthHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('jwt')}` });
     const initials = name => (name || 'U N').split(' ').map(n => n[0]?.toUpperCase()).join('').slice(0, 2);
-    const openModal = el => el.style.display = 'flex';
-    const closeModal = el => el.style.display = 'none';
+    const openModal = el => el && (el.style.display = 'flex');
+    const closeModal = el => el && (el.style.display = 'none');
     const showNotification = msg => {
         if (!notif || !notifText) return;
         notifText.textContent = msg;
@@ -91,37 +89,44 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { notif.style.display = 'none'; }, 4000);
     };
 
-    // Close modals
     document.querySelectorAll('.close').forEach(x =>
         x.addEventListener('click', () => {
             const target = document.querySelector(x.dataset.close);
             if (target) closeModal(target);
         })
     );
-    document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModal(m); }));
+
+    document.querySelectorAll('.modal').forEach(m =>
+        m.addEventListener('click', e => { if (e.target === m) closeModal(m); })
+    );
+
     document.getElementById('notifClose')?.addEventListener('click', () => { if (notif) notif.style.display = 'none'; });
 
     // ==== Auth Functions ====
     async function login(email, password) {
         try {
+            loginSubmit.disabled = true;
             const res = await fetch(`${API}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
+            if (!res.ok) throw new Error(data.error || 'Login failed');
             localStorage.setItem('jwt', data.token);
             currentUser = data.user;
             loginBtn.style.display = 'none';
             logoutBtn.style.display = 'inline-block';
             closeModal(loginModal);
             loadAll();
-        } catch (err) { showNotification(err.message); }
+        } catch (err) {
+            showNotification(err.message);
+        } finally { loginSubmit.disabled = false; }
     }
 
     async function signup() {
         try {
+            signupSubmit.disabled = true;
             const payload = {
                 username: authUsername.value.trim(),
                 full_name: authFullname.value.trim(),
@@ -134,9 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
+            if (!res.ok) throw new Error(data.error || 'Signup failed');
             await login(payload.email, payload.password);
         } catch (err) { showNotification(err.message); }
+        finally { signupSubmit.disabled = false; }
     }
 
     loginBtn.onclick = () => openModal(loginModal);
@@ -156,114 +162,153 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================
     fab.onclick = () => {
         if (!currentUser) return openModal(loginModal);
-        editingPostId = null;
+        editingPost = null;
         postAuthor.value = currentUser.username || '';
         postTitle.value = '';
         postContent.value = '';
+        if (postImage) postImage.value = '';
         openModal(postModal);
     };
 
     postSave.onclick = async () => {
         if (!currentUser) return openModal(loginModal);
+        postSave.disabled = true;
         try {
             const formData = new FormData();
             formData.append('title', postTitle.value.trim());
             formData.append('content', postContent.value.trim());
             if (postImage?.files[0]) formData.append('image', postImage.files[0]);
-            const res = await fetch(`${API}/posts${editingPostId ? '/' + editingPostId : ''}`, {
-                method: editingPostId ? 'PUT' : 'POST',
-                headers: getAuthHeaders(),
+            const url = `${API}/posts${editingPost ? '/' + editingPost.id : ''}`;
+            const res = await fetch(url, {
+                method: editingPost ? 'PUT' : 'POST',
+                headers: getAuthHeaders(), // no Content-Type needed for FormData
                 body: formData
             });
-            const data = await res.json(); if (!res.ok) throw new Error(data.error);
-            closeModal(postModal); loadFeed();
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to save post');
+            closeModal(postModal);
+            loadFeed();
         } catch (err) { showNotification(err.message); }
+        finally { postSave.disabled = false; }
     };
 
     async function loadFeed(tag = '') {
         if (!feed) return;
         try {
-            const url = tag ? `${API}/posts?tag=${encodeURIComponent(tag)}` : `${API}/posts`;
+            const url = tag ? `${API}/posts?tag=${encodeURIComponent(tag.trim())}` : `${API}/posts`;
             const res = await fetch(url, { headers: getAuthHeaders() });
             if (!res.ok) throw new Error(await res.text());
-            const posts = await res.json(); feed.innerHTML = '';
+            const posts = await res.json();
+            feed.innerHTML = '';
             posts.forEach(p => renderPostCard(p));
         } catch (err) { feed.innerHTML = `<p style="color:red;">Failed to load feed: ${err.message}</p>`; }
     }
 
-    function renderPostCard(p) {
+    function renderPostCard(post) {
         if (!feed) return;
         const card = document.createElement('div'); card.className = 'card';
         const meta = document.createElement('div'); meta.className = 'meta';
-        const av = document.createElement('div'); av.className = 'avatar'; av.textContent = initials(p.user.username || 'U N');
-        const who = document.createElement('div'); who.textContent = `${p.user.username || 'Unknown'} • ${new Date(p.created_at).toLocaleString()}`;
+        const av = document.createElement('div'); av.className = 'avatar'; av.textContent = initials(post.user.username || 'U N');
+        const who = document.createElement('div'); who.textContent = `${post.user.username || 'Unknown'} • ${new Date(post.created_at).toLocaleString()}`;
         meta.append(av, who);
-        const h3 = document.createElement('h3'); h3.textContent = p.title;
-        const preview = document.createElement('div'); preview.className = 'preview'; preview.textContent = p.content.length > 180 ? p.content.slice(0, 180) + '…' : p.content;
-        if (p.image_url) { const img = document.createElement('img'); img.src = p.image_url; img.style.maxWidth = '100%'; img.style.borderRadius = '10px'; card.append(img); }
+
+        const h3 = document.createElement('h3'); h3.textContent = post.title;
+        const preview = document.createElement('div'); preview.className = 'preview'; preview.textContent = post.content.length > 180 ? post.content.slice(0, 180) + '…' : post.content;
+
+        if (post.image_url) {
+            const img = document.createElement('img'); img.src = post.image_url;
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '10px';
+            card.append(img);
+        }
+
         const actions = document.createElement('div'); actions.className = 'actions';
-        const readBtn = document.createElement('button'); readBtn.className = 'chip'; readBtn.textContent = '📖 Read more'; readBtn.onclick = () => openReadModal(p.id, p);
-        const likeBtn = document.createElement('button'); likeBtn.className = 'chip'; likeBtn.textContent = '❤️ Like'; likeBtn.onclick = () => likePost(p.id);
+        const readBtn = document.createElement('button'); readBtn.className = 'chip'; readBtn.textContent = '📖 Read more'; readBtn.onclick = () => openReadModal(post);
+        const likeBtn = document.createElement('button'); likeBtn.className = 'chip'; likeBtn.textContent = '❤️ Like'; likeBtn.onclick = () => likePost(post.id);
+
         actions.append(readBtn, likeBtn);
+
         const ownerWrap = document.createElement('span'); ownerWrap.className = 'owner-actions';
-        if (currentUser && currentUser.id === p.user_id) {
-            const editBtn = document.createElement('button'); editBtn.className = 'chip'; editBtn.textContent = '✏️ Edit'; editBtn.onclick = () => {
-                editingPostId = p.id; postAuthor.value = p.user.username; postTitle.value = p.title; postContent.value = p.content; openModal(postModal);
+        if (currentUser && currentUser.id === post.user_id) {
+            const editBtn = document.createElement('button'); editBtn.className = 'chip'; editBtn.textContent = '✏️ Edit';
+            editBtn.onclick = () => {
+                editingPost = post;
+                postAuthor.value = post.user.username;
+                postTitle.value = post.title;
+                postContent.value = post.content;
+                openModal(postModal);
             };
-            const delBtn = document.createElement('button'); delBtn.className = 'chip'; delBtn.textContent = '🗑️ Delete'; delBtn.onclick = async () => {
+            const delBtn = document.createElement('button'); delBtn.className = 'chip'; delBtn.textContent = '🗑️ Delete';
+            delBtn.onclick = async () => {
                 if (confirm('Delete this post?')) {
-                    await fetch(`${API}/posts/${p.id}`, { method: 'DELETE', headers: getAuthHeaders() });
+                    await fetch(`${API}/posts/${post.id}`, { method: 'DELETE', headers: getAuthHeaders() });
                     loadFeed();
                 }
             };
             ownerWrap.append(editBtn, delBtn);
         }
-        actions.append(ownerWrap); card.append(meta, h3, preview, actions); feed.append(card);
+        actions.append(ownerWrap);
+        card.append(meta, h3, preview, actions);
+        feed.append(card);
     }
 
     // ============================
     // Comments / Read Modal
     // ============================
-    async function openReadModal(postId, post) {
+    async function openReadModal(post) {
         if (!readTitle || !readMeta || !readBody || !commentsBox) return;
-        openReadPostId = postId;
+        openReadPost = post;
         readTitle.textContent = post.title;
         readMeta.textContent = `${post.user.username || 'Unknown'} • ${new Date(post.created_at).toLocaleString()}`;
-        readBody.textContent = post.content; commentsBox.innerHTML = ''; commentText.value = '';
+        readBody.textContent = post.content;
+        commentsBox.innerHTML = '';
         if (commentFormWrap && commentHint) {
             commentFormWrap.style.display = currentUser ? 'flex' : 'none';
             commentHint.style.display = currentUser ? 'none' : 'block';
         }
+
         try {
-            const res = await fetch(`${API}/comments/post/${postId}`);
+            const res = await fetch(`${API}/comments/post/${post.id}`);
             if (!res.ok) throw new Error(await res.text());
             const comments = await res.json();
-            if (comments.length === 0) { const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'No comments yet — be the first!'; commentsBox.append(empty); }
-            else comments.forEach(c => renderComment(c, postId));
+            if (comments.length === 0) {
+                const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'No comments yet — be the first!';
+                commentsBox.append(empty);
+            } else comments.forEach(c => renderComment(c));
         } catch (err) { console.error(err); }
+
         commentPost.onclick = async () => {
             if (!currentUser) return openModal(loginModal);
-            const payload = { post_id: openReadPostId, content: commentText.value.trim() }; if (!payload.content) return alert('Enter comment');
+            const content = commentText.value.trim();
+            if (!content) return alert('Enter comment');
             try {
+                const payload = { post_id: post.id, content };
                 const res = await fetch(`${API}/comments`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
                 if (!res.ok) throw new Error(await res.text());
-                commentText.value = ''; openReadModal(openReadPostId, post);
+                commentText.value = '';
+                openReadModal(post); // refresh comments
             } catch (err) { showNotification(err.message); }
         };
+
         openModal(readModal);
     }
 
-    function renderComment(c, postId) {
+    function renderComment(comment) {
         if (!commentsBox) return;
         const row = document.createElement('div'); row.className = 'comment';
-        const who = document.createElement('div'); who.className = 'who'; who.textContent = c.user.username || 'Anonymous';
-        const text = document.createElement('div'); text.textContent = c.content;
+        const who = document.createElement('div'); who.className = 'who'; who.textContent = comment.user.username || 'Anonymous';
+        const text = document.createElement('div'); text.textContent = comment.content;
         row.append(who, text);
-        if (currentUser && currentUser.id === c.user_id) {
+
+        if (currentUser && currentUser.id === comment.user_id) {
             const del = document.createElement('button'); del.className = 'btn btn-ghost'; del.style.marginTop = '.4rem'; del.textContent = 'Delete';
-            del.onclick = async () => { await fetch(`${API}/comments/${c.id}`, { method: 'DELETE', headers: getAuthHeaders() }); openReadModal(postId, { id: postId, title: readTitle.textContent, content: readBody.textContent, user: { username: who.textContent } }); };
+            del.onclick = async () => {
+                await fetch(`${API}/comments/${comment.id}`, { method: 'DELETE', headers: getAuthHeaders() });
+                openReadModal(openReadPost);
+            };
             row.append(del);
         }
+
         commentsBox.append(row);
     }
 
@@ -290,51 +335,66 @@ document.addEventListener('DOMContentLoaded', () => {
         const h3 = document.createElement('h3'); h3.textContent = q.title;
         const preview = document.createElement('div'); preview.className = 'preview'; preview.textContent = q.details?.length > 180 ? q.details.slice(0, 180) + '…' : q.details;
         const actions = document.createElement('div'); actions.className = 'actions';
-        const readBtn = document.createElement('button'); readBtn.className = 'chip'; readBtn.textContent = '💬 View'; readBtn.onclick = () => openQuestionModal(q.id, q);
-        actions.append(readBtn); card.append(meta, h3, preview, actions); questionsFeed.append(card);
+        const readBtn = document.createElement('button'); readBtn.className = 'chip'; readBtn.textContent = '💬 View'; readBtn.onclick = () => openQuestionModal(q);
+        actions.append(readBtn);
+        card.append(meta, h3, preview, actions);
+        questionsFeed.append(card);
     }
 
-    async function openQuestionModal(questionId, question) {
+    async function openQuestionModal(question) {
         if (!questionTitle || !questionMeta || !questionBody || !answersBox) return;
-        openQuestionId = questionId;
+        openQuestion = question;
         questionTitle.textContent = question.title;
         questionMeta.textContent = `${question.user.username || 'Unknown'} • ${new Date(question.created_at).toLocaleString()}`;
         questionBody.textContent = question.details || '';
-        answersBox.innerHTML = ''; answerText.value = '';
+        answersBox.innerHTML = '';
         if (answerFormWrap && answerHint) {
             answerFormWrap.style.display = currentUser ? 'flex' : 'none';
             answerHint.style.display = currentUser ? 'none' : 'block';
         }
+
         try {
-            const res = await fetch(`${API}/answers/question/${questionId}`, { headers: getAuthHeaders() });
+            const res = await fetch(`${API}/answers/question/${question.id}`, { headers: getAuthHeaders() });
             if (!res.ok) throw new Error(await res.text());
             const answers = await res.json();
-            if (answers.length === 0) { const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'No answers yet — be the first!'; answersBox.append(empty); }
-            else answers.forEach(a => renderAnswer(a, questionId));
+            if (answers.length === 0) {
+                const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'No answers yet — be the first!';
+                answersBox.append(empty);
+            } else answers.forEach(a => renderAnswer(a));
         } catch (err) { console.error(err); }
+
         answerPost.onclick = async () => {
             if (!currentUser) return openModal(loginModal);
-            const payload = { question_id: openQuestionId, content: answerText.value.trim() }; if (!payload.content) return alert('Enter answer');
+            const content = answerText.value.trim();
+            if (!content) return alert('Enter answer');
             try {
+                const payload = { question_id: question.id, content };
                 const res = await fetch(`${API}/answers`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
                 if (!res.ok) throw new Error(await res.text());
-                answerText.value = ''; openQuestionModal(openQuestionId, question);
+                answerText.value = '';
+                openQuestionModal(question); // refresh answers
             } catch (err) { showNotification(err.message); }
         };
+
         openModal(questionModal);
     }
 
-    function renderAnswer(a, questionId) {
+    function renderAnswer(answer) {
         if (!answersBox) return;
         const row = document.createElement('div'); row.className = 'comment';
-        const who = document.createElement('div'); who.className = 'who'; who.textContent = a.user.username || 'Anonymous';
-        const text = document.createElement('div'); text.textContent = a.content;
+        const who = document.createElement('div'); who.className = 'who'; who.textContent = answer.user.username || 'Anonymous';
+        const text = document.createElement('div'); text.textContent = answer.content;
         row.append(who, text);
-        if (currentUser && currentUser.id === a.user_id) {
+
+        if (currentUser && currentUser.id === answer.user_id) {
             const del = document.createElement('button'); del.className = 'btn btn-ghost'; del.style.marginTop = '.4rem'; del.textContent = 'Delete';
-            del.onclick = async () => { await fetch(`${API}/answers/${a.id}`, { method: 'DELETE', headers: getAuthHeaders() }); openQuestionModal(questionId, { id: questionId, title: questionTitle.textContent, details: questionBody.textContent, user: { username: who.textContent } }); };
+            del.onclick = async () => {
+                await fetch(`${API}/answers/${answer.id}`, { method: 'DELETE', headers: getAuthHeaders() });
+                openQuestionModal(openQuestion);
+            };
             row.append(del);
         }
+
         answersBox.append(row);
     }
 
@@ -351,7 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = document.createElement('div'); card.className = 'card';
                 const h3 = document.createElement('h3'); h3.textContent = c.name;
                 const preview = document.createElement('div'); preview.className = 'preview'; preview.textContent = c.description;
-                const followBtn = document.createElement('button'); followBtn.className = 'chip'; followBtn.textContent = 'Follow'; followBtn.onclick = () => followUser(c.id);
+                const followBtn = document.createElement('button'); followBtn.className = 'chip'; followBtn.textContent = 'Follow';
+                followBtn.onclick = () => followUser(c.id);
                 card.append(h3, preview, followBtn);
                 communitiesFeed.append(card);
             });
@@ -360,12 +421,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     communitySave?.addEventListener('click', async () => {
         if (!currentUser) return openModal(loginModal);
+        communitySave.disabled = true;
         try {
             const payload = { name: communityName.value.trim(), description: communityDesc.value.trim() };
             const res = await fetch(`${API}/communities`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
             if (!res.ok) throw new Error(await res.text());
             closeModal(communityModal); loadCommunitiesFeed();
         } catch (err) { showNotification(err.message); }
+        finally { communitySave.disabled = false; }
     });
 
     // ============================
@@ -391,18 +454,14 @@ document.addEventListener('DOMContentLoaded', () => {
     async function likePost(postId) {
         if (!currentUser) return openModal(loginModal);
         try {
-            const payload = { post_id: postId };
-            const res = await fetch(`${API}/likes`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
-            if (!res.ok) throw new Error(await res.text());
+            await fetch(`${API}/likes`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify({ post_id: postId }) });
         } catch (err) { showNotification(err.message); }
     }
 
     async function followUser(followingId) {
         if (!currentUser) return openModal(loginModal);
         try {
-            const payload = { following_id: followingId };
-            const res = await fetch(`${API}/follows`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify(payload) });
-            if (!res.ok) throw new Error(await res.text());
+            await fetch(`${API}/follows`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, body: JSON.stringify({ following_id: followingId }) });
         } catch (err) { showNotification(err.message); }
     }
 
@@ -414,9 +473,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(`${API}/notifications`, { headers: getAuthHeaders() });
             if (!res.ok) throw new Error(await res.text());
-            const notifications = await res.json(); notificationsBox.innerHTML = '';
-            if (notifications.length === 0) { const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'No notifications yet'; notificationsBox.append(empty); }
-            else notifications.forEach(n => { const row = document.createElement('div'); row.className = 'comment'; row.textContent = n.message; notificationsBox.append(row); });
+            const notifications = await res.json();
+            notificationsBox.innerHTML = '';
+            if (notifications.length === 0) {
+                const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'No notifications yet';
+                notificationsBox.append(empty);
+            } else notifications.forEach(n => {
+                const row = document.createElement('div'); row.className = 'comment'; row.textContent = n.message;
+                notificationsBox.append(row);
+            });
         } catch (err) { console.error(err); }
     }
 
