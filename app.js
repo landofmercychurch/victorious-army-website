@@ -327,6 +327,212 @@ document.addEventListener("DOMContentLoaded", () => {
     commentsBox.append(row);
   }
 
+
+
+
+
+
+
+
+
+// ============================
+// Questions & Communities
+// ============================
+
+// ==== Questions Elements ====
+const questionModal = document.getElementById("questionModal");
+const questionTitle = document.getElementById("questionTitle");
+const questionMeta = document.getElementById("questionMeta");
+const questionBody = document.getElementById("questionBody");
+const answersBox = document.getElementById("answersBox");
+const answerText = document.getElementById("answerText");
+const answerPost = document.getElementById("answerPost");
+const answerFormWrap = document.getElementById("answerFormWrap");
+const answerHint = document.getElementById("answerHint");
+
+// ==== Communities Elements ====
+const communityModal = document.getElementById("communityModal");
+const communityName = document.getElementById("communityName");
+const communityDesc = document.getElementById("communityDesc");
+const communitySave = document.getElementById("communitySave");
+
+// ============================
+// Questions Functions
+// ============================
+async function loadQuestionsFeed() {
+  if (!questionsFeed) return;
+  try {
+    const res = await fetch(`${API}/questions`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    const questions = await res.json();
+    questionsFeed.innerHTML = "";
+    questions.forEach((q) => renderQuestionCard(q));
+  } catch (err) {
+    questionsFeed.innerHTML = `<p style="color:red;">Failed to load questions: ${err.message}</p>`;
+  }
+}
+
+function renderQuestionCard(question) {
+  if (!questionsFeed) return;
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.textContent = `${question.user.username || "Unknown"} • ${new Date(
+    question.created_at
+  ).toLocaleString()}`;
+
+  const h3 = document.createElement("h3");
+  h3.textContent = question.title;
+  const preview = document.createElement("div");
+  preview.className = "preview";
+  preview.textContent =
+    question.content.length > 180
+      ? question.content.slice(0, 180) + "…"
+      : question.content;
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  const readBtn = document.createElement("button");
+  readBtn.className = "chip";
+  readBtn.textContent = "💬 Answer";
+  readBtn.onclick = () => openQuestionModal(question);
+
+  actions.append(readBtn);
+  card.append(meta, h3, preview, actions);
+  questionsFeed.append(card);
+}
+
+async function openQuestionModal(question) {
+  if (!questionTitle || !questionMeta || !questionBody || !answersBox) return;
+  openQuestion = question;
+  questionTitle.textContent = question.title;
+  questionMeta.textContent = `${question.user.username || "Unknown"} • ${new Date(
+    question.created_at
+  ).toLocaleString()}`;
+  questionBody.textContent = question.content;
+  answersBox.innerHTML = "";
+
+  if (answerFormWrap && answerHint) {
+    answerFormWrap.style.display = currentUser ? "flex" : "none";
+    answerHint.style.display = currentUser ? "none" : "block";
+  }
+
+  try {
+    const res = await fetch(`${API}/answers/question/${question.id}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const answers = await res.json();
+    if (answers.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No answers yet — be the first!";
+      answersBox.append(empty);
+    } else answers.forEach((a) => renderAnswer(a));
+  } catch (err) {
+    console.error(err);
+  }
+
+  answerPost.onclick = async () => {
+    if (!currentUser) return openModal(loginModal);
+    const content = answerText.value.trim();
+    if (!content) return alert("Enter answer");
+    try {
+      const payload = { question_id: question.id, content };
+      const res = await fetch(`${API}/answers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      answerText.value = "";
+      openQuestionModal(question); // refresh answers
+    } catch (err) {
+      showNotification(err.message);
+    }
+  };
+
+  openModal(questionModal);
+}
+
+function renderAnswer(answer) {
+  if (!answersBox) return;
+  const row = document.createElement("div");
+  row.className = "comment";
+  const who = document.createElement("div");
+  who.className = "who";
+  who.textContent = answer.user.username || "Anonymous";
+  const text = document.createElement("div");
+  text.textContent = answer.content;
+  row.append(who, text);
+  answersBox.append(row);
+}
+
+// ============================
+// Communities Functions
+// ============================
+async function loadCommunitiesFeed() {
+  if (!communitiesFeed) return;
+  try {
+    const res = await fetch(`${API}/communities`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    const communities = await res.json();
+    communitiesFeed.innerHTML = "";
+    communities.forEach((c) => renderCommunityCard(c));
+  } catch (err) {
+    communitiesFeed.innerHTML = `<p style="color:red;">Failed to load communities: ${err.message}</p>`;
+  }
+}
+
+function renderCommunityCard(comm) {
+  if (!communitiesFeed) return;
+  const card = document.createElement("div");
+  card.className = "card";
+  const h3 = document.createElement("h3");
+  h3.textContent = comm.name;
+  const desc = document.createElement("div");
+  desc.className = "preview";
+  desc.textContent = comm.description || "";
+  card.append(h3, desc);
+  communitiesFeed.append(card);
+}
+
+communitySave.onclick = async () => {
+  if (!currentUser) return openModal(loginModal);
+  const name = communityName.value.trim();
+  const description = communityDesc.value.trim();
+  if (!name) return alert("Enter community name");
+  try {
+    const res = await fetch(`${API}/communities`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    communityName.value = "";
+    communityDesc.value = "";
+    closeModal(communityModal);
+    loadCommunitiesFeed();
+  } catch (err) {
+    showNotification(err.message);
+  }
+};
+
+// ============================
+// Update loadAll
+// ============================
+function loadAll() {
+  loadFeed();
+  loadQuestionsFeed();
+  loadCommunitiesFeed();
+  // loadTagsFeed(); // Optional if you implement tags
+  // loadNotifications(); // Optional if you implement notifications
+}
+
+if (localStorage.getItem("jwt")) loadAll();
+
   // ============================
   // Initial Load
   // ============================
