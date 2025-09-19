@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Insights Hub — FB + Quora Style</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",system-ui,Arial,sans-serif}
+    body{background:#f4f6f9;color:#222;line-height:1.6;font-size:16px}
+    header{position:sticky; top:0; z-index:10;text-align:center; padding:1.4rem 1rem;background:linear-gradient(135deg,#1877f2,#a21d1d);color:#fff; box-shadow:0 6px 14px rgba(0,0,0,.25)}
+    header h1{font-size:1.8rem; font-weight:700; letter-spacing:-.3px}
+    header p{font-size:.95rem; opacity:.95}
+    .top-actions{position:absolute; right:12px; top:12px; display:flex; gap:.5rem}
+    .btn{border:none; padding:.5rem .9rem; border-radius:50px; cursor:pointer;font-weight:600;transition: all 0.2s ease}
+    .btn-white{background:#fff;color:#1877f2}
+    .btn-red{background:#a21d1d;color:#fff}
+    .btn-blue{background:#1877f2;color:#fff}
+    .btn-ghost{background:#f4f6f9;color:#1877f2}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .btn-blue:hover, .btn-blue:focus{background:linear-gradient(135deg,#165acf,#a21d1d); transform:translateY(-1px);}
+    .btn-white:hover, .btn-white:focus{background:#e4e6eb; color:#1877f2; transform:translateY(-1px);}
+    .btn-red:hover, .btn-red:focus{background:#91171a; transform:translateY(-1px);}
+    .btn-ghost:hover, .btn-ghost:focus{background:#e4e6eb; transform:translateY(-1px);}
+    main{width:95%; max-width:860px; margin:1.4rem auto}
+    .insights-feed{display:flex; flex-direction:column; gap:1rem}
+    .card{background:#fff; border-radius:14px; padding:1.1rem; box-shadow:0 6px 14px rgba(0,0,0,.1); transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-2px); box-shadow:0 12px 22px rgba(0,0,0,.14)}
+    .card h3{color:#1877f2; margin-bottom:.35rem; font-size:1.1rem}
+    .meta{display:flex; gap:.6rem; align-items:center; color:#666; font-size:.85rem; margin-bottom:.4rem}
+    .avatar{width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size:.8rem; font-weight:700; color:#fff; background:#1877f2}
+    .preview{color:#333}
+    .actions{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.7rem}
+    .actions .chip{background:#f4f6f9; border:none; border-radius:999px; padding:.45rem .8rem; cursor:pointer}
+    .actions .chip:hover{background:#e4e6eb}
+    .owner-actions{margin-left:auto; display:flex; gap:.4rem}
+    #fab{position:fixed; bottom:18px; right:18px; width:60px; height:60px; border-radius:50%; display:grid; place-items:center; font-size:2rem; font-weight:700; cursor:pointer; border:none; color:#fff; background:linear-gradient(135deg,#1877f2,#a21d1d); box-shadow:0 10px 24px rgba(0,0,0,.28); transition:transform .15s ease, box-shadow .15s ease}
+    #fab:hover{transform:scale(1.07); box-shadow:0 12px 28px rgba(0,0,0,.32)}
+    .modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; padding:1rem; align-items:center; justify-content:center}
+    .modal-content{background:#fff; border-radius:14px; width:100%; max-width:650px; padding:1.2rem; position:relative; box-shadow:0 8px 24px rgba(0,0,0,.24); animation:fadeIn .22s ease; display:flex; flex-direction:column; overflow:hidden}
+    .close{position:absolute; right:14px; top:10px; font-size:1.6rem; color:#666; cursor:pointer}
+    #loginModal .modal-content{max-width:650px; display:flex; flex-direction:column; gap:.6rem; overflow:visible}
+    #loginModal h2{font-size:1.5rem; font-weight:700; color:#1877f2; margin-bottom:.3rem}
+    #loginModal .field{width:100%; padding:.85rem; border:1px solid #e3e6ea; border-radius:10px; margin:.45rem 0; font-size:1rem}
+    #loginModal .field:focus{outline:none; border-color:#1877f2; box-shadow:0 0 0 3px rgba(24,119,242,.12)}
+    #loginModal .row{display:flex; gap:.5rem; flex-wrap:wrap}
+    #postModal .modal-content{max-width:650px; display:flex; flex-direction:column; gap:.6rem}
+    #readModal .modal-content{max-height:90vh; max-width:700px; display:flex; flex-direction:column; overflow:hidden; padding:1rem}
+    #readBody{flex:1 1 auto; overflow-y:auto; margin:.4rem 0 .6rem; white-space:pre-wrap; padding-right:.5rem}
+    #commentsBox{flex-shrink:0; max-height:200px; overflow-y:auto; margin-top:.5rem; border-top:1px solid #edf0f4; padding-top:.5rem}
+    .comment{background:#f6f7fb; border:1px solid #eff1f5; border-radius:10px; padding:.6rem .7rem; margin:.45rem 0}
+    .comment .who{font-weight:700;color:#444}
+    .empty{color:#777; font-size:.92rem}
+    #notification{position:fixed; bottom:14px; left:50%; transform:translateX(-50%); display:none; align-items:center; gap:.6rem; background:#1877f2; color:#fff; padding:.6rem .9rem; border-radius:10px; box-shadow:0 6px 14px rgba(0,0,0,.25); z-index:1100}
+    @keyframes fadeIn{from{opacity:0; transform:scale(.97)} to{opacity:1; transform:scale(1)}}
+    @media(max-width:600px){header h1{font-size:1.4rem} .modal-content{padding:1rem}}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Insights Hub</h1>
+  <p>Share knowledge like FB + Quora</p>
+  <div class="top-actions">
+    <button id="loginBtn" class="btn btn-white">Login</button>
+    <button id="logoutBtn" class="btn btn-red" style="display:none">Logout</button>
+  </div>
+</header>
+
+<main>
+  <div class="insights-feed" id="feed"></div>
+</main>
+
+<button id="fab">+</button>
+
+<!-- ====== Login / Signup Modal ====== -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#loginModal">&times;</span>
+    <h2>Login / Signup</h2>
+    <input id="authUsername" class="field" type="text" placeholder="Username (for signup)">
+    <input id="authFullname" class="field" type="text" placeholder="Full Name (for signup)">
+    <input id="authEmail" class="field" type="email" placeholder="Email">
+    <input id="authPassword" class="field" type="password" placeholder="Password">
+    <div class="row">
+      <button id="loginSubmit" class="btn btn-blue">Login</button>
+      <button id="signupSubmit" class="btn btn-ghost">Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Post Modal ====== -->
+<div id="postModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#postModal">&times;</span>
+    <input id="postAuthor" class="field" placeholder="Author">
+    <input id="postTitle" class="field" placeholder="Title">
+    <textarea id="postContent" class="field" placeholder="Content"></textarea>
+    <div class="stack"></div>
+    <button id="postSave" class="btn btn-blue">Save Post</button>
+  </div>
+</div>
+
+<!-- ====== Read Modal ====== -->
+<div id="readModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#readModal">&times;</span>
+    <h2 id="readTitle"></h2>
+    <div id="readMeta" class="muted"></div>
+    <div id="readBody"></div>
+    <div id="commentsBox"></div>
+    <div id="commentFormWrap">
+      <input id="commenter" class="field" placeholder="Name">
+      <textarea id="commentText" class="field" placeholder="Comment"></textarea>
+      <button id="commentPost" class="btn btn-blue">Post Comment</button>
+    </div>
+    <div id="commentHint">Login to comment</div>
+  </div>
+</div>
+
+<div id="notification">
+  <span id="notifText"></span>
+  <button id="notifClose">x</button>
+</div>
+
+<script type="module">
+const API = 'https://insight-backend-gubm.onrender.com';
+let currentUser = null;
+let editingPostId = null;
+let openReadPostId = null;
+
+// ===== DOM Elements =====
+const feed = document.getElementById('feed');
+const fab = document.getElementById('fab');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginModal = document.getElementById('loginModal');
+const postModal = document.getElementById('postModal');
+const readModal = document.getElementById('readModal');
+const authUsername = document.getElementById('authUsername');
+const authFullname = document.getElementById('authFullname');
+const authEmail = document.getElementById('authEmail');
+const authPassword = document.getElementById('authPassword');
+const loginSubmit = document.getElementById('loginSubmit');
+const signupSubmit = document.getElementById('signupSubmit');
+const postAuthor = document.getElementById('postAuthor');
+const postTitle = document.getElementById('postTitle');
+const postContent = document.getElementById('postContent');
+const postSave = document.getElementById('postSave');
+const readTitle = document.getElementById('readTitle');
+const readMeta = document.getElementById('readMeta');
+const readBody = document.getElementById('readBody');
+const commentsBox = document.getElementById('commentsBox');
+const commenter = document.getElementById('commenter');
+const commentText = document.getElementById('commentText');
+const commentPost = document.getElementById('commentPost');
+const commentFormWrap = document.getElementById('commentFormWrap');
+const commentHint = document.getElementById('commentHint');
+const notif = document.getElementById('notification');
+const notifText = document.getElementById('notifText');
+const notifClose = document.getElementById('notifClose');
+const postImage = document.createElement('input');
+postImage.type = 'file'; postImage.accept='image/*';
+postModal.querySelector('.stack').appendChild(postImage);
+
+// ===== Utility =====
+const initials = name => (name||'U N').split(' ').map(n=>n[0]?.toUpperCase()).join('').slice(0,2);
+const openModal = el=>el.style.display='flex';
+const closeModal = el=>el.style.display='none';
+document.querySelectorAll('.close').forEach(x=>x.addEventListener('click',()=>closeModal(document.querySelector(x.dataset.close))));
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m)}));
+notifClose.onclick = ()=>notif.style.display='none';
+const getAuthHeaders = ()=>({Authorization:`Bearer ${localStorage.getItem('jwt')}`});
+
+// ===== WebSocket =====
+let socket;
+function connectSocket(){
+    socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
+    socket.onopen=()=>console.log('WebSocket connected');
+    socket.onmessage=event=>{
+        const data=JSON.parse(event.data);
+        switch(data.type){
+            case 'new_post': case 'update_post': case 'delete_post': loadFeed(); showNotification('Feed updated'); break;
+            case 'new_comment': if(openReadPostId===data.post_id) openReadModal(openReadPostId,data.post); break;
+        }
+    };
+    socket.onclose=()=>setTimeout(connectSocket,5000);
+}
+connectSocket();
+function showNotification(msg){notifText.textContent=msg; notif.style.display='flex';}
+
+// ===== Auth =====
+async function login(email,password){
+    const res = await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    localStorage.setItem('jwt',data.token); currentUser=data.user;
+    loginBtn.style.display='none'; logoutBtn.style.display='inline-block';
+    closeModal(loginModal); loadFeed();
+}
+async function signup(){
+    const payload = {
+        username: authUsername.value.trim(),
+        full_name: authFullname.value.trim(),
+        email: authEmail.value.trim(),
+        password: authPassword.value.trim()
+    };
+    const res = await fetch(`${API}/auth/signup`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    await login(payload.email,payload.password);
+}
+loginBtn.onclick=()=>openModal(loginModal);
+logoutBtn.onclick=()=>{localStorage.removeItem('jwt'); currentUser=null; loginBtn.style.display='inline-block'; logoutBtn.style.display='none'; commentFormWrap.style.display='none'; commentHint.style.display='block';};
+loginSubmit.onclick=()=>login(authEmail.value,authPassword.value);
+signupSubmit.onclick=()=>signup();
+
+// ===== Posts =====
+fab.onclick=()=>{
+    if(!currentUser)return openModal(loginModal);
+    editingPostId=null; postAuthor.value=currentUser.username||''; postTitle.value=''; postContent.value=''; openModal(postModal);
+};
+postSave.onclick=async()=>{
+    if(!currentUser)return openModal(loginModal);
+    const formData=new FormData();
+    formData.append('title',postTitle.value.trim());
+    formData.append('content',postContent.value.trim());
+    if(postImage.files[0]) formData.append('image',postImage.files[0]);
+    const res=await fetch(`${API}/posts${editingPostId?'/'+editingPostId:''}`,{method:editingPostId?'PUT':'POST',headers:getAuthHeaders(),body:formData});
+    const data=await res.json(); if(!res.ok)throw new Error(data.error);
+    closeModal(postModal); loadFeed();
+    if(socket&&socket.readyState===WebSocket.OPEN) socket.send(JSON.stringify({type:editingPostId?'update_post':'new_post',post:data.post}));
+};
+async function loadFeed(){
+    try{
+        const res=await fetch(`${API}/posts`,{headers:getAuthHeaders()});
+        if(!res.ok)throw new Error(await res.text());
+        const posts=await res.json(); feed.innerHTML='';
+        posts.forEach(p=>{
+            const card=document.createElement('div'); card.className='card';
+            const meta=document.createElement('div'); meta.className='meta';
+            const av=document.createElement('div'); av.className='avatar'; av.textContent=initials(p.user.username||'U N');
+            const who=document.createElement('div'); who.textContent=`${p.user.username||'Unknown'} • ${new Date(p.created_at).toLocaleString()}`;
+            meta.append(av,who);
+            const h3=document.createElement('h3'); h3.textContent=p.title;
+            const preview=document.createElement('div'); preview.className='preview'; preview.textContent=p.content.length>180?p.content.slice(0,180)+'…':p.content;
+            if(p.image_url){ const img=document.createElement('img'); img.src=p.image_url; img.style.maxWidth='100%'; img.style.borderRadius='10px'; card.append(img); }
+            const actions=document.createElement('div'); actions.className='actions';
+            const readBtn=document.createElement('button'); readBtn.className='chip'; readBtn.textContent='📖 Read more'; readBtn.onclick=()=>openReadModal(p.id,p);
+            const ownerWrap=document.createElement('span'); ownerWrap.className='owner-actions';
+            if(currentUser&&currentUser.id===p.user_id){
+                const editBtn=document.createElement('button'); editBtn.className='chip'; editBtn.textContent='✏️ Edit'; editBtn.onclick=()=>{
+                    editingPostId=p.id; postAuthor.value=p.user.username; postTitle.value=p.title; postContent.value=p.content; openModal(postModal);
+                };
+                const delBtn=document.createElement('button'); delBtn.className='chip'; delBtn.textContent='🗑️ Delete'; delBtn.onclick=async()=>{
+                    if(confirm('Delete this post?')){
+                        await fetch(`${API}/posts/${p.id}`,{method:'DELETE',headers:getAuthHeaders()});
+                        loadFeed();
+                        if(socket&&socket.readyState===WebSocket.OPEN) socket.send(JSON.stringify({type:'delete_post',post_id:p.id}));
+                    }
+                };
+                ownerWrap.append(editBtn,delBtn);
+            }
+            actions.append(readBtn,ownerWrap);
+            card.append(meta,h3,preview,actions);
+            feed.append(card);
+        });
+    }catch(err){ feed.innerHTML=`<p style="color:red;">Failed to load feed: ${err.message}</p>`; }
+}
+
+// ===== Read Post & Comments =====
+async function openReadModal(postId,post){
+    openReadPostId=postId;
+    readTitle.textContent=post.title;
+    readMeta.textContent=`${post.user.username||'Unknown'} • ${new Date(post.created_at).toLocaleString()}`;
+    readBody.textContent=post.content; commentsBox.innerHTML=''; commentText.value=''; commenter.value='';
+    commentFormWrap.style.display=currentUser?'flex':'none'; commentHint.style.display=currentUser?'none':'block';
+    try{
+        const res=await fetch(`${API}/comments/post/${postId}`);
+        if(!res.ok)throw new Error(await res.text());
+        const comments=await res.json();
+        if(comments.length===0){ const empty=document.createElement('div'); empty.className='empty'; empty.textContent='No comments yet — be the first!'; commentsBox.append(empty); }
+        else comments.forEach(c=>{
+            const row=document.createElement('div'); row.className='comment';
+            const who=document.createElement('div'); who.className='who'; who.textContent=c.user.username||'Anonymous';
+            const text=document.createElement('div'); text.textContent=c.content;
+            row.append(who,text);
+            if(currentUser&&currentUser.id===c.user_id){
+                const del=document.createElement('button'); del.className='btn btn-ghost'; del.style.marginTop='.4rem'; del.textContent='Delete';
+                del.onclick=async()=>{ await fetch(`${API}/comments/${c.id}`,{method:'DELETE',headers:getAuthHeaders()}); openReadModal(postId,post); };
+                row.append(del);
+            }
+            commentsBox.append(row);
+        });
+    }catch(err){ console.error(err); }
+    commentPost.onclick=async()=>{
+        if(!currentUser)return openModal(loginModal);
+        const payload={post_id:openReadPostId,content:commentText.value.trim()}; if(!payload.content)return alert('Enter comment');
+        const res=await fetch(`${API}/comments`,{method:'POST',headers:{'Content-Type':'application/json',...getAuthHeaders()},body:JSON.stringify(payload)});
+        if(!res.ok)throw new Error(await res.text()); commentText.value=''; openReadModal(openReadPostId,post);
+        if(socket&&socket.readyState===WebSocket.OPEN) socket.send(JSON.stringify({type:'new_comment',post_id:openReadPostId,post}));
+    };
+    openModal(readModal);
+}
+
+// ===== Initial Load =====
+if(localStorage.getItem('jwt')) loadFeed();
+</script>
+
+</body>
+</html>
