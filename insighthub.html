@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Insights Hub — FB + Quora Style</title>
+  <link rel="stylesheet" href="insight.css" />
+</head>
+<body>
+
+<header>
+  <h1>Insights Hub</h1>
+  <p>Share knowledge like FB + Quora</p>
+  <div class="top-actions">
+    <button id="loginBtn" class="btn btn-white">Login</button>
+    <button id="logoutBtn" class="btn btn-red" style="display:none">Logout</button>
+  </div>
+</header>
+
+<main>
+  <div class="insights-feed" id="feed"></div>
+  <div class="insights-feed" id="questionsFeed"></div>
+  <div class="insights-feed" id="communitiesFeed"></div>
+  <div class="insights-feed" id="tagsFeed"></div>
+</main>
+
+<button id="fab">+</button>
+
+<!-- Login / Signup Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#loginModal">&times;</span>
+    <h2>Login / Signup</h2>
+    <input id="authUsername" class="field" type="text" placeholder="Username (for signup)">
+    <input id="authFullname" class="field" type="text" placeholder="Full Name (for signup)">
+    <input id="authEmail" class="field" type="email" placeholder="Email">
+    <input id="authPassword" class="field" type="password" placeholder="Password">
+    <div class="row">
+      <button id="loginSubmit" class="btn btn-blue">Login</button>
+      <button id="signupSubmit" class="btn btn-ghost">Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<!-- Post Modal -->
+<div id="postModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#postModal">&times;</span>
+    <input id="postAuthor" class="field" type="text" placeholder="Author" readonly>
+    <input id="postTitle" class="field" type="text" placeholder="Post Title">
+    <textarea id="postContent" class="field" placeholder="Write your post..."></textarea>
+    <div class="stack"></div> <!-- container for post image input -->
+    <button id="postSave" class="btn btn-blue">Save Post</button>
+  </div>
+</div>
+
+<!-- Read Modal -->
+<div id="readModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#readModal">&times;</span>
+    <h3 id="readTitle"></h3>
+    <p id="readMeta"></p>
+    <div id="readBody"></div>
+    <div id="commentsBox"></div>
+    <div id="commentFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
+      <input id="commenter" class="field" type="text" placeholder="Your name" style="display:none;">
+      <textarea id="commentText" class="field" placeholder="Write a comment..."></textarea>
+      <button id="commentPost" class="btn btn-blue">Post Comment</button>
+    </div>
+    <div id="commentHint" class="empty">Login to comment</div>
+  </div>
+</div>
+
+<!-- Question Modal -->
+<div id="questionModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#questionModal">&times;</span>
+    <h3 id="questionTitle"></h3>
+    <p id="questionMeta"></p>
+    <div id="questionBody"></div>
+    <div id="answersBox"></div>
+    <div id="answerFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
+      <input id="answerer" class="field" type="text" placeholder="Your name" style="display:none;">
+      <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
+      <button id="answerPost" class="btn btn-blue">Post Answer</button>
+    </div>
+    <div id="answerHint" class="empty">Login to answer</div>
+  </div>
+</div>
+
+<!-- Community Modal -->
+<div id="communityModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#communityModal">&times;</span>
+    <h2>Create / Edit Community</h2>
+    <input id="communityName" class="field" type="text" placeholder="Community Name">
+    <textarea id="communityDesc" class="field" placeholder="Community Description"></textarea>
+    <button id="communitySave" class="btn btn-blue">Save Community</button>
+  </div>
+</div>
+
+<!-- Notifications Modal -->
+<div id="notifModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#notifModal">&times;</span>
+    <h2>Notifications</h2>
+    <div id="notificationsBox"></div>
+  </div>
+</div>
+
+<!-- Notification Toast -->
+<div id="notification">
+  <span id="notifText"></span>
+  <button id="notifClose" class="btn btn-ghost">✖</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
