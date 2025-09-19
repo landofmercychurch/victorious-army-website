@@ -84,37 +84,49 @@ document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e =
 document.getElementById('notifClose')?.addEventListener('click', () => notif.style.display = 'none');
 const showNotification = msg => { notifText.textContent = msg; notif.style.display = 'flex'; setTimeout(() => notif.style.display = 'none', 4000); };
 
-// ==== Socket.IO ====
-const socket = io(API, {
-    path: '/ws',           // Must match the backend path
-    transports: ['websocket']  // Force WebSocket transport
-});
+// ==== WebSocket (Socket.IO) ====
+let socket;
+function connectSocket() {
+    // Make sure the <script src="https://insight-backend-gubm.onrender.com/socket.io/socket.io.js"></script>
+    // is included in your HTML before this script runs
 
-socket.on('connect', () => console.log('Socket.IO connected:', socket.id));
+    socket = io("https://insight-backend-gubm.onrender.com", {
+        path: "/ws",
+        transports: ["websocket"] // ensures it uses WebSocket directly
+    });
 
-socket.on('new_post', () => loadFeed());
-socket.on('update_post', () => loadFeed());
-socket.on('delete_post', () => loadFeed());
+    socket.on("connect", () => console.log("WebSocket connected via Socket.IO"));
 
-socket.on('new_comment', data => {
-    if (openReadPostId === data.post_id) appendComment(data.comment);
-});
+    socket.on("new_post", data => loadFeed());
+    socket.on("update_post", data => loadFeed());
+    socket.on("delete_post", data => loadFeed());
 
-socket.on('new_question', () => loadQuestionsFeed());
-socket.on('update_question', () => loadQuestionsFeed());
+    socket.on("new_comment", data => {
+        if (openReadPostId === data.post_id) appendComment(data.comment);
+    });
 
-socket.on('new_answer', data => {
-    if (openQuestionId === data.question_id) appendAnswer(data.answer);
-});
+    socket.on("new_question", data => loadQuestionsFeed());
+    socket.on("update_question", data => loadQuestionsFeed());
 
-socket.on('new_like', () => showNotification('Someone liked your content'));
-socket.on('new_follow', () => showNotification('You have a new follower'));
+    socket.on("new_answer", data => {
+        if (openQuestionId === data.question_id) appendAnswer(data.answer);
+    });
 
-socket.on('new_notification', data => {
-    if (currentUser && data.user_id === currentUser.id) showNotification(data.message);
-});
+    socket.on("new_like", () => showNotification("Someone liked your content"));
+    socket.on("new_follow", () => showNotification("You have a new follower"));
 
-socket.on('disconnect', reason => console.log('Socket.IO disconnected:', reason));
+    socket.on("new_notification", data => {
+        if (currentUser && data.user_id === currentUser.id) showNotification(data.message);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("WebSocket disconnected, retrying in 5s...");
+        setTimeout(connectSocket, 5000);
+    });
+}
+
+// Connect immediately
+connectSocket();
 
 // ==== Auth ====
 async function login(email, password) {
