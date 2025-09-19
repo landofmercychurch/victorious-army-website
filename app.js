@@ -102,33 +102,33 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('notifClose')?.addEventListener('click', () => { if (notif) notif.style.display = 'none'; });
 
     // ==== WebSocket ====
-    let socket;
-    function connectSocket() {
-        socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
-        socket.onopen = () => console.log('WebSocket connected');
-        socket.onmessage = event => {
-            const data = JSON.parse(event.data);
-            switch (data.type) {
-                case 'new_post':
-                case 'update_post':
-                case 'delete_post':
-                    loadFeed(); break;
-                case 'new_comment':
-                    if (openReadPostId === data.post_id) appendComment(data.comment); break;
-                case 'new_question':
-                case 'update_question':
-                    loadQuestionsFeed(); break;
-                case 'new_answer':
-                    if (openQuestionId === data.question_id) appendAnswer(data.answer); break;
-                case 'new_like': showNotification('Someone liked your content'); break;
-                case 'new_follow': showNotification('You have a new follower'); break;
-                case 'new_notification':
-                    if (currentUser && data.user_id === currentUser.id) showNotification(data.message); break;
-            }
-        };
-        socket.onclose = () => setTimeout(connectSocket, 5000);
-    }
-    connectSocket();
+   // let socket;
+  //  function connectSocket() {
+  //      socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
+ //       socket.onopen = () => console.log('WebSocket connected');
+ //       socket.onmessage = event => {
+  //          const data = JSON.parse(event.data);
+ //           switch (data.type) {
+ //               case 'new_post':
+     //           case 'update_post':
+        //        case 'delete_post':
+            //        loadFeed(); break;
+         //       case 'new_comment':
+          //          if (openReadPostId === data.post_id) appendComment(data.comment); break;
+          //      case 'new_question':
+          //      case 'update_question':
+          //          loadQuestionsFeed(); break;
+     //  //         case 'new_answer':
+      //              if (openQuestionId === data.question_id) appendAnswer(data.answer); break;
+        //        case 'new_like': showNotification('Someone liked your content'); break;
+      //          case 'new_follow': showNotification('You have a new follower'); break;
+     //           case 'new_notification':
+    //                if (currentUser && data.user_id === currentUser.id) showNotification(data.message); break;
+    //        }
+   //     };
+ //       socket.onclose = () => setTimeout(connectSocket, 5000);
+//    }
+ //   connectSocket();
 
     // ==== Auth Functions ====
     async function login(email, password) {
