@@ -1,0 +1,242 @@
+/* ==========================
+   RESET & BASE
+========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f7f8fa;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* ==========================
+   HEADER
+========================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header .logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+header .search-bar input {
+  padding: 0.5rem 1rem;
+  width: 300px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+header .top-actions .btn {
+  margin-left: 0.5rem;
+}
+
+/* ==========================
+   LAYOUT
+========================== */
+.layout {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+/* --------------------------
+   CENTER FEED
+-------------------------- */
+.center-feed {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.insights-feed .card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e1e4e8;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card .meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.card .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #007bff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.card .preview {
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.card .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ==========================
+   SIDEBAR
+========================== */
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  margin: 0.2rem;
+  background: #e1ecf4;
+  color: #0366d6;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-blue { background: #007bff; color: #fff; }
+.btn-blue:hover { background: #0056b3; }
+
+.btn-red { background: #dc3545; color: #fff; }
+.btn-red:hover { background: #a71d2a; }
+
+.btn-white { background: #fff; color: #007bff; border: 1px solid #007bff; }
+.btn-white:hover { background: #f0f8ff; }
+
+.btn-ghost { background: transparent; color: #007bff; }
+.btn-ghost:hover { background: #f0f8ff; }
+
+.btn-small { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+
+/* ==========================
+   FLOATING ACTION BUTTON (FAB)
+========================== */
+#fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #007bff;
+  color: #fff;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ==========================
+   MODALS
+========================== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+}
+
+.modal .close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.8rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Fields inside modal */
+.field {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.3rem 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ==========================
+   NOTIFICATION TOAST
+========================== */
+#notification {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #007bff;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 3000;
+}
+#notification button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
