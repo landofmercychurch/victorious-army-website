@@ -1,117 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Insight Hub — FB + Quora Style</title>
-  <link rel="stylesheet" href="insight.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Hub</title>
+  <link rel="stylesheet" href="insight.css">
 </head>
 <body>
 
-<header>
-  <h1>Insight Hub</h1>
-  <p>Share knowledge like FB + Quora</p>
-  <div class="top-actions">
-    <button id="loginBtn" class="btn btn-white">Login</button>
-    <button id="logoutBtn" class="btn btn-red" style="display:none">Logout</button>
+  <!-- Navbar -->
+  <header>
+    <div class="nav-left"><h1>Insight Hub</h1></div>
+    <div class="nav-center"><input type="text" placeholder="Search..."></div>
+    <div class="nav-right">
+      <button class="btn btn-white" onclick="openModal('loginModal')">Login</button>
+      <button class="btn btn-blue" onclick="openModal('signupModal')">Sign Up</button>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <div class="layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Questions</a></li>
+        <li><a href="#">Topics</a></li>
+        <li><a href="#">Spaces</a></li>
+        <li><a href="#">Notifications</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Feed -->
+    <main>
+      <div class="insights-feed" id="feed"></div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="sidebar-right">
+      <div class="card">
+        <h3>Trending</h3>
+        <ul>
+          <li>Faith & Growth</li>
+          <li>Prayer Life</li>
+          <li>Community</li>
+        </ul>
+      </div>
+    </aside>
   </div>
-</header>
 
-<main>
-  <div class="insights-feed" id="feed"></div>
-  <div class="insights-feed" id="questionsFeed"></div>
-  <div class="insights-feed" id="communitiesFeed"></div>
-  <div class="insights-feed" id="tagsFeed"></div>
-</main>
+  <!-- Floating Button -->
+  <button id="fab" onclick="openModal('postModal')">+</button>
 
-<button id="fab">+</button>
-
-<!-- Login / Signup Modal -->
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#loginModal">&times;</span>
-    <h2>Login / Signup</h2>
-    <input id="authUsername" class="field" type="text" placeholder="Username (for signup)">
-    <input id="authFullname" class="field" type="text" placeholder="Full Name (for signup)">
-    <input id="authEmail" class="field" type="email" placeholder="Email">
-    <input id="authPassword" class="field" type="password" placeholder="Password">
-    <div class="row">
-      <button id="loginSubmit" class="btn btn-blue">Login</button>
-      <button id="signupSubmit" class="btn btn-ghost">Sign Up</button>
+  <!-- Modals -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Login</h2>
+      <input type="text" id="loginEmail" class="field" placeholder="Email">
+      <input type="password" id="loginPassword" class="field" placeholder="Password">
+      <button class="btn btn-blue" onclick="login()">Login</button>
     </div>
   </div>
-</div>
 
-<!-- Post Modal -->
-<div id="postModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#postModal">&times;</span>
-    <input id="postAuthor" class="field" type="text" placeholder="Author" readonly>
-    <input id="postTitle" class="field" type="text" placeholder="Post Title">
-    <textarea id="postContent" class="field" placeholder="Write your post..."></textarea>
-    <div class="stack"></div> <!-- container for post image input -->
-    <button id="postSave" class="btn btn-blue">Save Post</button>
-  </div>
-</div>
-
-<!-- Read Modal -->
-<div id="readModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#readModal">&times;</span>
-    <h3 id="readTitle"></h3>
-    <p id="readMeta"></p>
-    <div id="readBody"></div>
-    <div id="commentsBox"></div>
-    <div id="commentFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
-      <textarea id="commentText" class="field" placeholder="Write a comment..."></textarea>
-      <button id="commentPost" class="btn btn-blue">Post Comment</button>
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('signupModal')">&times;</span>
+      <h2>Sign Up</h2>
+      <input type="text" id="signupUsername" class="field" placeholder="Username">
+      <input type="text" id="signupEmail" class="field" placeholder="Email">
+      <input type="password" id="signupPassword" class="field" placeholder="Password">
+      <button class="btn btn-blue" onclick="signup()">Sign Up</button>
     </div>
-    <div id="commentHint" class="empty">Login to comment</div>
   </div>
-</div>
 
-<!-- Question Modal -->
-<div id="questionModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#questionModal">&times;</span>
-    <h3 id="questionTitle"></h3>
-    <p id="questionMeta"></p>
-    <div id="questionBody"></div>
-    <div id="answersBox"></div>
-    <div id="answerFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
-      <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
-      <button id="answerPost" class="btn btn-blue">Post Answer</button>
+  <div id="postModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('postModal')">&times;</span>
+      <h2>New Insight</h2>
+      <input type="text" id="postTitle" class="field" placeholder="Title">
+      <textarea id="postBody" class="field" rows="4" placeholder="Share your thoughts..."></textarea>
+      <button class="btn btn-blue" onclick="createInsight()">Post</button>
     </div>
-    <div id="answerHint" class="empty">Login to answer</div>
   </div>
-</div>
 
-<!-- Community Modal -->
-<div id="communityModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#communityModal">&times;</span>
-    <h2>Create / Edit Community</h2>
-    <input id="communityName" class="field" type="text" placeholder="Community Name">
-    <textarea id="communityDesc" class="field" placeholder="Community Description"></textarea>
-    <button id="communitySave" class="btn btn-blue">Save Community</button>
-  </div>
-</div>
+  <!-- Toast -->
+  <div id="notification"></div>
 
-<!-- Notifications Modal -->
-<div id="notifModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#notifModal">&times;</span>
-    <h2>Notifications</h2>
-    <div id="notificationsBox"></div>
-  </div>
-</div>
+  <script>
+    const API = "https://insight-backend-gubm.onrender.com";
+    const feed = document.getElementById("feed");
+    const notif = document.getElementById("notification");
 
-<!-- Notification Toast -->
-<div id="notification">
-  <span id="notifText"></span>
-  <button id="notifClose" class="btn btn-ghost">✖</button>
-</div>
+    function notify(msg){
+      notif.innerText=msg;
+      notif.style.display="flex";
+      setTimeout(()=>notif.style.display="none",2500);
+    }
+    function openModal(id){document.getElementById(id).style.display="flex";}
+    function closeModal(id){document.getElementById(id).style.display="none";}
 
-<script src="app.js"></script>
+    async function signup(){
+      const username=document.getElementById("signupUsername").value;
+      const email=document.getElementById("signupEmail").value;
+      const password=document.getElementById("signupPassword").value;
+      try{
+        const res=await fetch(API+"/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,email,password})});
+        const data=await res.json();
+        if(res.ok){notify("Signup successful");closeModal("signupModal");}
+        else notify(data.error||"Signup failed");
+      }catch(err){notify("Error");}
+    }
+
+    async function login(){
+      const email=document.getElementById("loginEmail").value;
+      const password=document.getElementById("loginPassword").value;
+      try{
+        const res=await fetch(API+"/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+        const data=await res.json();
+        if(res.ok){localStorage.setItem("token",data.token);notify("Login successful");closeModal("loginModal");loadInsights();}
+        else notify(data.error||"Login failed");
+      }catch(err){notify("Error");}
+    }
+
+    async function createInsight(){
+      const token=localStorage.getItem("token");
+      if(!token)return notify("Login required");
+      const title=document.getElementById("postTitle").value;
+      const body=document.getElementById("postBody").value;
+      try{
+        const res=await fetch(API+"/insights",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({title,body})});
+        const data=await res.json();
+        if(res.ok){notify("Insight posted");closeModal("postModal");loadInsights();}
+        else notify(data.error||"Failed");
+      }catch(err){notify("Error");}
+    }
+
+    async function loadInsights(){
+      feed.innerHTML="Loading...";
+      try{
+        const res=await fetch(API+"/insights");
+        const data=await res.json();
+        feed.innerHTML="";
+        data.forEach(ins=>{
+          const div=document.createElement("div");
+          div.className="card";
+          div.innerHTML=`<h3>${ins.title}</h3>
+            <div class="meta"><div class="avatar">${ins.username?ins.username[0].toUpperCase():"U"}</div><span>${ins.username||"Unknown"}</span></div>
+            <p>${ins.body}</p>
+            <div class="actions"><button class="chip">👍 Like</button><button class="chip">💬 Comment</button></div>`;
+          feed.appendChild(div);
+        });
+      }catch(err){feed.innerHTML="Error loading feed";}
+    }
+
+    loadInsights();
+  </script>
+
 </body>
 </html>
