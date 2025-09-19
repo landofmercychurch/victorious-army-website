@@ -82,26 +82,26 @@ document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e =
 document.getElementById('notifClose')?.addEventListener('click', ()=> notif.style.display='none');
 const showNotification = msg => { notifText.textContent=msg; notif.style.display='flex'; };
 
-// ==== WebSocket ====
-let socket;
-function connectSocket(){
-    socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
-    socket.onopen = ()=>console.log('WebSocket connected');
-    socket.onmessage = event=>{
-        const data = JSON.parse(event.data);
-        switch(data.type){
-            case 'new_post': case 'update_post': case 'delete_post': loadFeed(); break;
-            case 'new_comment': if(openReadPostId===data.post_id) openReadModal(openReadPostId,data.post); break;
-            case 'new_question': case 'update_question': loadQuestionsFeed(); break;
-            case 'new_answer': if(openQuestionId===data.question_id) openQuestionModal(openQuestionId,data.question); break;
-            case 'new_like': showNotification('Someone liked your content'); break;
-            case 'new_follow': showNotification('You have a new follower'); break;
-            case 'new_notification': if(currentUser && data.user_id===currentUser.id) showNotification(data.message); break;
-        }
-    };
-    socket.onclose = ()=>setTimeout(connectSocket,5000);
-}
-connectSocket();
+// ==== WebSocket ==== 
+//let socket;
+//function connectSocket(){
+//    socket = new WebSocket('wss://insight-backend-gubm.onrender.com/ws');
+  //  socket.onopen = ()=>console.log('WebSocket connected');
+  //  socket.onmessage = event=>{
+  //      const data = JSON.parse(event.data);
+ //       switch(data.type){
+     //       case 'new_post': case 'update_post': case 'delete_post': loadFeed(); break;
+    //        case 'new_comment': if(openReadPostId===data.post_id) openReadModal(openReadPostId,data.post); break;
+   //         case 'new_question': case 'update_question': loadQuestionsFeed(); break;
+        //    case 'new_answer': if(openQuestionId===data.question_id) openQuestionModal(openQuestionId,data.question); break;
+    //        case 'new_like': showNotification('Someone liked your content'); break;
+       //     case 'new_follow': showNotification('You have a new follower'); break;
+        //    case 'new_notification': if(currentUser && data.user_id===currentUser.id) showNotification(data.message); break;
+ //       }
+//    };
+//    socket.onclose = ()=>setTimeout(connectSocket,5000);
+//}
+//connectSocket(); //
 
 // ==== Auth ====
 async function login(email,password){
