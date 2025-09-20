@@ -90,3 +90,18 @@ export function initTheme() {
     localStorage.setItem("theme", nextTheme);
   });
 }
+
+
+
+// Navbar/login links
+document.addEventListener("DOMContentLoaded", () => {
+  const navLogin = document.getElementById("loginBtn");
+  const navSignup = document.getElementById("signupBtn");
+
+  if (navLogin) {
+    navLogin.addEventListener("click", () => openModal("#loginModal"));
+  }
+  if (navSignup) {
+    navSignup.addEventListener("click", () => openModal("#signupModal"));
+  }
+});
