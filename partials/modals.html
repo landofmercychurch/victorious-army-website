@@ -1,6 +1,6 @@
 <!-- /partials/modals.html -->
 
-<!-- LOGIN MODAL -->
+<!-- LOGIN / SIGNUP MODAL -->
 <div id="loginModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="#loginModal">&times;</span>
@@ -13,6 +13,7 @@
       <button id="loginSubmit" class="btn btn-blue">Login</button>
       <button id="signupSubmit" class="btn btn-ghost">Sign Up</button>
     </div>
+    <p id="authFeedback" class="empty"></p>
   </div>
 </div>
 
@@ -25,29 +26,6 @@
     <textarea id="postContent" class="field" placeholder="Write your post..."></textarea>
     <div class="stack"></div>
     <button id="postSave" class="btn btn-blue">Save Post</button>
-  </div>
-</div>
-
-<!-- QUESTION MODAL -->
-<div id="questionModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#questionModal">&times;</span>
-    <div id="questionCreate">
-      <input id="questionTitleInput" class="field" type="text" placeholder="Question Title">
-      <textarea id="questionContentInput" class="field" placeholder="Write your question..."></textarea>
-      <button id="questionPost" class="btn btn-blue">Post Question</button>
-    </div>
-    <div id="questionRead" style="display:none;">
-      <h3 id="questionTitle"></h3>
-      <p id="questionMeta"></p>
-      <div id="questionBody"></div>
-      <div id="answersBox"></div>
-      <div id="answerFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
-        <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
-        <button id="answerPost" class="btn btn-blue">Post Answer</button>
-      </div>
-      <div id="answerHint" class="empty">Login to answer</div>
-    </div>
   </div>
 </div>
 
