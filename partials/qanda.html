@@ -1,104 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Q&A | Insight Hub</title>
-  <link rel="stylesheet" href="/insight.css">
-</head>
-<body>
+<!-- Q&A Feed Partial -->
+<div id="questionsFeed" class="feed-container">
+  <!-- Questions will be dynamically rendered here -->
+</div>
 
-  <!-- HEADER / NAV -->
-  <div id="header"></div>
+<!-- QUESTION MODAL (CREATE + READ MODE) -->
+<div id="questionModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#questionModal">&times;</span>
 
-  <!-- QUESTIONS FEED -->
-  <main>
-    <div id="questionsFeed" class="feed-container">
-      <!-- Questions will render here -->
+    <!-- CREATE QUESTION -->
+    <div id="questionCreate">
+      <input id="questionTitleInput" class="field" type="text" placeholder="Question Title">
+      <textarea id="questionContentInput" class="field" placeholder="Write your question..."></textarea>
+      <button id="questionPost" class="btn btn-blue">Post Question</button>
     </div>
-    <!-- Floating action button to post a question -->
-    <button id="fab" class="fab">➕ Ask Question</button>
-  </main>
 
-  <!-- LOGIN MODAL -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <span class="close" data-close="#loginModal">&times;</span>
-      <h2>Login / Signup</h2>
+    <!-- READ QUESTION + ANSWERS -->
+    <div id="questionRead" style="display:none;">
+      <h3 id="questionTitle"></h3>
+      <p id="questionMeta"></p>
+      <div id="questionBody"></div>
 
-      <!-- LOGIN FORM -->
-      <form id="loginForm">
-        <input id="loginEmail" class="field" type="email" placeholder="Email" required>
-        <input id="loginPassword" class="field" type="password" placeholder="Password" required>
-        <button type="submit" class="btn btn-blue">Login</button>
-      </form>
-
-      <!-- SIGNUP FORM -->
-      <form id="signupForm">
-        <input id="signupUsername" class="field" type="text" placeholder="Username" required>
-        <input id="signupEmail" class="field" type="email" placeholder="Email" required>
-        <input id="signupPassword" class="field" type="password" placeholder="Password" required>
-        <button type="submit" class="btn btn-ghost">Sign Up</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- QUESTION MODAL (CREATE + READ MODE) -->
-  <div id="questionModal" class="modal">
-    <div class="modal-content">
-      <span class="close" data-close="#questionModal">&times;</span>
-
-      <!-- CREATE QUESTION -->
-      <div id="questionCreate">
-        <input id="questionTitleInput" class="field" type="text" placeholder="Question Title">
-        <textarea id="questionContentInput" class="field" placeholder="Write your question..."></textarea>
-        <button id="questionPost" class="btn btn-blue">Post Question</button>
+      <h4>Answers</h4>
+      <div id="answersBox">
+        <p class="loading">Loading answers...</p>
       </div>
 
-      <!-- READ QUESTION + ANSWERS -->
-      <div id="questionRead" style="display:none;">
-        <h3 id="questionTitle"></h3>
-        <p id="questionMeta"></p>
-        <div id="questionBody"></div>
-
-        <h4>Answers</h4>
-        <div id="answersBox">
-          <p>Loading answers...</p>
-        </div>
-
-        <!-- Answer Form -->
-        <div id="answerFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
-          <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
-          <button id="answerPost" class="btn btn-blue">Post Answer</button>
-        </div>
-        <div id="answerHint" class="empty">Login to answer</div>
+      <!-- Answer Form -->
+      <div id="answerFormWrap">
+        <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
+        <button id="answerPost" class="btn btn-blue">Post Answer</button>
       </div>
+
+      <div id="answerHint" class="empty">Login to answer</div>
     </div>
   </div>
-
-  <!-- NOTIFICATIONS -->
-  <div id="notificationContainer"></div>
-
-  <!-- SCRIPTS -->
-  <script type="module">
-    import { setupAuth } from './auth.js';
-    import { renderQandA } from './qanda.js';
-
-    // -----------------------
-    // Auth state
-    // -----------------------
-    const currentUser = { value: null };
-    const loginModal = document.getElementById("loginModal");
-
-    // Initialize login/signup
-    setupAuth(currentUser, loginModal);
-
-    // Questions feed container
-    const feedContainer = document.getElementById("questionsFeed");
-
-    // Render Q&A
-    renderQandA(feedContainer, currentUser, loginModal);
-  </script>
-
-</body>
-</html>
+</div>
