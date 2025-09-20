@@ -1,4 +1,3 @@
-// auth.js
 import { showNotification, openModal, closeModal } from "./config.js";
 
 // -----------------------
@@ -8,7 +7,7 @@ const SUPABASE_URL = "https://igyuswrhfsdbxxgtoody.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM";
 
 // Use the global supabase object provided by the CDN
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // -----------------------
 // Setup Auth
@@ -22,7 +21,7 @@ export function setupAuth(currentUser, loginModal, signupModal) {
   // -----------------------
   async function login(email, password) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       currentUser.value = data.user;
@@ -40,7 +39,7 @@ export function setupAuth(currentUser, loginModal, signupModal) {
   // -----------------------
   async function signup(username, full_name, email, password) {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
         options: { data: { username, full_name } }
