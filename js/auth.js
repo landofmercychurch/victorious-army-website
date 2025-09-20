@@ -1,14 +1,9 @@
 // auth.js
-import { API, showNotification, openModal } from "./config.js";
+import { API, showNotification, openModal, closeModal } from "./config.js";
 
 export function setupAuth(currentUser, loginModal) {
-  const usernameInput = document.getElementById("authUsername");
-  const fullnameInput = document.getElementById("authFullname");
-  const emailInput = document.getElementById("authEmail");
-  const passwordInput = document.getElementById("authPassword");
-  const loginBtn = document.getElementById("loginSubmit");
-  const signupBtn = document.getElementById("signupSubmit");
-  const authFeedback = document.getElementById("authFeedback");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
 
   // -----------------------
   // LOGIN
@@ -24,67 +19,61 @@ export function setupAuth(currentUser, loginModal) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
 
-      // Save token & user profile
       localStorage.setItem("token", data.token);
       currentUser.value = data.user;
 
-      authFeedback.textContent = "Login successful 🎉";
-      authFeedback.style.color = "green";
-      setTimeout(() => closeModal(loginModal), 1000);
+      showNotification("Login successful 🎉");
+      closeModal(loginModal);
     } catch (err) {
-      authFeedback.textContent = err.message;
-      authFeedback.style.color = "red";
+      showNotification(err.message);
     }
   }
 
   // -----------------------
   // SIGNUP
   // -----------------------
-  async function signup(username, fullname, email, password) {
+  async function signup(username, email, password) {
     try {
       const res = await fetch(`${API}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, fullname, email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
-      // Save token & user profile
       localStorage.setItem("token", data.token);
       currentUser.value = data.user;
 
-      authFeedback.textContent = "Signup successful 🎉";
-      authFeedback.style.color = "green";
-      setTimeout(() => closeModal(loginModal), 1000);
+      showNotification("Signup successful 🎉");
+      closeModal(loginModal);
     } catch (err) {
-      authFeedback.textContent = err.message;
-      authFeedback.style.color = "red";
+      showNotification(err.message);
     }
   }
 
   // -----------------------
-  // Bind buttons
+  // Bind form submissions
   // -----------------------
-  if (loginBtn) {
-    loginBtn.onclick = () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
+  if (loginForm) {
+    loginForm.onsubmit = (e) => {
+      e.preventDefault();
+      const email = loginForm.querySelector("#loginEmail").value.trim();
+      const password = loginForm.querySelector("#loginPassword").value.trim();
       if (!email || !password) return showNotification("Enter email and password");
       login(email, password);
     };
   }
 
-  if (signupBtn) {
-    signupBtn.onclick = () => {
-      const username = usernameInput.value.trim();
-      const fullname = fullnameInput.value.trim();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!username || !fullname || !email || !password)
-        return showNotification("Fill all signup fields");
-      signup(username, fullname, email, password);
+  if (signupForm) {
+    signupForm.onsubmit = (e) => {
+      e.preventDefault();
+      const username = signupForm.querySelector("#signupUsername").value.trim();
+      const email = signupForm.querySelector("#signupEmail").value.trim();
+      const password = signupForm.querySelector("#signupPassword").value.trim();
+      if (!username || !email || !password) return showNotification("Fill all signup fields");
+      signup(username, email, password);
     };
   }
 
