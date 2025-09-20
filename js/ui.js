@@ -71,3 +71,22 @@ export function setupModals(currentUser = { value: null }) {
     });
   }
 }
+
+// ========================
+// THEME TOGGLE
+// ========================
+export function initTheme() {
+  const themeToggle = document.getElementById("themeToggle"); // make sure you have a button with this id
+  if (!themeToggle) return;
+
+  // Load saved theme from localStorage
+  const savedTheme = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+
+  themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    const nextTheme = current === "light" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", nextTheme);
+    localStorage.setItem("theme", nextTheme);
+  });
+}
