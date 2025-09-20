@@ -42,6 +42,11 @@
   <button id="themeToggle" class="btn btn-ghost" style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
 
   <!-- Scripts -->
-  <script type="module" src="js/main.js"></script>
+  <!-- 1. Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+
+  <!-- 2. Main loader which imports all modules including auth.js -->
+  <script type="module" src="js/loadAndInit.js"></script>
+
 </body>
 </html>
