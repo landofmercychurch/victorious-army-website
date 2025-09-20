@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +17,17 @@
   <!-- Header -->
   <div id="header"></div>
 
-  <!-- Main content -->
-  <div id="main-layout"></div>
+  <!-- Main layout -->
+  <div class="layout">
+    <!-- Center feed -->
+    <div class="center-feed">
+      <div id="mainFeed"></div>
+      <div id="qandaFeed"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebarContainer"></div>
+  </div>
 
   <!-- Modals -->
   <div id="modals"></div>
@@ -26,10 +35,13 @@
   <!-- Notifications -->
   <div id="notification"></div>
 
-  <!-- Floating action button -->
+  <!-- Floating Action Button -->
   <button id="fab" class="fab">+</button>
 
+  <!-- Theme Toggle -->
+  <button id="themeToggle" class="btn btn-ghost" style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
+
   <!-- Scripts -->
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/loadAndInit.js"></script>
 </body>
 </html>
