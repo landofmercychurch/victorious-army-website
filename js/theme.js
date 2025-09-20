@@ -1,5 +1,4 @@
 // theme.js
-
 export function initTheme(toggleBtnId = 'themeToggle') {
   const toggleBtn = document.getElementById(toggleBtnId);
 
