@@ -7,6 +7,7 @@ import {
   closeModal,
   initials,
 } from "./config.js";
+import { renderAnswers } from "./answers.js"; // ✅ Import answers module
 
 export function renderQuestions(feedContainer, currentUser, loginModal) {
   if (!feedContainer) return;
@@ -147,35 +148,14 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
 
     const titleEl = document.getElementById("questionTitle");
     const bodyEl = document.getElementById("questionBody");
-    const answersBox = document.getElementById("answersBox");
 
     titleEl.textContent = question.title;
     bodyEl.textContent = question.details;
-    answersBox.innerHTML = "<p>Loading answers...</p>";
 
     openModal(questionModal);
 
-    // Load answers (if you implement answers endpoint)
-    fetch(`${API}/answers/question/${question.id}`, {
-      headers: getAuthHeaders(),
-    })
-      .then((res) => res.json())
-      .then((answers) => {
-        answersBox.innerHTML = "";
-        if (!answers.length) {
-          answersBox.innerHTML = "<p>No answers yet. Be the first!</p>";
-          return;
-        }
-        answers.forEach((a) => {
-          const div = document.createElement("div");
-          div.className = "answer";
-          div.innerHTML = `<strong>${a.profiles?.username || "Anon"}</strong>: ${a.content}`;
-          answersBox.appendChild(div);
-        });
-      })
-      .catch((err) => {
-        answersBox.innerHTML = `<p style="color:red;">${err.message}</p>`;
-      });
+    // ✅ Load answers using the answers.js module
+    renderAnswers(question.id, currentUser);
   }
 
   // Auto-load on mount
