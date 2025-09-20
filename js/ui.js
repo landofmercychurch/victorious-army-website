@@ -93,8 +93,8 @@ export function initTheme() {
 
 
 
-// Navbar/login links
-document.addEventListener("DOMContentLoaded", () => {
+// Call this **after your header.html partial is loaded**
+export function setupHeaderButtons() {
   const navLogin = document.getElementById("loginBtn");
   const navSignup = document.getElementById("signupBtn");
 
@@ -104,4 +104,4 @@ document.addEventListener("DOMContentLoaded", () => {
   if (navSignup) {
     navSignup.addEventListener("click", () => openModal("#signupModal"));
   }
-});
+}
