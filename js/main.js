@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ======================
   const [
     { setupAuth },
-    { setupModals },
+    { setupModals, initTheme }, // ← added initTheme here
     { renderUsers },
     { renderPosts },
     { renderQandA },
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     { initNotifications },
   ] = await Promise.all([
     import("./auth.js"),
-    import("./ui.js"),
+    import("./ui.js"), // initTheme is exported from ui.js
     import("./users.js"),
     import("./posts.js"),
     import("./qanda.js"),
@@ -73,4 +73,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initLikes();
   initFollows();
   initNotifications();
+
+  initTheme(); // ← initialize theme toggle at the end
 });
