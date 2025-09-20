@@ -82,14 +82,12 @@
   <!-- SCRIPTS -->
   <script type="module">
     import { setupAuth } from './auth.js';
-    import { renderQuestions } from './questions.js';
+    import { renderQandA } from './qanda.js';
 
     // -----------------------
     // Auth state
     // -----------------------
     const currentUser = { value: null };
-
-    // Login modal
     const loginModal = document.getElementById("loginModal");
 
     // Initialize login/signup
@@ -98,8 +96,8 @@
     // Questions feed container
     const feedContainer = document.getElementById("questionsFeed");
 
-    // Render questions
-    renderQuestions(feedContainer, currentUser, loginModal);
+    // Render Q&A
+    renderQandA(feedContainer, currentUser, loginModal);
   </script>
 
 </body>
