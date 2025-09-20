@@ -1,4 +1,4 @@
-export const API = "https://insight-backend-gubm.onrender.com/api";
+export const API = "https://insight-backend-ct7r.onrender.com/api";
 
 // Get headers with token
 export function getAuthHeaders() {
