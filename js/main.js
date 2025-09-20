@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderUsers(document.getElementById("profile"), currentUser);
   renderPosts(document.getElementById("feed"), currentUser, document.getElementById("loginModal"));
-  renderQuestions(document.getElementById("questionsFeed"), currentUser, document.getElementById("loginModal"));
+  renderQandA(document.getElementById("questionsFeed"), currentUser, document.getElementById("loginModal"));
   initCommunities(currentUser);
   initTags();
   initComments(currentUser, document.getElementById("loginModal"));
