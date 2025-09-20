@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Hub — Quora Style</title>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="insight.css">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="16x16" href="insighthub-favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="insighthub-favicon2-16x16.png">
+</head>
+<body>
+
+  <!-- Header -->
+  <div id="header"></div>
+
+  <!-- Main layout -->
+  <div class="layout">
+    <!-- Center feed -->
+    <div class="center-feed">
+      <div id="mainFeed"></div>
+      <div id="qandaFeed"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebarContainer"></div>
+  </div>
+
+  <!-- Modals -->
+  <div id="modals"></div>
+
+  <!-- Notifications -->
+  <div id="notification"></div>
+
+  <!-- Floating Action Button -->
+  <button id="fab" class="fab">+</button>
+
+  <!-- Theme Toggle -->
+  <button id="themeToggle" class="btn btn-ghost" style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
+
+ <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.30.0/dist/supabase.min.js"></script>
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>

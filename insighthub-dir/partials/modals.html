@@ -1,0 +1,70 @@
+<!-- /partials/modals.html -->
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#loginModal">&times;</span>
+    <h2>Login</h2>
+    <input id="loginEmail" class="field" type="email" placeholder="Email">
+    <input id="loginPassword" class="field" type="password" placeholder="Password">
+    <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+      <button id="loginSubmit" class="btn btn-blue">Login</button>
+    </div>
+    <p id="authFeedback" class="empty"></p>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div id="signupModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#signupModal">&times;</span>
+    <h2>Sign Up</h2>
+    <input id="signupUsername" class="field" type="text" placeholder="Username">
+    <input id="signupFullname" class="field" type="text" placeholder="Full Name">
+    <input id="signupEmail" class="field" type="email" placeholder="Email">
+    <input id="signupPassword" class="field" type="password" placeholder="Password">
+    <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+      <button id="signupSubmit" class="btn btn-ghost">Sign Up</button>
+    </div>
+    <p id="signupFeedback" class="empty"></p>
+  </div>
+</div>
+
+<!-- POST MODAL -->
+<div id="postModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#postModal">&times;</span>
+    <input id="postAuthor" class="field" type="text" placeholder="Author" readonly>
+    <input id="postTitle" class="field" type="text" placeholder="Post Title">
+    <textarea id="postContent" class="field" placeholder="Write your post..."></textarea>
+    <div class="stack"></div>
+    <button id="postSave" class="btn btn-blue">Save Post</button>
+  </div>
+</div>
+
+<!-- READ POST MODAL -->
+<div id="readModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#readModal">&times;</span>
+    <h3 id="readTitle"></h3>
+    <p id="readMeta"></p>
+    <div id="readBody"></div>
+    <div id="commentsBox"></div>
+    <div id="commentFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
+      <textarea id="commentText" class="field" placeholder="Write a comment..."></textarea>
+      <button id="commentPost" class="btn btn-blue">Post Comment</button>
+    </div>
+    <div id="commentHint" class="empty">Login to comment</div>
+  </div>
+</div>
+
+<!-- COMMUNITY MODAL -->
+<div id="communityModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="#communityModal">&times;</span>
+    <h2>Create / Edit Community</h2>
+    <input id="communityName" class="field" type="text" placeholder="Community Name">
+    <textarea id="communityDesc" class="field" placeholder="Community Description"></textarea>
+    <button id="communitySave" class="btn btn-blue">Save Community</button>
+  </div>
+</div>
