@@ -1,15 +1,16 @@
 // answers.js
-import { API, getAuthHeaders, showNotification } from "./config.js";
+import { API, getAuthHeaders, showNotification, openModal } from "./config.js";
 
-export function renderAnswers(questionId, answersBox, currentUser, loginModal) {
-  if (!answersBox) return;
-
+export function renderAnswers(questionId, currentUser, loginModal) {
+  const answersBox = document.getElementById("answersBox");
   const answerFormWrap = document.getElementById("answerFormWrap");
   const answerText = document.getElementById("answerText");
   const answerPostBtn = document.getElementById("answerPost");
-
-  // Show login hint if user not logged in
   const answerHint = document.getElementById("answerHint");
+
+  if (!answersBox) return;
+
+  // Show/hide answer form based on login
   if (!currentUser.value) {
     if (answerFormWrap) answerFormWrap.style.display = "none";
     if (answerHint) answerHint.style.display = "block";
