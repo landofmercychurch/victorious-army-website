@@ -1,20 +1,23 @@
 // auth.js
+// -----------------------
+// Browser-ready Supabase Auth
+// -----------------------
 import { showNotification, openModal, closeModal } from "./config.js";
-import { createClient } from "@supabase/supabase-js";
 
 // -----------------------
 // Supabase client
 // -----------------------
-const SUPABASE_URL = "https://your-supabase-url.supabase.co"; // replace with your Supabase URL
-const SUPABASE_ANON_KEY = "your-anon-key"; // replace with your anon key
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = "https://igyuswrhfsdbxxgtoody.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM";
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // -----------------------
 // Setup Auth
 // -----------------------
 export function setupAuth(currentUser, loginModal) {
-  const loginForm = document.getElementById("loginForm");
-  const signupForm = document.getElementById("signupForm");
+  const loginBtn = document.getElementById("loginSubmit");
+  const signupBtn = document.getElementById("signupSubmit");
 
   // -----------------------
   // LOGIN
@@ -42,11 +45,8 @@ export function setupAuth(currentUser, loginModal) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: { username, full_name }
-        }
+        options: { data: { username, full_name } }
       });
-
       if (error) throw error;
 
       currentUser.value = data.user;
@@ -60,26 +60,25 @@ export function setupAuth(currentUser, loginModal) {
   }
 
   // -----------------------
-  // Bind form submissions
+  // Bind Buttons
   // -----------------------
-  if (loginForm) {
-    loginForm.onsubmit = (e) => {
-      e.preventDefault();
-      const email = loginForm.querySelector("#loginEmail").value.trim();
-      const password = loginForm.querySelector("#loginPassword").value.trim();
+  if (loginBtn) {
+    loginBtn.onclick = () => {
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
       if (!email || !password) return showNotification("Enter email and password");
       login(email, password);
     };
   }
 
-  if (signupForm) {
-    signupForm.onsubmit = (e) => {
-      e.preventDefault();
-      const username = signupForm.querySelector("#signupUsername").value.trim();
-      const full_name = signupForm.querySelector("#signupFullname").value.trim();
-      const email = signupForm.querySelector("#signupEmail").value.trim();
-      const password = signupForm.querySelector("#signupPassword").value.trim();
-      if (!username || !full_name || !email || !password) return showNotification("Fill all signup fields");
+  if (signupBtn) {
+    signupBtn.onclick = () => {
+      const username = document.getElementById("authUsername").value.trim();
+      const full_name = document.getElementById("authFullname").value.trim();
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
+      if (!username || !full_name || !email || !password)
+        return showNotification("Fill all signup fields");
       signup(username, full_name, email, password);
     };
   }
