@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q&A | Insight Hub</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- HEADER / NAV -->
+  <div id="header"></div>
+
+  <!-- QUESTIONS FEED -->
+  <main>
+    <div id="questionsFeed" class="feed-container">
+      <!-- Questions will be rendered here -->
+    </div>
+    <!-- Floating action button for posting a question -->
+    <button id="fab" class="fab">➕ Ask Question</button>
+  </main>
+
+  <!-- QUESTION MODAL (CREATE + READ MODE) -->
+  <div id="questionModal" class="modal">
+    <div class="modal-content">
+      <span class="close" data-close="#questionModal">&times;</span>
+
+      <!-- CREATE QUESTION -->
+      <div id="questionCreate">
+        <input id="questionTitleInput" class="field" type="text" placeholder="Question Title">
+        <textarea id="questionContentInput" class="field" placeholder="Write your question..."></textarea>
+        <button id="questionPost" class="btn btn-blue">Post Question</button>
+      </div>
+
+      <!-- READ QUESTION + ANSWERS -->
+      <div id="questionRead" style="display:none;">
+        <h3 id="questionTitle"></h3>
+        <p id="questionMeta"></p>
+        <div id="questionBody"></div>
+
+        <h4>Answers</h4>
+        <div id="answersBox">
+          <p>Loading answers...</p>
+        </div>
+
+        <!-- Answer Form -->
+        <div id="answerFormWrap" style="display:flex; flex-direction:column; gap:.5rem;">
+          <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
+          <button id="answerPost" class="btn btn-blue">Post Answer</button>
+        </div>
+        <div id="answerHint" class="empty">Login to answer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER / NOTIFICATIONS -->
+  <div id="notificationContainer"></div>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="/config.js"></script>
+  <script type="module" src="/answers.js"></script>
+  <script type="module" src="/questions.js"></script>
+  <script>
+    import { renderQuestions } from "./questions.js";
+
+    const feedContainer = document.getElementById("questionsFeed");
+    const currentUser = { value: null }; // Replace with your auth logic
+    const loginModal = document.getElementById("loginModal"); // If using the login modal from modals.html
+
+    renderQuestions(feedContainer, currentUser, loginModal);
+  </script>
+
+</body>
+</html>
