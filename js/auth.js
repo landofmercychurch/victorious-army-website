@@ -1,6 +1,17 @@
 // auth.js
-import { API, showNotification, openModal, closeModal } from "./config.js";
+import { showNotification, openModal, closeModal } from "./config.js";
+import { createClient } from "@supabase/supabase-js";
 
+// -----------------------
+// Supabase client
+// -----------------------
+const SUPABASE_URL = "https://your-supabase-url.supabase.co"; // replace with your Supabase URL
+const SUPABASE_ANON_KEY = "your-anon-key"; // replace with your anon key
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// -----------------------
+// Setup Auth
+// -----------------------
 export function setupAuth(currentUser, loginModal) {
   const loginForm = document.getElementById("loginForm");
   const signupForm = document.getElementById("signupForm");
@@ -10,17 +21,11 @@ export function setupAuth(currentUser, loginModal) {
   // -----------------------
   async function login(email, password) {
     try {
-      const res = await fetch(`${API}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
-
-      localStorage.setItem("token", data.token);
       currentUser.value = data.user;
+      localStorage.setItem("token", data.session.access_token || "");
 
       showNotification("Login successful 🎉");
       closeModal(loginModal);
@@ -32,19 +37,20 @@ export function setupAuth(currentUser, loginModal) {
   // -----------------------
   // SIGNUP
   // -----------------------
-  async function signup(username, email, password) {
+  async function signup(username, full_name, email, password) {
     try {
-      const res = await fetch(`${API}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username, full_name }
+        }
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Signup failed");
+      if (error) throw error;
 
-      localStorage.setItem("token", data.token);
       currentUser.value = data.user;
+      localStorage.setItem("token", data.session?.access_token || "");
 
       showNotification("Signup successful 🎉");
       closeModal(loginModal);
@@ -70,10 +76,11 @@ export function setupAuth(currentUser, loginModal) {
     signupForm.onsubmit = (e) => {
       e.preventDefault();
       const username = signupForm.querySelector("#signupUsername").value.trim();
+      const full_name = signupForm.querySelector("#signupFullName").value.trim();
       const email = signupForm.querySelector("#signupEmail").value.trim();
       const password = signupForm.querySelector("#signupPassword").value.trim();
-      if (!username || !email || !password) return showNotification("Fill all signup fields");
-      signup(username, email, password);
+      if (!username || !full_name || !email || !password) return showNotification("Fill all signup fields");
+      signup(username, full_name, email, password);
     };
   }
 
