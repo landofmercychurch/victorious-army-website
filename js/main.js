@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     { setupModals },
     { renderUsers },
     { renderPosts },
-    { renderQuestions },
+    { renderQuestionsandanswers},
     { initCommunities },
     { initTags },
     { initComments },
