@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ======================
   // LOAD PARTIAL HTML
   // ======================
-  await loadPartial("header", "/partials/header.html");
-  await loadPartial("qandaFeed", "/partials/qanda.html");
-  await loadPartial("mainFeed", "/partials/feed.html");
-  await loadPartial("sidebarContainer", "/partials/sidebar.html");
-  await loadPartial("modals", "/partials/modals.html");
-  await loadPartial("notification", "/partials/notification.html");
+  await loadPartial("header", "../partials/header.html");
+  await loadPartial("qandaFeed", "../partials/qanda.html");
+  await loadPartial("mainFeed", "../partials/feed.html");
+  await loadPartial("sidebarContainer", "../partials/sidebar.html");
+  await loadPartial("modals", "../partials/modals.html");
+  await loadPartial("notification", "../partials/notification.html");
 
   const currentUser = { value: null };
   const loginModal = document.getElementById("loginModal");
