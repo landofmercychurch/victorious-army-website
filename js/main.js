@@ -28,13 +28,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const currentUser = { value: null };
   const loginModal = document.getElementById("loginModal");
+  const signupModal = document.getElementById("signupModal");
 
   // ======================
   // IMPORT & INIT MODULES
   // ======================
   const [
     { setupAuth },
-    { setupModals, initTheme }, // ← added initTheme here
+    { setupModals, initTheme },
     { renderUsers },
     { renderPosts },
     { renderQandA },
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     { initNotifications },
   ] = await Promise.all([
     import("./auth.js"),
-    import("./ui.js"), // initTheme is exported from ui.js
+    import("./ui.js"),
     import("./users.js"),
     import("./posts.js"),
     import("./qanda.js"),
@@ -59,11 +60,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   ]);
 
   // ======================
-  // EXECUTE INITIALIZATION
+  // SETUP AUTH
   // ======================
-  setupAuth(currentUser, loginModal);
+  setupAuth(currentUser, loginModal, signupModal); // now supports both login & signup modals
+
+  // ======================
+  // SETUP UI MODALS & THEME
+  // ======================
   setupModals(currentUser);
 
+  // ======================
+  // RENDER INITIAL CONTENT
+  // ======================
   renderUsers(document.getElementById("profile"), currentUser);
   renderPosts(document.getElementById("feed"), currentUser, loginModal);
   renderQandA(document.getElementById("questionsFeed"), currentUser, loginModal);
@@ -74,5 +82,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   initFollows();
   initNotifications();
 
-  initTheme(); // ← initialize theme toggle at the end
+  initTheme(); // initialize theme toggle
+
+  // ======================
+  // OPTIONAL: Modal Switch Links
+  // ======================
+  document.getElementById("switchToSignup")?.addEventListener("click", () => {
+    closeModal(loginModal);
+    openModal(signupModal);
+  });
+  document.getElementById("switchToLogin")?.addEventListener("click", () => {
+    closeModal(signupModal);
+    openModal(loginModal);
+  });
 });
