@@ -20,13 +20,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // LOAD PARTIAL HTML
   // ======================
   await loadPartial("header", "/partials/header.html");
-  await loadPartial("main-layout", "/partials/feed.html");
-  await loadPartial("main-layout", "/partials/sidebar.html", true); // append sidebar
+  await loadPartial("qandaFeed", "/partials/qanda.html");
+  await loadPartial("mainFeed", "/partials/feed.html");
+  await loadPartial("sidebarContainer", "/partials/sidebar.html");
   await loadPartial("modals", "/partials/modals.html");
   await loadPartial("notification", "/partials/notification.html");
-  await loadPartial("questionandanswers", "/partials/qanda.html");
 
   const currentUser = { value: null };
+  const loginModal = document.getElementById("loginModal");
 
   // ======================
   // IMPORT & INIT MODULES
@@ -36,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     { setupModals },
     { renderUsers },
     { renderPosts },
-    { renderQuestionsandanswers},
+    { renderQandA },
     { initCommunities },
     { initTags },
     { initComments },
@@ -60,15 +61,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ======================
   // EXECUTE INITIALIZATION
   // ======================
-  setupAuth(currentUser);
+  setupAuth(currentUser, loginModal);
   setupModals(currentUser);
 
   renderUsers(document.getElementById("profile"), currentUser);
-  renderPosts(document.getElementById("feed"), currentUser, document.getElementById("loginModal"));
-  renderQandA(document.getElementById("questionsFeed"), currentUser, document.getElementById("loginModal"));
+  renderPosts(document.getElementById("feed"), currentUser, loginModal);
+  renderQandA(document.getElementById("questionsFeed"), currentUser, loginModal);
   initCommunities(currentUser);
   initTags();
-  initComments(currentUser, document.getElementById("loginModal"));
+  initComments(currentUser, loginModal);
   initLikes();
   initFollows();
   initNotifications();
