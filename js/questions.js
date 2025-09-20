@@ -49,7 +49,7 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
         const res = await fetch(`${API}/questions`, {
           method: "POST",
           headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ title, content }),
+          body: JSON.stringify({ title, details: content }),
         });
 
         const data = await res.json();
@@ -102,10 +102,10 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
 
     const av = document.createElement("div");
     av.className = "avatar";
-    av.textContent = initials(question.user?.username || "U N");
+    av.textContent = initials(question.profiles?.username || "U N");
 
     const who = document.createElement("div");
-    who.textContent = `${question.user?.username || "Unknown"} • ${new Date(
+    who.textContent = `${question.profiles?.username || "Unknown"} • ${new Date(
       question.created_at
     ).toLocaleString()}`;
 
@@ -119,9 +119,9 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
     const preview = document.createElement("div");
     preview.className = "preview";
     preview.textContent =
-      question.content.length > 180
-        ? question.content.slice(0, 180) + "…"
-        : question.content;
+      question.details.length > 180
+        ? question.details.slice(0, 180) + "…"
+        : question.details;
 
     // Actions
     const actions = document.createElement("div");
@@ -150,7 +150,7 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
     const answersBox = document.getElementById("answersBox");
 
     titleEl.textContent = question.title;
-    bodyEl.textContent = question.content;
+    bodyEl.textContent = question.details;
     answersBox.innerHTML = "<p>Loading answers...</p>";
 
     openModal(questionModal);
@@ -169,7 +169,7 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
         answers.forEach((a) => {
           const div = document.createElement("div");
           div.className = "answer";
-          div.innerHTML = `<strong>${a.user?.username || "Anon"}</strong>: ${a.content}`;
+          div.innerHTML = `<strong>${a.profiles?.username || "Anon"}</strong>: ${a.content}`;
           answersBox.appendChild(div);
         });
       })
