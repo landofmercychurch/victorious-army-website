@@ -15,10 +15,11 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
   const answerPostBtn = document.getElementById("answerPost");
   const answerHint = document.getElementById("answerHint");
 
+  const fab = document.getElementById("fab");
+
   // -----------------------
   // Open question modal (create mode)
   // -----------------------
-  const fab = document.getElementById("fab");
   if (fab) {
     fab.onclick = () => {
       if (!currentUser.value) return openModal(loginModal);
@@ -35,7 +36,7 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
   }
 
   // -----------------------
-  // Submit new question
+  // Post a new question
   // -----------------------
   if (questionPostBtn) {
     questionPostBtn.onclick = async () => {
@@ -69,13 +70,11 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
   }
 
   // -----------------------
-  // Load questions feed
+  // Load questions
   // -----------------------
   async function loadQuestions() {
     try {
-      const res = await fetch(`${API}/questions`, {
-        headers: getAuthHeaders(),
-      });
+      const res = await fetch(`${API}/questions`, { headers: getAuthHeaders() });
       const questions = await res.json();
       if (!res.ok) throw new Error(await res.text());
 
@@ -85,7 +84,7 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
         return;
       }
 
-      questions.forEach((q) => renderQuestionCard(q));
+      questions.forEach(renderQuestionCard);
     } catch (err) {
       feedContainer.innerHTML = `<p style="color:red;">Failed to load questions: ${err.message}</p>`;
     }
@@ -98,7 +97,6 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
     const card = document.createElement("div");
     card.className = "card";
 
-    // Meta section
     const meta = document.createElement("div");
     meta.className = "meta";
 
@@ -107,25 +105,19 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
     av.textContent = initials(question.profiles?.username || "U N");
 
     const who = document.createElement("div");
-    who.textContent = `${question.profiles?.username || "Unknown"} • ${new Date(
-      question.created_at
-    ).toLocaleString()}`;
+    who.textContent = `${question.profiles?.username || "Unknown"} • ${new Date(question.created_at).toLocaleString()}`;
 
     meta.append(av, who);
 
-    // Title
     const h3 = document.createElement("h3");
     h3.textContent = question.title;
 
-    // Preview
     const preview = document.createElement("div");
     preview.className = "preview";
-    preview.textContent =
-      question.details.length > 180
-        ? question.details.slice(0, 180) + "…"
-        : question.details;
+    preview.textContent = question.details.length > 180
+      ? question.details.slice(0, 180) + "…"
+      : question.details;
 
-    // Actions
     const actions = document.createElement("div");
     actions.className = "actions";
 
@@ -135,8 +127,6 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
     readBtn.onclick = () => openQuestionModal(question);
 
     actions.append(readBtn);
-
-    // Assemble
     card.append(meta, h3, preview, actions);
     feedContainer.append(card);
   }
@@ -150,11 +140,8 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
     document.getElementById("questionCreate").style.display = "none";
     document.getElementById("questionRead").style.display = "block";
 
-    const titleEl = document.getElementById("questionTitle");
-    const bodyEl = document.getElementById("questionBody");
-
-    titleEl.textContent = question.title;
-    bodyEl.textContent = question.details;
+    document.getElementById("questionTitle").textContent = question.title;
+    document.getElementById("questionBody").textContent = question.details;
 
     openModal(questionModal);
 
@@ -162,21 +149,18 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
   }
 
   // -----------------------
-  // Load answers for current question
+  // Load & post answers
   // -----------------------
   function renderAnswers(questionId) {
     if (!answersBox) return;
 
-    // Show/hide answer form based on login
-    if (!currentUser.value) {
-      if (answerFormWrap) answerFormWrap.style.display = "none";
-      if (answerHint) answerHint.style.display = "block";
-    } else {
-      if (answerFormWrap) answerFormWrap.style.display = "flex";
-      if (answerHint) answerHint.style.display = "none";
-    }
+    // Show/hide answer form
+    answerFormWrap.style.display = currentUser.value ? "flex" : "none";
+    answerHint.style.display = currentUser.value ? "none" : "block";
 
-    // Load answers
+    // Clear previous click to avoid duplicates
+    answerPostBtn.onclick = null;
+
     async function loadAnswers() {
       answersBox.innerHTML = "<p>Loading answers...</p>";
       try {
@@ -192,7 +176,7 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
           return;
         }
 
-        answers.forEach((a) => {
+        answers.forEach(a => {
           const div = document.createElement("div");
           div.className = "answer";
           div.innerHTML = `<strong>${a.profiles?.username || "Anon"}</strong>: ${a.content}`;
@@ -203,43 +187,38 @@ export function renderQandA(feedContainer, currentUser, loginModal) {
       }
     }
 
-    // Post new answer
-    if (answerPostBtn) {
-      answerPostBtn.onclick = async () => {
-        if (!currentUser.value) return openModal(loginModal);
+    // Post answer
+    answerPostBtn.onclick = async () => {
+      if (!currentUser.value) return openModal(loginModal);
 
-        const content = answerText.value.trim();
-        if (!content) return showNotification("Write an answer first");
+      const content = answerText.value.trim();
+      if (!content) return showNotification("Write an answer first");
 
-        answerPostBtn.disabled = true;
+      answerPostBtn.disabled = true;
+      try {
+        const res = await fetch(`${API}/answers`, {
+          method: "POST",
+          headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ question_id: questionId, content }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to post answer");
 
-        try {
-          const res = await fetch(`${API}/answers`, {
-            method: "POST",
-            headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-            body: JSON.stringify({ question_id: questionId, content }),
-          });
+        answerText.value = "";
+        loadAnswers();
+        showNotification("Answer posted ✅");
+      } catch (err) {
+        showNotification(err.message);
+      } finally {
+        answerPostBtn.disabled = false;
+      }
+    };
 
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Failed to post answer");
-
-          answerText.value = "";
-          loadAnswers();
-          showNotification("Answer posted ✅");
-        } catch (err) {
-          showNotification(err.message);
-        } finally {
-          answerPostBtn.disabled = false;
-        }
-      };
-    }
-
-    // Initial load
     loadAnswers();
   }
 
   // -----------------------
-  // Auto-load questions on mount
+  // Initialize
   // -----------------------
   loadQuestions();
 
