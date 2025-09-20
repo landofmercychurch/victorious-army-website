@@ -41,10 +41,13 @@
   <!-- Theme Toggle -->
   <button id="themeToggle" class="btn btn-ghost" style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
 
- <!-- Scripts -->
+ <!-- Supabase CDN first -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.30.0/dist/supabase.min.js"></script>
-<script type="module" src="../js/main.js"></script>
-  <script type="module" src="../js/auth.js"></script>
 
+<!-- Then auth.js (sets up supabaseClient, setupAuth, etc.) -->
+<script type="module" src="../js/auth.js"></script>
+
+<!-- Finally main.js (uses setupAuth and other things) -->
+<script type="module" src="../js/main.js"></script>
 </body>
 </html>
