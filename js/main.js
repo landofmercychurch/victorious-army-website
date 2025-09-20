@@ -96,3 +96,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     openModal(loginModal);
   });
 });
+
+import { setupHeaderButtons } from "./ui.js";
+
+// Example using your loadPartial function
+await loadPartial("header", "../partials/header.html");
+
+// After header is in DOM, attach button events
+setupHeaderButtons();
