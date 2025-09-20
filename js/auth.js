@@ -25,7 +25,7 @@ export function setupAuth(currentUser, loginModal) {
       if (error) throw error;
 
       currentUser.value = data.user;
-      localStorage.setItem("token", data.session.access_token || "");
+      localStorage.setItem("token", data.session?.access_token || "");
 
       showNotification("Login successful 🎉");
       closeModal(loginModal);
@@ -76,7 +76,7 @@ export function setupAuth(currentUser, loginModal) {
     signupForm.onsubmit = (e) => {
       e.preventDefault();
       const username = signupForm.querySelector("#signupUsername").value.trim();
-      const full_name = signupForm.querySelector("#signupFullName").value.trim();
+      const full_name = signupForm.querySelector("#signupFullname").value.trim();
       const email = signupForm.querySelector("#signupEmail").value.trim();
       const password = signupForm.querySelector("#signupPassword").value.trim();
       if (!username || !full_name || !email || !password) return showNotification("Fill all signup fields");
