@@ -1,17 +1,25 @@
 // auth.js
 import { showNotification, openModal, closeModal } from "./config.js";
 
-// Supabase client (browser-ready)
+// -----------------------
+// Supabase client (browser)
+// -----------------------
 const SUPABASE_URL = "https://igyuswrhfsdbxxgtoody.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ✅ Use window.supabase when using CDN
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// -----------------------
+// Setup Auth
+// -----------------------
 export function setupAuth(currentUser, loginModal, signupModal) {
   const loginBtn = document.getElementById("loginSubmit");
   const signupBtn = document.getElementById("signupSubmit");
 
+  // -----------------------
   // LOGIN
+  // -----------------------
   async function login(email, password) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -27,7 +35,9 @@ export function setupAuth(currentUser, loginModal, signupModal) {
     }
   }
 
+  // -----------------------
   // SIGNUP
+  // -----------------------
   async function signup(username, full_name, email, password) {
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -47,7 +57,9 @@ export function setupAuth(currentUser, loginModal, signupModal) {
     }
   }
 
+  // -----------------------
   // BUTTON EVENTS
+  // -----------------------
   if (loginBtn) {
     loginBtn.onclick = () => {
       const email = document.getElementById("loginEmail").value.trim();
