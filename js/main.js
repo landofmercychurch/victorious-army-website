@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadPartial("main-layout", "/partials/sidebar.html", true); // append sidebar
   await loadPartial("modals", "/partials/modals.html");
   await loadPartial("notification", "/partials/notification.html");
+  await loadPartial("questionandanswers", "/partials/qanda.html");
 
   const currentUser = { value: null };
 
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     import("./ui.js"),
     import("./users.js"),
     import("./posts.js"),
-    import("./questions.js"),
+    import("./qanda.js"),
     import("./communities.js"),
     import("./tags.js"),
     import("./comments.js"),
