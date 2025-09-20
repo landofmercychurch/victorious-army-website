@@ -148,6 +148,7 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
 
     const titleEl = document.getElementById("questionTitle");
     const bodyEl = document.getElementById("questionBody");
+    const answersBox = document.getElementById("answersBox");
 
     titleEl.textContent = question.title;
     bodyEl.textContent = question.details;
@@ -155,7 +156,7 @@ export function renderQuestions(feedContainer, currentUser, loginModal) {
     openModal(questionModal);
 
     // ✅ Load answers using the answers.js module
-    renderAnswers(question.id, currentUser);
+    renderAnswers(question.id, answersBox, currentUser, loginModal);
   }
 
   // Auto-load on mount
