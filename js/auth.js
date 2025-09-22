@@ -1,5 +1,9 @@
-import { showNotification, closeModal } from "./config.js";
+// auth.js
+import { showNotification, openModal, closeModal } from "./config.js";
 
+// -----------------------
+// Supabase client
+// -----------------------
 const SUPABASE_URL = "https://igyuswrhfsdbxxgtoody.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM";
@@ -9,52 +13,51 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_ANON_KEY
 );
 
+// -----------------------
+// Update header UI
+// -----------------------
+function updateHeaderUI(user) {
+  const loginBtn = document.getElementById("loginBtn");
+  const signupBtn = document.getElementById("signupBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const userMenu = document.getElementById("userMenu");
+  const userInitials = document.getElementById("userInitials");
+  const userName = document.getElementById("userName");
+
+  if (user) {
+    // Logged in
+    if (loginBtn) loginBtn.style.display = "none";
+    if (signupBtn) signupBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
+    if (userMenu) userMenu.style.display = "flex";
+
+    if (userInitials) {
+      const initials = (user.user_metadata?.username || user.email || "U")
+        .slice(0, 2)
+        .toUpperCase();
+      userInitials.textContent = initials;
+    }
+    if (userName) {
+      userName.textContent =
+        user.user_metadata?.full_name ||
+        user.user_metadata?.username ||
+        user.email;
+    }
+  } else {
+    // Logged out
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (signupBtn) signupBtn.style.display = "inline-block";
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "none";
+  }
+}
+
+// -----------------------
+// Setup Auth
+// -----------------------
 export function setupAuth(currentUser, loginModal, signupModal) {
   const loginBtn = document.getElementById("loginSubmit");
   const signupBtn = document.getElementById("signupSubmit");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const profileContainer = document.getElementById("profile");
-  const postAuthorField = document.getElementById("postAuthor");
-
-  // -----------------------
-  // HELPER: update profile UI
-  // -----------------------
-  function updateProfileUI(user) {
-    if (profileContainer) {
-      if (user) {
-        profileContainer.innerHTML = `
-          <div class="profile-card">
-            <h3>${user.user_metadata?.username || "Anonymous"}</h3>
-            <p>${user.email}</p>
-          </div>
-        `;
-      } else {
-        profileContainer.innerHTML = `<p style="color:gray">Not logged in</p>`;
-      }
-    }
-
-    if (postAuthorField) {
-      postAuthorField.value = user?.user_metadata?.username || "";
-    }
-  }
-
-  // -----------------------
-  // HELPER: toggle nav buttons
-  // -----------------------
-  function toggleAuthUI(isLoggedIn) {
-    const navLogin = document.getElementById("loginBtn");
-    const navSignup = document.getElementById("signupBtn");
-
-    if (isLoggedIn) {
-      navLogin && (navLogin.style.display = "none");
-      navSignup && (navSignup.style.display = "none");
-      logoutBtn && (logoutBtn.style.display = "inline-block");
-    } else {
-      navLogin && (navLogin.style.display = "inline-block");
-      navSignup && (navSignup.style.display = "inline-block");
-      logoutBtn && (logoutBtn.style.display = "none");
-    }
-  }
 
   // -----------------------
   // LOGIN
@@ -73,10 +76,9 @@ export function setupAuth(currentUser, loginModal, signupModal) {
         localStorage.setItem("token", data.session.access_token);
       }
 
+      updateHeaderUI(data.user);
       showNotification("Login successful 🎉");
       closeModal(loginModal);
-      toggleAuthUI(true);
-      updateProfileUI(data.user);
     } catch (err) {
       showNotification(err.message);
     }
@@ -100,28 +102,11 @@ export function setupAuth(currentUser, loginModal, signupModal) {
         localStorage.setItem("token", data.session.access_token);
       }
 
+      updateHeaderUI(data.user);
       showNotification(
         "Signup successful 🎉 (check your email if confirmation is required)"
       );
       closeModal(signupModal);
-      toggleAuthUI(true);
-      updateProfileUI(data.user);
-    } catch (err) {
-      showNotification(err.message);
-    }
-  }
-
-  // -----------------------
-  // LOGOUT
-  // -----------------------
-  async function logout() {
-    try {
-      await supabaseClient.auth.signOut();
-      localStorage.removeItem("token");
-      currentUser.value = null;
-      showNotification("Logged out ✅");
-      toggleAuthUI(false);
-      updateProfileUI(null);
     } catch (err) {
       showNotification(err.message);
     }
@@ -142,12 +127,8 @@ export function setupAuth(currentUser, loginModal, signupModal) {
 
   if (signupBtn) {
     signupBtn.onclick = () => {
-      const username = document
-        .getElementById("signupUsername")
-        .value.trim();
-      const full_name = document
-        .getElementById("signupFullname")
-        .value.trim();
+      const username = document.getElementById("signupUsername").value.trim();
+      const full_name = document.getElementById("signupFullname").value.trim();
       const email = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value.trim();
       if (!username || !full_name || !email || !password) {
@@ -157,24 +138,5 @@ export function setupAuth(currentUser, loginModal, signupModal) {
     };
   }
 
-  if (logoutBtn) {
-    logoutBtn.onclick = logout;
-  }
-
-  // -----------------------
-  // PERSIST SESSION on refresh
-  // -----------------------
-  supabaseClient.auth.getSession().then(({ data }) => {
-    if (data.session?.user) {
-      currentUser.value = data.session.user;
-      localStorage.setItem("token", data.session.access_token);
-      toggleAuthUI(true);
-      updateProfileUI(data.session.user);
-    } else {
-      toggleAuthUI(false);
-      updateProfileUI(null);
-    }
-  });
-
-  return { login, signup, logout };
+  return { login, signup, updateHeaderUI };
 }
