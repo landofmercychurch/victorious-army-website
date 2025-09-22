@@ -1,10 +1,11 @@
 // ui.js
 import { openModal, closeModal } from "./config.js";
 
+// ========================
+// MODALS
+// ========================
 export function setupModals(currentUser = { value: null }) {
-  // ========================
-  // MODAL CLOSE HANDLING
-  // ========================
+  // Close buttons
   document.querySelectorAll(".close").forEach(btn => {
     btn.addEventListener("click", () => {
       const target = document.querySelector(btn.dataset.close);
@@ -12,60 +13,47 @@ export function setupModals(currentUser = { value: null }) {
     });
   });
 
-  // Close modal when clicking outside content
+  // Click outside modal
   document.querySelectorAll(".modal").forEach(modal => {
     modal.addEventListener("click", e => {
       if (e.target === modal) closeModal(modal);
     });
   });
 
-  // ========================
-  // NOTIFICATION TOAST
-  // ========================
+  // Notification close
   const notifClose = document.getElementById("notifClose");
   const notif = document.getElementById("notification");
   if (notifClose && notif) {
     notifClose.addEventListener("click", () => closeModal(notif));
   }
 
-  // ========================
-  // FLOATING ACTION BUTTON (FAB)
-  // ========================
+  // Floating Action Button
   const fab = document.getElementById("fab");
   if (fab) {
     fab.addEventListener("click", () => {
       if (!currentUser.value) {
-        // Show login modal if user not logged in
+        // If not logged in → show login modal
         const loginModal = document.getElementById("loginModal");
         if (loginModal) openModal(loginModal);
         return;
       }
 
-      // Determine which feed is visible
-      const postFeed = document.getElementById("feed");
-      const questionsFeed = document.getElementById("questionsFeed");
+      // If logged in → decide what to open
+      const feed = document.getElementById("feed");
+      const qanda = document.getElementById("questionsFeed");
 
-      const postsVisible = postFeed && postFeed.offsetParent !== null;
-      const questionsVisible = questionsFeed && questionsFeed.offsetParent !== null;
-
-      if (postsVisible) {
+      if (feed && feed.offsetParent !== null) {
         const postModal = document.getElementById("postModal");
         if (postModal) {
-          // Reset post form
-          document.getElementById("postAuthor").value =
-            currentUser.value.username || "";
           document.getElementById("postTitle").value = "";
           document.getElementById("postContent").value = "";
           openModal(postModal);
         }
-      } else if (questionsVisible) {
+      } else if (qanda && qanda.offsetParent !== null) {
         const questionModal = document.getElementById("questionModal");
         if (questionModal) {
-          // Reset question create section
           document.getElementById("questionTitleInput").value = "";
           document.getElementById("questionContentInput").value = "";
-          document.getElementById("questionCreate").style.display = "block";
-          document.getElementById("questionRead").style.display = "none";
           openModal(questionModal);
         }
       }
@@ -74,21 +62,20 @@ export function setupModals(currentUser = { value: null }) {
 }
 
 // ========================
-// THEME TOGGLE
+// THEME
 // ========================
 export function initTheme() {
   const themeToggle = document.getElementById("themeToggle");
   if (!themeToggle) return;
 
-  // Load saved theme from localStorage
   const savedTheme = localStorage.getItem("theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
 
   themeToggle.addEventListener("click", () => {
     const current = document.documentElement.getAttribute("data-theme");
-    const nextTheme = current === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", nextTheme);
-    localStorage.setItem("theme", nextTheme);
+    const next = current === "light" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
   });
 }
 
