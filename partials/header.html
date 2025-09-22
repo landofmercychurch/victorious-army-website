@@ -1,11 +1,29 @@
 <!-- /partials/header.html -->
-<header>
+<header class="header">
+  <!-- Logo -->
   <div class="logo">Insight Hub</div>
+
+  <!-- Search Bar -->
   <div class="search-bar">
-    <input type="text" placeholder="Search questions, posts, communities...">
+    <input 
+      id="searchInput" 
+      type="text" 
+      placeholder="Search questions, posts, communities..." 
+      autocomplete="off" 
+    />
   </div>
+
+  <!-- Top Actions -->
   <div class="top-actions">
-   <button id="loginBtn" class="btn btn-blue">Login</button>
-<button id="signupBtn" class="btn btn-ghost">Sign Up</button>
+    <!-- Visible when logged OUT -->
+    <button id="loginBtn" class="btn btn-blue">Login</button>
+    <button id="signupBtn" class="btn btn-ghost">Sign Up</button>
+
+    <!-- Visible when logged IN -->
+    <button id="logoutBtn" class="btn btn-red" style="display:none;">Logout</button>
+    <div id="userMenu" class="user-menu" style="display:none;">
+      <span id="userInitials" class="avatar">U</span>
+      <span id="userName"></span>
+    </div>
   </div>
 </header>
