@@ -1,7 +1,7 @@
+// ui.js
 import { openModal, closeModal } from "./config.js";
 
 export function setupModals(currentUser = { value: null }) {
-
   // ========================
   // MODAL CLOSE HANDLING
   // ========================
@@ -52,7 +52,8 @@ export function setupModals(currentUser = { value: null }) {
         const postModal = document.getElementById("postModal");
         if (postModal) {
           // Reset post form
-          document.getElementById("postAuthor").value = currentUser.value.username || "";
+          document.getElementById("postAuthor").value =
+            currentUser.value.username || "";
           document.getElementById("postTitle").value = "";
           document.getElementById("postContent").value = "";
           openModal(postModal);
@@ -76,7 +77,7 @@ export function setupModals(currentUser = { value: null }) {
 // THEME TOGGLE
 // ========================
 export function initTheme() {
-  const themeToggle = document.getElementById("themeToggle"); // make sure you have a button with this id
+  const themeToggle = document.getElementById("themeToggle");
   if (!themeToggle) return;
 
   // Load saved theme from localStorage
@@ -91,17 +92,24 @@ export function initTheme() {
   });
 }
 
-
-
-// Call this **after your header.html partial is loaded**
+// ========================
+// HEADER BUTTONS
+// ========================
 export function setupHeaderButtons() {
   const navLogin = document.getElementById("loginBtn");
   const navSignup = document.getElementById("signupBtn");
 
   if (navLogin) {
-    navLogin.addEventListener("click", () => openModal("#loginModal"));
+    navLogin.addEventListener("click", () => {
+      const modal = document.getElementById("loginModal");
+      if (modal) openModal(modal);
+    });
   }
+
   if (navSignup) {
-    navSignup.addEventListener("click", () => openModal("#signupModal"));
+    navSignup.addEventListener("click", () => {
+      const modal = document.getElementById("signupModal");
+      if (modal) openModal(modal);
+    });
   }
 }
