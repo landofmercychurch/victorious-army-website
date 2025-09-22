@@ -2,10 +2,10 @@
 // CORE IMPORTS
 // ==============================
 import { setupModals, setupHeaderButtons } from "./ui.js";
-import { renderUsers } from "./users.js";   // ✅ fixed (users.js not user.js)
+import { renderUsers } from "./users.js";   // ✅ corrected (users.js)
 import { setupAuth } from "./auth.js";
 import { showNotification } from "./config.js";
-import { initTheme } from "./theme.js";     // ✅ add theme support
+import { initTheme } from "./theme.js";     // ✅ theme support
 
 // ==============================
 // FEATURE MODULES (side-effect only)
@@ -35,6 +35,7 @@ function updateHeaderUI(user) {
   const userName = document.getElementById("userName");
 
   if (user) {
+    // Logged in
     if (loginBtn) loginBtn.style.display = "none";
     if (signupBtn) signupBtn.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-block";
@@ -53,6 +54,7 @@ function updateHeaderUI(user) {
         user.email;
     }
   } else {
+    // Logged out
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (signupBtn) signupBtn.style.display = "inline-block";
     if (logoutBtn) logoutBtn.style.display = "none";
@@ -64,6 +66,13 @@ function updateHeaderUI(user) {
 // DOM READY
 // ==============================
 document.addEventListener("DOMContentLoaded", async () => {
+  // Ensure Supabase client exists
+  if (!window.supabase) {
+    console.error("❌ Supabase client is not initialised. Check your HTML script.");
+    return;
+  }
+  console.log("✅ Supabase client available");
+
   // Init theme toggle
   initTheme();
 
@@ -85,12 +94,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Restore session from Supabase
-  const { data: { user } } = await window.supabase.auth.getUser();
-  if (user) {
-    currentUser.value = user;
-    updateHeaderUI(user);
-    showNotification(`Welcome back, ${user.email}`);
-  } else {
+  try {
+    const { data, error } = await window.supabase.auth.getUser();
+    if (error) throw error;
+
+    if (data.user) {
+      currentUser.value = data.user;
+      updateHeaderUI(data.user);
+      showNotification(`Welcome back, ${data.user.email}`);
+    } else {
+      updateHeaderUI(null);
+    }
+  } catch (err) {
+    console.warn("⚠️ Could not restore session:", err.message);
     updateHeaderUI(null);
   }
 
@@ -100,7 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     logoutBtn.addEventListener("click", async () => {
       await window.supabase.auth.signOut();
       currentUser.value = null;
-      localStorage.removeItem("token"); // optional
+      localStorage.removeItem("token"); // optional cleanup
       updateHeaderUI(null);
       showNotification("Logged out successfully 👋");
     });
