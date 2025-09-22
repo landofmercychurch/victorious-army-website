@@ -1,6 +1,6 @@
 // main.js
 import { setupModals, setupHeaderButtons } from "./ui.js";
-import { renderUsers } from "./user.js";
+import { renderUsers } from "./users.js";
 import { setupAuth } from "./auth.js";
 import { showNotification } from "./config.js";
 
