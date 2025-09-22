@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Insight Hub — Quora Style</title>
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="insight.css">
+  <link rel="stylesheet" href="insight.css" />
 
   <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="16x16" href="insighthub-favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="insighthub-favicon2-16x16.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="insighthub-favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="insighthub-favicon2-16x16.png" />
 </head>
 <body>
-
   <!-- Header -->
   <div id="header"></div>
 
   <!-- Main layout -->
   <div class="layout">
-    <!-- Center feed -->
     <div class="center-feed">
       <div id="mainFeed"></div>
       <div id="qandaFeed"></div>
     </div>
-
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebarContainer"></div>
   </div>
 
@@ -39,20 +35,20 @@
   <button id="fab" class="fab">+</button>
 
   <!-- Theme Toggle -->
-  <button id="themeToggle" class="btn btn-ghost" style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
+  <button id="themeToggle" class="btn btn-ghost"
+    style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
 
-  <!-- Supabase client (ESM version) -->
+  <!-- Supabase ESM init -->
   <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js";
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const SUPABASE_URL = "https://igyuswrhfsdbxxgtoodoy.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM";
-
-    // Make Supabase client available everywhere
-    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.supabase = createClient(
+      "https://igyuswrhfsdbxxgtoody.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM"
+    );
   </script>
 
-  <!-- Your scripts (must come AFTER supabase init) -->
+  <!-- Your app scripts -->
   <script type="module" src="../js/config.js"></script>
   <script type="module" src="../js/main.js"></script>
   <script type="module" src="../js/auth.js"></script>
