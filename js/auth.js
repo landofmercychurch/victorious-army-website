@@ -1,30 +1,10 @@
-// /js/auth.js (frontend)
-// Responsible for signup + login using the Supabase browser client.
-
+// auth.js
 import { showNotification, openModal, closeModal } from "./config.js";
+import { supabase } from "./supabaseClient.js"; // ✅ use the exported client
 
-/*
-  IMPORTANT:
-  - This file assumes you've included the Supabase browser bundle BEFORE your module scripts:
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script type="module" src="/js/main.js"></script>
-  - The global provided by that script is `supabase` (non-module). We create a client once here.
-*/
-
-const SUPABASE_URL = "https://xasbpjtbwttgguhidoek.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhhc2JwanRid3R0Z2d1aGlkb2VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NzM4NTgsImV4cCI6MjA3NDE0OTg1OH0.rU1K36EV6ly3ikx_1BDUl5V0ok-FCzitDyDP0-0bJyk";
-
-// Create client (only once). `supabase` must exist from the CDN script.
-if (!window.supabase || typeof window.supabase.createClient !== "function") {
-  console.error("Supabase global not found. Make sure you included the CDN script BEFORE your module scripts.");
-  // We still set a fallback so imports won't explode — functions will throw later if used.
-}
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-// small helper to safely call showNotification
-function notifySafe(msg) { try { showNotification(msg); } catch(e){ console.warn(e); } }
-
-// Update header behavior and visible buttons
+// -----------------------
+// Update header UI
+// -----------------------
 function updateHeaderUI(user) {
   const loginBtn = document.getElementById("loginBtn");
   const signupBtn = document.getElementById("signupBtn");
@@ -59,95 +39,90 @@ function updateHeaderUI(user) {
   }
 }
 
-// Public setup function
-export function setupAuth(currentUser = { value: null }, loginModal = null, signupModal = null) {
-  if (!supabase) {
-    console.error("Supabase client not initialized. Auth will not work.");
-  }
+// -----------------------
+// Setup Auth
+// -----------------------
+export function setupAuth(currentUser, loginModal, signupModal) {
+  const loginSubmit = document.getElementById("loginSubmit");
+  const signupSubmit = document.getElementById("signupSubmit");
 
-  const loginBtn = document.getElementById("loginSubmit");
-  const signupBtn = document.getElementById("signupSubmit");
-
+  // -----------------------
   // LOGIN
+  // -----------------------
   async function login(email, password) {
-    if (!supabase) return notifySafe("Auth not available");
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-
-      currentUser.value = data.user || null;
-      // Supabase client stores session automatically. Save token optionally for fetch() usage.
-      if (data.session?.access_token) localStorage.setItem("token", data.session.access_token);
-
-      updateHeaderUI(currentUser.value);
-      notifySafe("Login successful 🎉");
-      if (loginModal) closeModal(loginModal);
-    } catch (err) {
-      notifySafe(err.message || "Login failed");
-    }
-  }
-
-  // SIGNUP
-  async function signup(username, full_name, email, password) {
-    if (!supabase) return notifySafe("Auth not available");
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email, password,
-        options: { data: { username, full_name } }
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
       if (error) throw error;
 
-      currentUser.value = data.user || null;
-      if (data.session?.access_token) localStorage.setItem("token", data.session.access_token);
+      currentUser.value = data.user;
 
-      updateHeaderUI(currentUser.value);
-      notifySafe("Signup successful — check your email if confirmation required");
-      if (signupModal) closeModal(signupModal);
+      if (data.session?.access_token) {
+        localStorage.setItem("token", data.session.access_token);
+      }
+
+      updateHeaderUI(data.user);
+      showNotification("Login successful 🎉");
+      closeModal(loginModal);
     } catch (err) {
-      notifySafe(err.message || "Signup failed");
+      showNotification(err.message);
     }
   }
 
-  // Hook modal buttons
-  if (loginBtn) {
-    loginBtn.onclick = () => {
+  // -----------------------
+  // SIGNUP
+  // -----------------------
+  async function signup(username, full_name, email, password) {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { username, full_name } },
+      });
+      if (error) throw error;
+
+      currentUser.value = data.user;
+
+      if (data.session?.access_token) {
+        localStorage.setItem("token", data.session.access_token);
+      }
+
+      updateHeaderUI(data.user);
+      showNotification(
+        "Signup successful 🎉 (check your email if confirmation is required)"
+      );
+      closeModal(signupModal);
+    } catch (err) {
+      showNotification(err.message);
+    }
+  }
+
+  // Attach login button
+  if (loginSubmit) {
+    loginSubmit.onclick = () => {
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
-      if (!email || !password) return notifySafe("Enter email and password");
+      if (!email || !password)
+        return showNotification("Enter email and password");
       login(email, password);
     };
   }
-  if (signupBtn) {
-    signupBtn.onclick = () => {
+
+  // Attach signup button
+  if (signupSubmit) {
+    signupSubmit.onclick = () => {
       const username = document.getElementById("signupUsername").value.trim();
       const full_name = document.getElementById("signupFullname").value.trim();
       const email = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value.trim();
-      if (!username || !full_name || !email || !password) return notifySafe("Fill all signup fields");
+      if (!username || !full_name || !email || !password) {
+        return showNotification("Fill all signup fields");
+      }
       signup(username, full_name, email, password);
     };
   }
 
-  // Restore existing session (if any) and update header
-  (async () => {
-    if (!supabase) return;
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) {
-        // Not fatal; just log
-        console.warn("supabase.auth.getUser error:", error.message || error);
-      } else if (user) {
-        currentUser.value = user;
-        updateHeaderUI(user);
-      } else {
-        updateHeaderUI(null);
-      }
-    } catch (err) {
-      console.warn("session restore error", err.message);
-      updateHeaderUI(null);
-    }
-  })();
-
-  // Return actions for callsites
   return { login, signup, updateHeaderUI };
 }
