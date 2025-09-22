@@ -1,5 +1,7 @@
+// ==============================
 // auth.js
-import { showNotification, openModal, closeModal } from "./config.js";
+// ==============================
+import { showNotification, closeModal } from "./config.js";
 
 // -----------------------
 // Supabase client
@@ -8,7 +10,10 @@ const SUPABASE_URL = "https://igyuswrhfsdbxxgtoody.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlneXVzd3JoZnNkYnh4Z3Rvb2R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTc2NzIsImV4cCI6MjA3Mzc3MzY3Mn0.7ba9HYSvJlGK-9V-VqvEHrn481nSbtHSKiVIt4CdzQM";
 
-const supabaseClient = window.supabase.createClient(
+if (!window.supabase) {
+  console.error("❌ Supabase library not loaded. Check <script src> in HTML.");
+}
+export const supabaseClient = window.supabase?.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
@@ -25,7 +30,6 @@ function updateHeaderUI(user) {
   const userName = document.getElementById("userName");
 
   if (user) {
-    // Logged in
     if (loginBtn) loginBtn.style.display = "none";
     if (signupBtn) signupBtn.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-block";
@@ -44,7 +48,6 @@ function updateHeaderUI(user) {
         user.email;
     }
   } else {
-    // Logged out
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (signupBtn) signupBtn.style.display = "inline-block";
     if (logoutBtn) logoutBtn.style.display = "none";
@@ -58,6 +61,7 @@ function updateHeaderUI(user) {
 export function setupAuth(currentUser, loginModal, signupModal) {
   const loginBtn = document.getElementById("loginSubmit");
   const signupBtn = document.getElementById("signupSubmit");
+  const logoutBtn = document.getElementById("logoutBtn");
 
   // -----------------------
   // LOGIN
@@ -77,10 +81,11 @@ export function setupAuth(currentUser, loginModal, signupModal) {
       }
 
       updateHeaderUI(data.user);
-      showNotification("Login successful 🎉");
+      showNotification(`Welcome back, ${data.user.email} 🎉`);
       closeModal(loginModal);
     } catch (err) {
-      showNotification(err.message);
+      console.error("Login error:", err);
+      showNotification(err.message || "Login failed");
     }
   }
 
@@ -108,7 +113,8 @@ export function setupAuth(currentUser, loginModal, signupModal) {
       );
       closeModal(signupModal);
     } catch (err) {
-      showNotification(err.message);
+      console.error("Signup error:", err);
+      showNotification(err.message || "Signup failed");
     }
   }
 
@@ -119,8 +125,9 @@ export function setupAuth(currentUser, loginModal, signupModal) {
     loginBtn.onclick = () => {
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
-      if (!email || !password)
+      if (!email || !password) {
         return showNotification("Enter email and password");
+      }
       login(email, password);
     };
   }
@@ -135,6 +142,21 @@ export function setupAuth(currentUser, loginModal, signupModal) {
         return showNotification("Fill all signup fields");
       }
       signup(username, full_name, email, password);
+    };
+  }
+
+  if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+      try {
+        await supabaseClient.auth.signOut();
+        currentUser.value = null;
+        localStorage.removeItem("token");
+        updateHeaderUI(null);
+        showNotification("Logged out successfully 👋");
+      } catch (err) {
+        console.error("Logout error:", err);
+        showNotification("Logout failed");
+      }
     };
   }
 
