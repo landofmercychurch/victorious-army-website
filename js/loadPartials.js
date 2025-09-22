@@ -1,6 +1,7 @@
 export async function loadPartial(id, url) {
   try {
     const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const html = await res.text();
     const container = document.getElementById(id);
     if (container) container.innerHTML = html;
@@ -9,15 +10,14 @@ export async function loadPartial(id, url) {
   }
 }
 
-// Load all partials
+// Load all partials relative to insighthub.html
 export async function loadAllPartials() {
-  await loadPartial("header", "/partials/header.html");
-  await loadPartial("qandaFeed", "/partials/qanda.html");
-await loadPartial("mainFeed", "/partials/feed.html");// you can combine feed + sidebar inside feed.html
-await loadPartial("sidebarContainer", "/partials/sidebar.html");
-await loadPartial("modals", "/partials/modals.html");
-await loadPartial("notification", "/partials/notification.html");
-  
+  await loadPartial("header", "./partials/header.html");
+  await loadPartial("qandaFeed", "./partials/qanda.html");
+  await loadPartial("mainFeed", "./partials/feed.html");
+  await loadPartial("sidebarContainer", "./partials/sidebar.html");
+  await loadPartial("modals", "./partials/modals.html");
+  await loadPartial("notification", "./partials/notification.html");
 }
 
 // Automatically load when module is imported
