@@ -1,13 +1,30 @@
-// main.js
+// ==============================
+// CORE IMPORTS
+// ==============================
 import { setupModals, setupHeaderButtons } from "./ui.js";
-import { renderUsers } from "./users.js";
+import { renderUsers } from "./users.js";   // ✅ fixed (users.js not user.js)
 import { setupAuth } from "./auth.js";
 import { showNotification } from "./config.js";
+import { initTheme } from "./theme.js";     // ✅ add theme support
 
+// ==============================
+// FEATURE MODULES (side-effect only)
+// ==============================
+import "./follows.js";
+import "./communities.js";
+import "./likes.js";
+import "./notifications.js";
+import "./qanda.js";
+import "./posts.js";
+import "./tags.js";
+
+// ==============================
+// STATE
+// ==============================
 const currentUser = { value: null };
 
 // ==============================
-// Update header based on auth state
+// HEADER UPDATE LOGIC
 // ==============================
 function updateHeaderUI(user) {
   const loginBtn = document.getElementById("loginBtn");
@@ -18,7 +35,6 @@ function updateHeaderUI(user) {
   const userName = document.getElementById("userName");
 
   if (user) {
-    // Logged in
     if (loginBtn) loginBtn.style.display = "none";
     if (signupBtn) signupBtn.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-block";
@@ -37,7 +53,6 @@ function updateHeaderUI(user) {
         user.email;
     }
   } else {
-    // Logged out
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (signupBtn) signupBtn.style.display = "inline-block";
     if (logoutBtn) logoutBtn.style.display = "none";
@@ -45,8 +60,14 @@ function updateHeaderUI(user) {
   }
 }
 
+// ==============================
+// DOM READY
+// ==============================
 document.addEventListener("DOMContentLoaded", async () => {
-  // Setup modals (login, signup, etc.)
+  // Init theme toggle
+  initTheme();
+
+  // Setup modals
   setupModals(currentUser);
 
   // Setup header login/signup buttons
@@ -55,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Attach auth handling
   const loginModal = document.getElementById("loginModal");
   const signupModal = document.getElementById("signupModal");
-  const { login, signup } = setupAuth(currentUser, loginModal, signupModal);
+  setupAuth(currentUser, loginModal, signupModal);
 
   // Render profile section
   const profileContainer = document.getElementById("profileContainer");
@@ -63,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderUsers(profileContainer, currentUser);
   }
 
-  // 🔑 Restore session if available (handled by Supabase)
+  // Restore session from Supabase
   const { data: { user } } = await window.supabase.auth.getUser();
   if (user) {
     currentUser.value = user;
@@ -73,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateHeaderUI(null);
   }
 
-  // 🔴 Hook up logout button
+  // Logout button
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
