@@ -5,7 +5,8 @@ import { setupModals, setupHeaderButtons } from "./ui.js";
 import { renderUsers } from "./users.js";   // ✅ fixed name
 import { setupAuth } from "./auth.js";
 import { showNotification } from "./config.js";
-import { initTheme } from "./theme.js";     // ✅ add theme support
+import { initTheme } from "./theme.js";
+import { supabase } from "./supabaseClient.js"; // ✅ import supabase client
 
 // ==============================
 // FEATURE MODULES (side-effect only)
@@ -48,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Restore session from Supabase
-  const { data: { user } } = await window.supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser(); // ✅ fixed
   if (user) {
     currentUser.value = user;
     updateHeaderUI(user);
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
-      await window.supabase.auth.signOut();
+      await supabase.auth.signOut(); // ✅ fixed
       currentUser.value = null;
       localStorage.removeItem("token"); // optional
       updateHeaderUI(null);
