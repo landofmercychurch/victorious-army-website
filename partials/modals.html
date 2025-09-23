@@ -1,25 +1,17 @@
-<!-- /partials/modals.html -->
-
-<!-- =====================
-     LOGIN MODAL
-===================== -->
+<!-- LOGIN MODAL -->
 <div id="loginModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="#loginModal">&times;</span>
     <h2>Login</h2>
     <input id="loginEmail" class="field" type="email" placeholder="Email" />
     <input id="loginPassword" class="field" type="password" placeholder="Password" />
-    <button id="loginSubmit" class="btn btn-blue" style="margin-top:.5rem;">Login</button>
+    <button id="loginSubmit" class="btn btn-blue">Login</button>
     <p id="authFeedback" class="empty"></p>
-    <p class="switch-text">Don’t have an account? 
-      <a href="#" id="toSignup">Sign up</a>
-    </p>
+    <p class="switch-text">Don’t have an account? <a href="#" id="toSignup">Sign up</a></p>
   </div>
 </div>
 
-<!-- =====================
-     SIGNUP MODAL
-===================== -->
+<!-- SIGNUP MODAL -->
 <div id="signupModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="#signupModal">&times;</span>
@@ -28,17 +20,13 @@
     <input id="signupFullname" class="field" type="text" placeholder="Full Name" />
     <input id="signupEmail" class="field" type="email" placeholder="Email" />
     <input id="signupPassword" class="field" type="password" placeholder="Password" />
-    <button id="signupSubmit" class="btn btn-ghost" style="margin-top:.5rem;">Sign Up</button>
+    <button id="signupSubmit" class="btn btn-ghost">Sign Up</button>
     <p id="signupFeedback" class="empty"></p>
-    <p class="switch-text">Already have an account? 
-      <a href="#" id="toLogin">Login</a>
-    </p>
+    <p class="switch-text">Already have an account? <a href="#" id="toLogin">Login</a></p>
   </div>
 </div>
 
-<!-- =====================
-     POST MODAL
-===================== -->
+<!-- POST MODAL -->
 <div id="postModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="#postModal">&times;</span>
@@ -49,9 +37,7 @@
   </div>
 </div>
 
-<!-- =====================
-     READ POST MODAL
-===================== -->
+<!-- READ POST MODAL -->
 <div id="readModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="#readModal">&times;</span>
@@ -68,9 +54,7 @@
   </div>
 </div>
 
-<!-- =====================
-     COMMUNITY MODAL
-===================== -->
+<!-- COMMUNITY MODAL -->
 <div id="communityModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="#communityModal">&times;</span>
@@ -80,13 +64,3 @@
     <button id="communitySave" class="btn btn-blue">Save Community</button>
   </div>
 </div>
-
-
-<!-- =====================
-     HEADER NAV (login/logout buttons)
-===================== -->
-<nav>
-  <button id="loginBtn" class="btn btn-blue">Login</button>
-  <button id="signupBtn" class="btn btn-ghost">Sign Up</button>
-  <button id="logoutBtn" class="btn btn-red" style="display:none;">Logout</button>
-</nav>
