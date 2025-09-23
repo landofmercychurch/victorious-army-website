@@ -1,38 +1,5 @@
-<!-- Q&A Feed Partial -->
-<div id="questionsFeed" class="feed-container">
-  <!-- Questions will be dynamically rendered here -->
-</div>
-
-<!-- QUESTION MODAL (CREATE + READ MODE) -->
-<div id="questionModal" class="modal">
-  <div class="modal-content">
-    <span class="close" data-close="#questionModal">&times;</span>
-
-    <!-- CREATE QUESTION -->
-    <div id="questionCreate">
-      <input id="questionTitleInput" class="field" type="text" placeholder="Question Title">
-      <textarea id="questionContentInput" class="field" placeholder="Write your question..."></textarea>
-      <button id="questionPost" class="btn btn-blue">Post Question</button>
-    </div>
-
-    <!-- READ QUESTION + ANSWERS -->
-    <div id="questionRead" style="display:none;">
-      <h3 id="questionTitle"></h3>
-      <p id="questionMeta"></p>
-      <div id="questionBody"></div>
-
-      <h4>Answers</h4>
-      <div id="answersBox">
-        <p class="loading">Loading answers...</p>
-      </div>
-
-      <!-- Answer Form -->
-      <div id="answerFormWrap">
-        <textarea id="answerText" class="field" placeholder="Write your answer..."></textarea>
-        <button id="answerPost" class="btn btn-blue">Post Answer</button>
-      </div>
-
-      <div id="answerHint" class="empty">Login to answer</div>
-    </div>
-  </div>
-</div>
+<!-- Q&A Feed -->
+<section id="questionsFeed" class="feed">
+  <h2>Questions</h2>
+  <div id="questionsList"></div>
+</section>
