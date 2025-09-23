@@ -19,10 +19,13 @@
   <!-- Main layout -->
   <div class="layout">
     <div class="center-feed">
+      <!-- Feed -->
       <div id="mainFeed"></div>
+      <!-- Q&A -->
       <div id="qandaFeed"></div>
     </div>
-    <div class="sidebar" id="sidebarContainer"></div>
+    <!-- Sidebar -->
+    <div id="sidebarContainer"></div>
   </div>
 
   <!-- Modals -->
@@ -38,7 +41,7 @@
   <button id="themeToggle" class="btn btn-ghost"
     style="position: fixed; bottom: 1rem; left: 1rem; z-index: 4000;">🌓</button>
 
-  <!-- Supabase ESM init -->
+  <!-- Supabase init -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -46,6 +49,23 @@
       "https://xasbpjtbwttgguhidoek.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhhc2JwanRid3R0Z2d1aGlkb2VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NzM4NTgsImV4cCI6MjA3NDE0OTg1OH0.rU1K36EV6ly3ikx_1BDUl5V0ok-FCzitDyDP0-0bJyk"
     );
+  </script>
+
+  <!-- Load partials -->
+  <script type="module">
+    async function loadPartial(containerId, path) {
+      const res = await fetch(path);
+      const html = await res.text();
+      document.getElementById(containerId).innerHTML = html;
+    }
+
+    // inject partials
+    loadPartial("header", "/partials/header.html");
+    loadPartial("mainFeed", "/partials/feed.html");
+    loadPartial("qandaFeed", "/partials/qanda.html");
+    loadPartial("sidebarContainer", "/partials/sidebar.html");
+    loadPartial("modals", "/partials/modals.html");
+    loadPartial("notification", "/partials/notification.html");
   </script>
 
   <!-- Your app scripts -->
