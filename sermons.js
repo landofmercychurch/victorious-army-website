@@ -1,134 +1,129 @@
-// sermons.js
+// js/sermons.js
 import { api } from "./api.js";
-import { el, openWhatsAppShare, universalShare, copyToClipboard } from "./utils.js";
-import { showNotification } from "./config.js";
+import { el } from "./utils.js";
 
 export async function initSermons(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading sermons…</p>";
+
   try {
     const sermons = await api.get("/sermons");
     container.innerHTML = "";
+
     if (!sermons.length) {
-      container.innerHTML = "<p>No sermons yet.</p>";
+      container.innerHTML = "<p>No sermons uploaded yet.</p>";
       return;
     }
-    sermons.forEach(renderSermon);
+
+    // Latest sermon (first one since backend sorts DESC)
+    renderSermon(sermons[0], container, true);
+
+    // Older sermons
+    if (sermons.length > 1) {
+      const older = el("div", "older-sermons");
+      const title = el("h3", null, "📚 Older Sermons");
+      older.appendChild(title);
+
+      sermons.slice(1).forEach(s => renderSermon(s, older, false));
+      container.appendChild(older);
+    }
   } catch (err) {
-    container.innerHTML = `<p style="color:red">Failed to load sermons</p>`;
+    container.innerHTML = `<p style="color:red">Failed to load sermons.</p>`;
     console.error(err);
   }
+}
 
-  function renderSermon(s) {
-    const card = el("div", "card sermon");
+function renderSermon(s, container, latest = false) {
+  const card = el("div", latest ? "sermon-card latest" : "sermon-card");
 
-    // Video (YouTube, Cloudinary, direct mp4)
-    if (s.video_url) {
-      if (s.video_url.includes("youtube.com") || s.video_url.includes("youtu.be")) {
-        // embed YouTube
-        const iframe = el("iframe", "sermon-video", {
-          src: s.video_url.replace("watch?v=", "embed/"),
-          allowfullscreen: true
-        });
-        card.appendChild(iframe);
-      } else {
-        const video = el("video", "sermon-video", { src: s.video_url, controls: true });
-        card.appendChild(video);
-      }
-    }
-
-    // Title + description
-    card.appendChild(el("h3", "sermon-title", { text: s.title }));
-    if (s.description) {
-      card.appendChild(el("p", "sermon-desc", { text: s.description }));
-    }
-
-    // Actions row
-    const actions = el("div", "actions");
-
-    // Likes
-    const likeBtn = el("button", "btn like-btn", { text: `👍 ${s.likes_count || 0}` });
-    likeBtn.onclick = async () => {
-      try {
-        await api.post(`/sermons/${s.id}/like`, {});
-        s.likes_count = (s.likes_count || 0) + 1;
-        likeBtn.textContent = `👍 ${s.likes_count}`;
-      } catch (e) {
-        console.error(e);
-        showNotification("Failed to like");
-      }
-    };
-
-    // Share
-    const shareBtn = el("button", "btn", { text: "Share" });
-    shareBtn.onclick = async () => {
-      const url = `${location.origin}/sermons/${s.id}`;
-      const shared = await universalShare(s.title || "", url);
-      if (!shared) {
-        await copyToClipboard(url);
-        showNotification("Link copied");
-      }
-    };
-
-    // WhatsApp
-    const waBtn = el("button", "btn", { text: "WhatsApp" });
-    waBtn.onclick = () =>
-      openWhatsAppShare(s.title || "", `${location.origin}/sermons/${s.id}`);
-
-    actions.append(likeBtn, shareBtn, waBtn);
-    card.appendChild(actions);
-
-    // Comments section
-    const commentsBox = el("div", "comments-box");
-    const commentsList = el("div", "comments-list", { text: "Loading comments…" });
-    commentsBox.appendChild(commentsList);
-
-    // Load comments
-    loadComments(s.id, commentsList);
-
-    // Comment form
-    const form = el("form", "comment-form");
-    const nameInput = el("input", null, { type: "text", placeholder: "Your name", required: true });
-    const contentInput = el("textarea", null, { placeholder: "Write a comment…", required: true });
-    const submitBtn = el("button", "btn", { type: "submit", text: "Post" });
-    form.append(nameInput, contentInput, submitBtn);
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const body = { name: nameInput.value, content: contentInput.value };
-        await api.post(`/sermons/${s.id}/comments`, body);
-        nameInput.value = "";
-        contentInput.value = "";
-        loadComments(s.id, commentsList);
-      } catch (err) {
-        console.error(err);
-        showNotification("Failed to post comment");
-      }
-    };
-    commentsBox.appendChild(form);
-
-    card.appendChild(commentsBox);
-
-    container.appendChild(card);
+  // Video
+  if (s.video_url) {
+    const video = document.createElement("video");
+    video.className = "sermon-video";
+    video.src = s.video_url;
+    video.controls = true;
+    if (latest) video.autoplay = false;
+    card.appendChild(video);
   }
 
-  async function loadComments(sermonId, container) {
-    try {
-      const comments = await api.get(`/sermons/${sermonId}/comments`);
-      container.innerHTML = "";
-      if (!comments.length) {
-        container.innerHTML = "<p>No comments yet.</p>";
-        return;
-      }
-      comments.forEach((c) => {
-        const div = el("div", "comment");
-        div.appendChild(el("strong", null, { text: c.name || "Guest" }));
-        div.appendChild(el("p", null, { text: c.content }));
-        container.appendChild(div);
-      });
-    } catch (err) {
-      container.innerHTML = `<p style="color:red">Failed to load comments</p>`;
-      console.error(err);
-    }
+  // Title + description
+  const info = el("div", "sermon-info");
+  const title = el("h4", null, s.title || "Untitled Sermon");
+  const desc = el("p", null, s.description || "");
+  const date = el("span", "sermon-date", new Date(s.created_at).toLocaleString());
+  info.append(title, desc, date);
+  card.appendChild(info);
+
+  // Actions
+  const actions = el("div", "sermon-actions");
+  const likeBtn = el("button", "like-btn", "❤️ Like");
+  const likeCount = el("span", "like-count", "0 Likes");
+
+  likeBtn.onclick = async () => {
+    await api.post("/likes", { sermon_id: s.id });
+    updateLikeCount();
+  };
+
+  async function updateLikeCount() {
+    const result = await api.get(`/likes/count/${s.id}?type=sermon`);
+    likeCount.textContent = `${result.count} Likes`;
+  }
+  updateLikeCount();
+
+  const commentBtn = el("button", "comment-btn", "💬 Comments");
+  const commentsBox = el("div", "comments-box");
+  commentBtn.onclick = () => toggleComments(s.id, commentsBox);
+
+  actions.append(likeBtn, likeCount, commentBtn);
+  card.appendChild(actions);
+  card.appendChild(commentsBox);
+
+  container.appendChild(card);
+}
+
+// --- Comments ---
+async function toggleComments(sermonId, box) {
+  if (box.dataset.loaded === "true") {
+    box.classList.toggle("open");
+    return;
+  }
+
+  box.innerHTML = "<p>Loading comments…</p>";
+
+  try {
+    const comments = await api.get(`/comments/sermon/${sermonId}`);
+    box.innerHTML = "";
+
+    const list = document.createElement("div");
+    list.className = "comment-list";
+
+    comments.forEach(c => {
+      const item = document.createElement("div");
+      item.className = "comment";
+      item.textContent = c.text;
+      list.appendChild(item);
+    });
+
+    const form = document.createElement("form");
+    form.className = "comment-form";
+    form.innerHTML = `
+      <input type="text" placeholder="Write a comment…" required />
+      <button type="submit">Post</button>
+    `;
+    form.onsubmit = async e => {
+      e.preventDefault();
+      const input = form.querySelector("input");
+      const text = input.value.trim();
+      if (!text) return;
+      await api.post("/comments", { sermon_id: sermonId, text });
+      input.value = "";
+      toggleComments(sermonId, box);
+    };
+
+    box.append(list, form);
+    box.dataset.loaded = "true";
+    box.classList.add("open");
+  } catch (err) {
+    box.innerHTML = "<p style='color:red'>Failed to load comments.</p>";
   }
 }
