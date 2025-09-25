@@ -415,6 +415,9 @@ footer {
   margin-bottom: 5px;
 }
 
+/* ================================
+   SERMON ACTIONS (Likes, Comments, Share)
+==================================*/
 .sermon-actions {
   position: absolute;
   right: 10px;
@@ -429,19 +432,89 @@ footer {
   background: rgba(255,255,255,0.2);
   border: none;
   border-radius: 50%;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
+  font-size: 1.2rem;
+  color: #fff;
 }
 
 .sermon-actions button:hover {
   background: rgba(255,255,255,0.4);
+  transform: scale(1.1);
 }
 
 .sermon-actions span {
   color: #fff;
   font-size: 0.9rem;
+  margin-top: -10px;
 }
+
+/* ================================
+   COMMENTS BOX
+==================================*/
+.comments-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 50%;
+  background: rgba(0,0,0,0.85);
+  padding: 10px;
+  overflow-y: auto;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.comment-list {
+  margin-bottom: 10px;
+}
+
+.comment {
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+}
+
+.comment b {
+  color: #ffd369;
+}
+
+/* ================================
+   COMMENT FORM
+==================================*/
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.comment-form button {
+  background: #ffd369;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: bold;
+}
+
+.comment-form button:hover {
+  background: #ffb703;
+}
+
 
 
 
