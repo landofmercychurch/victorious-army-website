@@ -127,15 +127,10 @@ async function loadSermons() {
           });
         }
       });
-    });
+    }); // ✅ closes forEach
   } catch (err) {
     console.error("Failed to load sermons:", err);
   }
-}
-
-document.addEventListener("DOMContentLoaded", loadSermons);
-);
-  }
-}
+} // ✅ closes loadSermons
 
 document.addEventListener("DOMContentLoaded", loadSermons);
