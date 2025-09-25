@@ -16,9 +16,9 @@ async function loadSermons() {
         </div>
         <div class="sermon-actions">
           <button class="like-btn">❤️</button>
-          <span class="like-count">0</span>
+          <span class="like-count">0 Likes</span>
           <button class="comment-btn">💬</button>
-          <span class="comment-count">0</span>
+          <span class="comment-count">0 Comments</span>
           <button class="share-btn">🔗 Share</button>
         </div>
         <div class="comments-box" style="display:none"></div>
@@ -39,7 +39,7 @@ async function loadSermons() {
       async function refreshLikes() {
         try {
           const res = await api.get(`/likes/count/${sermon.id}`);
-          likeCountEl.textContent = res.count + " Likes";
+          likeCountEl.textContent = (res.count || 0) + " Likes";
         } catch {
           likeCountEl.textContent = "0 Likes";
         }
@@ -47,7 +47,7 @@ async function loadSermons() {
 
       likeBtn.addEventListener("click", async () => {
         try {
-          await api.post("/likes", { postId: sermon.id, type: "sermon" });
+          await api.post("/likes", { post_id: sermon.id, type: "sermon" });
           refreshLikes();
         } catch (err) {
           console.error("Failed to like:", err);
@@ -80,10 +80,10 @@ async function loadSermons() {
             if (!content) return;
             try {
               await api.post("/comments", {
-                name: "Guest",
-                content,
+                post_id: sermon.id,
                 target_type: "sermon",
-                target_id: sermon.id,
+                content,
+                name: "Guest",
               });
               input.value = "";
               refreshComments();
@@ -127,6 +127,12 @@ async function loadSermons() {
           });
         }
       });
+
+      // --- 🔄 Live Updates (polling) ---
+      setInterval(() => {
+        refreshLikes();
+        refreshComments();
+      }, 10000); // every 10s
     }); // ✅ closes forEach
   } catch (err) {
     console.error("Failed to load sermons:", err);
