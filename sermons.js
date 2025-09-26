@@ -45,9 +45,9 @@ async function loadSermons() {
         }
       }
 
-     likeBtn.addEventListener("click", async () => {
+    likeBtn.addEventListener("click", async () => {
   try {
-    await api.post("/likes", { post_id: sermon.id });
+    await api.post("/likes", { sermon_id: sermon.id });
     refreshLikes();
   } catch (err) {
     console.error("Failed to like:", err);
@@ -73,14 +73,14 @@ async function loadSermons() {
           `;
 
           const form = commentsBox.querySelector(".comment-form");
-          form.onsubmit = async e => {
+         form.onsubmit = async e => {
   e.preventDefault();
   const input = form.querySelector("input");
   const content = input.value.trim();
   if (!content) return;
   try {
     await api.post("/comments", {
-      post_id: sermon.id,
+      sermon_id: sermon.id,
       name: "Guest",
       content,
     });
