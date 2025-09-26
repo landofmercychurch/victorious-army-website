@@ -45,14 +45,14 @@ async function loadSermons() {
         }
       }
 
-      likeBtn.addEventListener("click", async () => {
-        try {
-          await api.post("/likes", { post_id: sermon.id, type: "sermon" });
-          refreshLikes();
-        } catch (err) {
-          console.error("Failed to like:", err);
-        }
-      });
+     likeBtn.addEventListener("click", async () => {
+  try {
+    await api.post("/likes", { post_id: sermon.id });
+    refreshLikes();
+  } catch (err) {
+    console.error("Failed to like:", err);
+  }
+});
 
       refreshLikes();
 
@@ -74,23 +74,22 @@ async function loadSermons() {
 
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async e => {
-            e.preventDefault();
-            const input = form.querySelector("input");
-            const content = input.value.trim();
-            if (!content) return;
-            try {
-              await api.post("/comments", {
-                post_id: sermon.id,
-                target_type: "sermon",
-                content,
-                name: "Guest",
-              });
-              input.value = "";
-              refreshComments();
-            } catch (err) {
-              console.error("Failed to post comment:", err);
-            }
-          };
+  e.preventDefault();
+  const input = form.querySelector("input");
+  const content = input.value.trim();
+  if (!content) return;
+  try {
+    await api.post("/comments", {
+      post_id: sermon.id,
+      name: "Guest",
+      content,
+    });
+    input.value = "";
+    refreshComments();
+  } catch (err) {
+    console.error("Failed to post comment:", err);
+  }
+};
         } catch (err) {
           console.error("Failed to load comments:", err);
           commentsBox.innerHTML = `<p style="color:red">Error loading comments</p>`;
