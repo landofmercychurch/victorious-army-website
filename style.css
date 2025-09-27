@@ -283,29 +283,7 @@ footer {
 
 
 
-/* --- Picture Feed --- */
-.picture-feed {
-  display: grid;
-  gap: 16px;
-}
 
-/* Desktop grid */
-@media (min-width: 768px) {
-  .picture-feed {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-/* Mobile TikTok-style */
-@media (max-width: 767px) {
-  .picture-feed {
-    display: block;
-  }
-  .picture-card {
-    height: 100vh; /* full-screen */
-    scroll-snap-align: start;
-  }
-}
 
 /* ================================
    Picture Feed Grid
@@ -315,6 +293,8 @@ footer {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
   padding: 8px;
+  position: relative; /* for mobile absolute cards */
+  overflow: hidden;
 }
 
 /* ================================
@@ -327,7 +307,8 @@ footer {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  position: relative; /* for mobile swipe positioning */
 }
 
 .picture-card:hover {
@@ -434,6 +415,23 @@ footer {
 }
 
 /* ================================
+   Progress Bar for Autoplay
+==================================*/
+.picture-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: #0077cc;
+  width: 0;
+  transition: width 3s linear; /* matches autoplay interval */
+}
+.picture-card.active::after {
+  width: 100%;
+}
+
+/* ================================
    Responsive Adjustments
 ==================================*/
 @media (max-width: 768px) {
@@ -441,6 +439,7 @@ footer {
     grid-template-columns: 1fr; /* single column on small screens */
     gap: 12px;
     padding: 6px;
+    height: auto; /* will be set dynamically by JS */
   }
   
   .picture-card {
@@ -470,8 +469,6 @@ footer {
     font-size: 12px;
   }
 }
-
-
 
 
 
