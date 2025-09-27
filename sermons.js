@@ -5,8 +5,7 @@ import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
 async function loadSermons() {
   try {
-    const sermonsRes = await api.get("/sermons");
-    const sermons = sermonsRes.data; // ✅ use .data
+    const sermons = await api.get("/sermons"); // ✅ no .data
     const container = document.getElementById("sermon-feed");
 
     container.innerHTML = sermons.map(sermon => `
@@ -41,7 +40,7 @@ async function loadSermons() {
       async function refreshLikes() {
         try {
           const res = await api.get(`/likes/count/${sermon.id}?type=sermon`);
-          likeCountEl.textContent = (res.data.count || 0) + " Likes"; // ✅ use res.data
+          likeCountEl.textContent = (res.count || 0) + " Likes"; // ✅ res.count directly
         } catch {
           likeCountEl.textContent = "0 Likes";
         }
@@ -61,7 +60,7 @@ async function loadSermons() {
       // --- Comments ---
       async function refreshComments() {
         try {
-          const comments = await fetchSermonComments(sermon.id); // ✅ reuse helper
+          const comments = await fetchSermonComments(sermon.id); // ✅ already array
           commentCountEl.textContent = comments.length + " Comments";
 
           commentsBox.innerHTML = `
@@ -81,7 +80,7 @@ async function loadSermons() {
             const nameInput = form.querySelector(".comment-name");
             const contentInput = form.querySelector(".comment-content");
 
-            const name = nameInput.value.trim() || "Guest"; // default to Guest
+            const name = nameInput.value.trim() || "Guest";
             const content = contentInput.value.trim();
 
             if (!content) return;
