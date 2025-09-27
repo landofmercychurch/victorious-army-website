@@ -1,5 +1,4 @@
 // js/sermons.js
-// js/sermons.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
@@ -70,7 +69,8 @@ async function loadSermons() {
               ${comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> ${c.content}</div>`).join("")}
             </div>
             <form class="comment-form">
-              <input type="text" placeholder="Write a comment…" required />
+              <input type="text" class="comment-name" placeholder="Your name (optional)" />
+              <input type="text" class="comment-content" placeholder="Write a comment…" required />
               <button type="submit">Post</button>
             </form>
           `;
@@ -78,16 +78,21 @@ async function loadSermons() {
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async e => {
             e.preventDefault();
-            const input = form.querySelector("input");
-            const content = input.value.trim();
+            const nameInput = form.querySelector(".comment-name");
+            const contentInput = form.querySelector(".comment-content");
+
+            const name = nameInput.value.trim() || "Guest"; // default to Guest
+            const content = contentInput.value.trim();
+
             if (!content) return;
             try {
               await postSermonComment({
                 sermon_id: sermon.id,
-                name: "Guest",
+                name,
                 content,
               });
-              input.value = "";
+              nameInput.value = "";
+              contentInput.value = "";
               refreshComments();
             } catch (err) {
               console.error("Failed to post comment:", err);
