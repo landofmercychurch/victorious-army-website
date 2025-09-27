@@ -366,6 +366,7 @@ footer {
 
 
 
+
 /* ================================
    SERMON FEED (TikTok style)
 ==================================*/
@@ -450,10 +451,6 @@ footer {
   margin-top: -10px;
 }
 
-
-
-
-
 /* ================================
    COMMENTS BOX
 ==================================*/
@@ -471,6 +468,7 @@ footer {
   font-size: 0.95rem;
   color: #f1f1f1;
   backdrop-filter: blur(5px);
+  z-index: 10;
 }
 
 /* Smooth scroll for better UX */
@@ -558,8 +556,31 @@ footer {
   padding: 6px 0;
 }
 
+/* ================================
+   CLOSE BUTTON FOR COMMENTS
+==================================*/
+.comments-box .close-btn {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
 
-
+.comments-box .close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
 
 
 
