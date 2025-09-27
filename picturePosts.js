@@ -17,10 +17,12 @@ export async function initPicturePosts(container) {
     }
 
     const cards = [];
+    let autoScrollPaused = false;
 
     posts.forEach(post => {
-      const card = el("div", "picture-card");
+      const card = el("div", "picture-card", { "data-id": post.id });
 
+      // Image
       if (post.image_url) {
         const img = el("img", "picture-img");
         img.src = post.image_url;
@@ -28,15 +30,17 @@ export async function initPicturePosts(container) {
         card.appendChild(img);
       }
 
+      // Caption
       if (post.caption) {
         const caption = el("p", "picture-caption");
         caption.textContent = post.caption;
         card.appendChild(caption);
       }
 
+      // Actions
       const actions = el("div", "picture-actions");
-
-      const likeBtn = el("button", "like-btn", "❤️");
+      const likeBtn = el("button", "like-btn");
+      likeBtn.textContent = "❤️";
       const likeCount = el("span", "like-count", "0 Likes");
 
       async function updateLikeCount() {
@@ -47,7 +51,6 @@ export async function initPicturePosts(container) {
           likeCount.textContent = "0 Likes";
         }
       }
-
       likeBtn.addEventListener("click", async () => {
         try {
           await api.post("/likes", { post_id: post.id });
@@ -58,12 +61,14 @@ export async function initPicturePosts(container) {
       });
       updateLikeCount();
 
-      const commentBtn = el("button", "comment-btn", "💬");
+      const commentBtn = el("button", "comment-btn");
+      commentBtn.textContent = "💬";
       const commentCount = el("span", "comment-count", "0 Comments");
 
       actions.append(likeBtn, likeCount, commentBtn, commentCount);
       card.appendChild(actions);
 
+      // Comments box
       const commentsBox = el("div", "comments-box");
       card.appendChild(commentsBox);
 
@@ -87,6 +92,7 @@ export async function initPicturePosts(container) {
             });
           }
 
+          // Comment form
           const form = el("form", "comment-form");
           form.innerHTML = `
             <input type="text" class="comment-name" placeholder="Your name (optional)" />
@@ -103,10 +109,12 @@ export async function initPicturePosts(container) {
             loadComments();
           };
 
-          const closeBtn = el("button", "close-btn", "×");
+          // Close button
+          const closeBtn = el("button", "close-btn");
+          closeBtn.textContent = "×";
           closeBtn.addEventListener("click", () => {
             commentsBox.classList.remove("open");
-            autoScrollPaused = false; // Resume auto-scroll
+            autoScrollPaused = false;
           });
 
           commentsBox.innerHTML = "";
@@ -114,8 +122,7 @@ export async function initPicturePosts(container) {
           commentsBox.classList.add("open");
 
           commentCount.textContent = `${comments.length || 0} Comments`;
-
-          autoScrollPaused = true; // Pause auto-scroll while comment box is open
+          autoScrollPaused = true;
         } catch (err) {
           commentsBox.innerHTML = "<p style='color:red'>Failed to load comments.</p>";
         }
@@ -124,35 +131,35 @@ export async function initPicturePosts(container) {
       commentBtn.addEventListener("click", () => {
         if (commentsBox.classList.contains("open")) {
           commentsBox.classList.remove("open");
-          autoScrollPaused = false; // Resume auto-scroll
-        } else loadComments();
+          autoScrollPaused = false;
+        } else {
+          loadComments();
+        }
       });
 
-      // --- Pause auto-scroll on hover ---
+      // Pause auto-scroll on hover
       card.addEventListener("mouseenter", () => (autoScrollPaused = true));
       card.addEventListener("mouseleave", () => (autoScrollPaused = false));
     });
 
     // --- TikTok-style vertical scrolling ---
     let currentIndex = 0;
-    let autoScrollPaused = false;
 
     function showCard(index) {
       cards.forEach((card, i) => {
         card.style.display = i === index ? "block" : "none";
       });
     }
-
     showCard(currentIndex);
 
     function nextCard() {
-      if (!autoScrollPaused) {
+      if (!autoScrollPaused && cards.length) {
         currentIndex = (currentIndex + 1) % cards.length;
         showCard(currentIndex);
       }
     }
 
-    setInterval(nextCard, 4000); // scroll every 4 seconds
+    setInterval(nextCard, 4000);
 
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load posts.</p>`;
@@ -161,6 +168,6 @@ export async function initPicturePosts(container) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("picture-feed");
+  const container = document.getElementById("picturePostsContainer");
   initPicturePosts(container);
 });
