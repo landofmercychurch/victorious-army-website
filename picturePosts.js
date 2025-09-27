@@ -25,7 +25,7 @@ export async function initPicturePosts(container) {
     const isMobile = window.innerWidth < 768;
     let startY = 0;
 
-    // --- Show card function ---
+    // --- Show card ---
     function showCard(index) {
       cards.forEach((card, i) => {
         if (!isMobile) {
@@ -37,9 +37,7 @@ export async function initPicturePosts(container) {
           card.classList.toggle("active", i === index);
         }
       });
-      if (isMobile && cards[index]) {
-        container.style.height = `${cards[index].scrollHeight}px`;
-      }
+      if (isMobile && cards[index]) container.style.height = `${cards[index].scrollHeight}px`;
     }
 
     function startAutoplay() {
@@ -95,20 +93,21 @@ export async function initPicturePosts(container) {
         card.appendChild(descEl);
       }
 
-      // Actions: likes & comments
+      // Actions: likes, comments & share
       const actions = el("div", "picture-actions");
       const likeBtn = el("button", "like-btn", "❤️");
       const likeCount = el("span", "like-count", "0 Likes");
       const commentBtn = el("button", "comment-btn", "💬");
       const commentCount = el("span", "comment-count", "0 Comments");
-      actions.append(likeBtn, likeCount, commentBtn, commentCount);
+      const shareBtn = el("button", "share-btn", "🔗 Share");
+      actions.append(likeBtn, likeCount, commentBtn, commentCount, shareBtn);
       card.appendChild(actions);
 
       // Comments box
       const commentsBox = el("div", "comments-box");
       card.appendChild(commentsBox);
 
-      // Append card to container
+      // Append card
       container.appendChild(card);
       cards.push(card);
 
@@ -174,9 +173,25 @@ export async function initPicturePosts(container) {
         else startAutoplay();
         if (isOpen) loadComments();
       });
+
+      // --- Share button ---
+      shareBtn.addEventListener("click", () => {
+        const postUrl = `${window.location.origin}/posts/${post.id}`;
+        if (navigator.share) {
+          navigator.share({
+            title: post.title || "Check out this post",
+            text: post.description?.slice(0, 100) || "",
+            url: postUrl,
+          }).catch(console.error);
+        } else {
+          navigator.clipboard.writeText(postUrl).then(() => {
+            alert("Post link copied to clipboard!");
+          });
+        }
+      });
     }
 
-    // --- Mobile swipe handling ---
+    // --- Mobile swipe ---
     if (isMobile) {
       container.style.overflow = "hidden";
       container.style.position = "relative";
