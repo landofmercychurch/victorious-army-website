@@ -1,20 +1,39 @@
 // utils.js
+
+/**
+ * Create an element with optional class and attributes/text.
+ * @param {string} tag - The HTML tag name.
+ * @param {string} className - Optional class name.
+ * @param {object|string} attrs - Attributes object or text content.
+ * @returns {HTMLElement}
+ */
 export function el(tag, className = "", attrs = {}) {
   const e = document.createElement(tag);
+
+  // Set class
   if (className) e.className = className;
-  for (const [k,v] of Object.entries(attrs || {})) {
-    if (k === "text") e.textContent = v;
-    else e.setAttribute(k, v);
+
+  // Handle attrs or text
+  if (typeof attrs === "string") {
+    e.textContent = attrs;
+  } else if (typeof attrs === "object" && attrs !== null) {
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "text") e.textContent = v;
+      else e.setAttribute(k, v);
+    }
   }
+
   return e;
 }
 
+/**
+ * Copy text to clipboard (with fallback)
+ */
 export async function copyToClipboard(text) {
   if (navigator.clipboard) {
     await navigator.clipboard.writeText(text);
     return true;
   }
-  // fallback
   const ta = document.createElement("textarea");
   ta.value = text;
   document.body.appendChild(ta);
@@ -23,12 +42,18 @@ export async function copyToClipboard(text) {
   return true;
 }
 
+/**
+ * Open WhatsApp share
+ */
 export function openWhatsAppShare(text, url) {
   const message = encodeURIComponent(`${text}\n${url}`);
   const wa = `https://wa.me/?text=${message}`;
   window.open(wa, "_blank");
 }
 
+/**
+ * Universal share using Web Share API or fallback
+ */
 export async function universalShare(fallbackText, url) {
   if (navigator.share) {
     try {
@@ -49,7 +74,6 @@ export function showNotification(message, type = "info") {
   el.className = `notification ${type}`;
   el.textContent = message;
 
-  // Basic inline styles (you can move to CSS later)
   Object.assign(el.style, {
     position: "fixed",
     bottom: "20px",
@@ -70,9 +94,7 @@ export function showNotification(message, type = "info") {
   document.body.appendChild(el);
 
   // Fade in
-  requestAnimationFrame(() => {
-    el.style.opacity = "1";
-  });
+  requestAnimationFrame(() => el.style.opacity = "1");
 
   // Auto remove after 3s
   setTimeout(() => {
