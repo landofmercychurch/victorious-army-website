@@ -1,5 +1,7 @@
 // commentsPublic.js
+
 import { api } from "./api.js";
+import { showNotification } from "./utils.js";
 
 /**
  * Fetch comments for a sermon
@@ -7,27 +9,10 @@ import { api } from "./api.js";
 export async function fetchSermonComments(sermon_id) {
   try {
     const res = await api.get(`/comments/${sermon_id}?type=sermon`);
-    return res.data;
+    return Array.isArray(res) ? res : []; // ✅ always return array
   } catch (err) {
     showNotification?.("Failed to load sermon comments", "error");
-    throw err;
-  }
-}
-
-/**
- * Post a comment for a sermon
- */
-export async function postSermonComment({ sermon_id, name, content }) {
-  try {
-    const res = await api.post("/comments/sermon", {
-      sermon_id,
-      name,
-      content,
-    });
-    return res.data;
-  } catch (err) {
-    showNotification?.("Failed to post sermon comment", "error");
-    throw err;
+    return []; // ✅ fallback empty array
   }
 }
 
@@ -37,26 +22,26 @@ export async function postSermonComment({ sermon_id, name, content }) {
 export async function fetchPictureComments(post_id) {
   try {
     const res = await api.get(`/comments/${post_id}?type=post`);
-    return res.data;
+    return Array.isArray(res) ? res : [];
   } catch (err) {
     showNotification?.("Failed to load post comments", "error");
-    throw err;
+    return [];
   }
 }
 
 /**
- * Post a comment for a picture post
+ * Post a comment on a sermon
  */
-export async function postPictureComment({ post_id, name, content }) {
+export async function postSermonComment({ sermon_id, name, content }) {
   try {
-    const res = await api.post("/comments/post", {
-      post_id,
+    const res = await api.post("/comments", {
+      sermon_id,
       name,
       content,
     });
-    return res.data;
+    return res;
   } catch (err) {
-    showNotification?.("Failed to post picture comment", "error");
+    showNotification?.("Failed to post comment", "error");
     throw err;
   }
 }
