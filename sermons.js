@@ -1,13 +1,39 @@
 // js/sermons.js
-// js/sermons.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
+/**
+ * Dynamically set Open Graph and Twitter meta tags for sharing
+ */
+function setOpenGraphMeta({ title, description, image, url }) {
+  const head = document.head;
+
+  function createOrUpdate(property, content, isName = false) {
+    let selector = isName ? `meta[name="${property}"]` : `meta[property="${property}"]`;
+    let meta = head.querySelector(selector);
+    if (!meta) {
+      meta = document.createElement("meta");
+      if (isName) meta.setAttribute("name", property);
+      else meta.setAttribute("property", property);
+      head.appendChild(meta);
+    }
+    meta.setAttribute("content", content);
+  }
+
+  createOrUpdate("og:title", title);
+  createOrUpdate("og:description", description);
+  createOrUpdate("og:image", image);
+  createOrUpdate("og:url", url);
+  createOrUpdate("twitter:card", "summary_large_image", true);
+  createOrUpdate("twitter:title", title, true);
+  createOrUpdate("twitter:description", description, true);
+  createOrUpdate("twitter:image", image, true);
+}
+
 async function loadSermons() {
   try {
     let sermons = await api.get("/sermons");
-    // Sort latest first
     sermons = sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const container = document.getElementById("sermon-feed");
 
@@ -28,6 +54,25 @@ async function loadSermons() {
         <div class="comments-box" style="display:none"></div>
       </div>
     `).join("");
+
+    // Update OG tags if direct link has ?sermon=ID
+    function updateOGFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const sermonId = params.get("sermon");
+      if (!sermonId) return;
+
+      const sermon = sermons.find(s => s.id === sermonId);
+      if (!sermon) return;
+
+      setOpenGraphMeta({
+        title: sermon.title,
+        description: sermon.description || "Watch our latest sermon!",
+        image: sermon.thumbnail_url || "",
+        url: `${window.location.origin}/?sermon=${sermon.id}`
+      });
+    }
+
+    updateOGFromURL();
 
     sermons.forEach(sermon => {
       const card = container.querySelector(`.sermon-card[data-id="${sermon.id}"]`);
@@ -119,7 +164,7 @@ async function loadSermons() {
 
       refreshComments();
 
-      // --- Share ---
+      // --- Share with OG tags ---
       shareBtn.addEventListener("click", async () => {
         const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
         const shareData = {
@@ -127,6 +172,13 @@ async function loadSermons() {
           text: sermon.description || "Watch our latest sermon!",
           url: shareUrl,
         };
+
+        setOpenGraphMeta({
+          title: sermon.title,
+          description: sermon.description || "Watch our latest sermon!",
+          image: sermon.thumbnail_url || "",
+          url: shareUrl
+        });
 
         if (navigator.share) {
           try { await navigator.share(shareData); } 
