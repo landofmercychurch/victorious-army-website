@@ -1,7 +1,8 @@
 // js/picturePosts.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
-import { refreshPostLikes, handlePostLike } from "./likes.js"; // import reusable likes functions
+import { refreshPostLikes, handlePostLike } from "./likes.js";
+import { fetchPictureComments, postPictureComment } from "./commentsPublic.js";
 
 export async function initPicturePosts(container) {
   if (!container) return;
@@ -24,6 +25,7 @@ export async function initPicturePosts(container) {
     const isMobile = window.innerWidth < 768;
     let startY = 0;
 
+    // --- Show card function ---
     function showCard(index) {
       cards.forEach((card, i) => {
         if (!isMobile) {
@@ -52,6 +54,7 @@ export async function initPicturePosts(container) {
       if (autoplayInterval) clearInterval(autoplayInterval);
     }
 
+    // --- Build cards ---
     for (const post of posts) {
       const card = el("div", "picture-card");
 
@@ -76,6 +79,7 @@ export async function initPicturePosts(container) {
       if (post.description) {
         const descEl = el("p", "picture-description");
         const maxLength = 200;
+
         const setDescription = (text) => {
           if (text.length > maxLength) {
             descEl.textContent = text.slice(0, maxLength) + "... ";
@@ -88,11 +92,12 @@ export async function initPicturePosts(container) {
             descEl.textContent = text;
           }
         };
+
         setDescription(post.description);
         card.appendChild(descEl);
       }
 
-      // Actions
+      // Actions: likes & comments
       const actions = el("div", "picture-actions");
       const likeBtn = el("button", "like-btn", "❤️");
       const likeCount = el("span", "like-count", "0 Likes");
@@ -108,15 +113,15 @@ export async function initPicturePosts(container) {
       container.appendChild(card);
       cards.push(card);
 
-      // --- Likes using likes.js ---
-      refreshPostLikes(post.id, likeCount); // initialize count
+      // --- Likes ---
+      refreshPostLikes(post.id, likeCount);
       likeBtn.addEventListener("click", () => handlePostLike(post.id, likeCount));
 
       // --- Comments ---
       async function loadComments() {
         commentsBox.innerHTML = "<p>Loading comments…</p>";
         try {
-          const comments = await api.get(`/comments/post/${post.id}`);
+          const comments = await fetchPictureComments(post.id); // ✅ use commentsPublic.js
           commentsBox.innerHTML = "";
           const list = el("div", "comment-list");
 
@@ -140,9 +145,10 @@ export async function initPicturePosts(container) {
             const name = form.querySelector(".comment-name").value.trim() || "Guest";
             const content = form.querySelector(".comment-content").value.trim();
             if (!content) return;
-            await api.post("/comments", { post_id: post.id, name, content });
+
+            await postPictureComment({ post_id: post.id, name, content }); // ✅ post comment
             form.querySelector(".comment-content").value = "";
-            loadComments();
+            loadComments(); // reload comments
           };
 
           commentsBox.append(list, form);
@@ -161,7 +167,7 @@ export async function initPicturePosts(container) {
       });
     }
 
-    // --- Mobile swipe ---
+    // --- Mobile swipe handling ---
     if (isMobile) {
       container.style.overflow = "hidden";
       container.style.position = "relative";
@@ -212,3 +218,4 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("picture-feed");
   initPicturePosts(container);
 });
+
