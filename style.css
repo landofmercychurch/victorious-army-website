@@ -526,6 +526,16 @@ footer {
     max-height: 150px;
   }
 }
+.share-btn {
+  background: none;
+  border: none;
+  color: #28a745;
+  font-size: 14px;
+  cursor: pointer;
+}
+.share-btn:hover {
+  text-decoration: underline;
+}
 
 
 
