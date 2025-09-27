@@ -4,6 +4,37 @@ import { el } from "./utils.js";
 import { refreshPostLikes, handlePostLike } from "./likes.js";
 import { fetchPictureComments, postPictureComment } from "./commentsPublic.js";
 
+/**
+ * Dynamically set Open Graph and Twitter meta tags (for sharing previews)
+ * Note: Only WhatsApp, Messenger, and social scrapers read OG meta from server HTML,
+ * so this is mostly for in-page updates if needed.
+ */
+function setOpenGraphMeta({ title, description, image, url }) {
+  const head = document.head;
+
+  function createOrUpdate(property, content, isName = false) {
+    const selector = isName ? `meta[name="${property}"]` : `meta[property="${property}"]`;
+    let meta = head.querySelector(selector);
+    if (!meta) {
+      meta = document.createElement("meta");
+      if (isName) meta.setAttribute("name", property);
+      else meta.setAttribute("property", property);
+      head.appendChild(meta);
+    }
+    meta.setAttribute("content", content);
+  }
+
+  createOrUpdate("og:title", title);
+  createOrUpdate("og:description", description);
+  createOrUpdate("og:image", image);
+  createOrUpdate("og:url", url);
+  createOrUpdate("og:type", "article");
+  createOrUpdate("twitter:card", "summary_large_image", true);
+  createOrUpdate("twitter:title", title, true);
+  createOrUpdate("twitter:description", description, true);
+  createOrUpdate("twitter:image", image, true);
+}
+
 export async function initPicturePosts(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading posts…</p>";
@@ -11,7 +42,6 @@ export async function initPicturePosts(container) {
   try {
     let posts = await api.get("/posts");
     posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
     container.innerHTML = "";
     if (!posts.length) {
       container.innerHTML = "<p>No posts yet.</p>";
@@ -19,13 +49,28 @@ export async function initPicturePosts(container) {
     }
 
     container.classList.add("picture-feed");
+
+    // --- Check URL param ?post=ID for direct link
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get("post");
+    if (postId) {
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        setOpenGraphMeta({
+          title: post.title || "Check out this post",
+          description: post.description?.slice(0, 100) || "See this image!",
+          image: post.image_url || "",
+          url: `${window.location.origin}/posts/${post.id}`
+        });
+      }
+    }
+
     const cards = [];
     let autoplayInterval;
     let currentIndex = 0;
     const isMobile = window.innerWidth < 768;
     let startY = 0;
 
-    // --- Show card ---
     function showCard(index) {
       cards.forEach((card, i) => {
         if (!isMobile) {
@@ -56,14 +101,12 @@ export async function initPicturePosts(container) {
     for (const post of posts) {
       const card = el("div", "picture-card");
 
-      // Title
       if (post.title) {
         const titleEl = el("h3", "picture-title");
         titleEl.textContent = post.title;
         card.appendChild(titleEl);
       }
 
-      // Image
       if (post.image_url) {
         const img = el("img", "picture-img", {
           src: post.image_url,
@@ -73,7 +116,6 @@ export async function initPicturePosts(container) {
         card.appendChild(img);
       }
 
-      // Description with "Read more"
       if (post.description) {
         const descEl = el("p", "picture-description");
         const maxLength = 200;
@@ -81,19 +123,15 @@ export async function initPicturePosts(container) {
           if (text.length > maxLength) {
             descEl.textContent = text.slice(0, maxLength) + "... ";
             const readMoreBtn = el("button", "load-more-btn", "Read more");
-            readMoreBtn.addEventListener("click", () => {
-              descEl.textContent = text;
-            });
+            readMoreBtn.addEventListener("click", () => { descEl.textContent = text; });
             descEl.appendChild(readMoreBtn);
-          } else {
-            descEl.textContent = text;
-          }
+          } else descEl.textContent = text;
         };
         setDescription(post.description);
         card.appendChild(descEl);
       }
 
-      // Actions: likes, comments & share
+      // --- Actions ---
       const actions = el("div", "picture-actions");
       const likeBtn = el("button", "like-btn", "❤️");
       const likeCount = el("span", "like-count", "0 Likes");
@@ -103,26 +141,22 @@ export async function initPicturePosts(container) {
       actions.append(likeBtn, likeCount, commentBtn, commentCount, shareBtn);
       card.appendChild(actions);
 
-      // Comments box
       const commentsBox = el("div", "comments-box");
       card.appendChild(commentsBox);
 
-      // Append card
       container.appendChild(card);
       cards.push(card);
 
-      // --- Likes ---
+      // --- Likes & Comments ---
       refreshPostLikes(post.id, likeCount);
       likeBtn.addEventListener("click", () => handlePostLike(post.id, likeCount));
 
-      // --- Comments ---
       async function loadComments() {
         commentsBox.innerHTML = "<p>Loading comments…</p>";
         try {
           const comments = await fetchPictureComments(post.id);
           commentsBox.innerHTML = "";
 
-          // Close button
           const closeBtn = el("button", "close-comments", "Close");
           closeBtn.addEventListener("click", () => {
             commentsBox.classList.remove("open");
@@ -130,25 +164,23 @@ export async function initPicturePosts(container) {
           });
           commentsBox.appendChild(closeBtn);
 
-          // Comment list
           const list = el("div", "comment-list");
           if (!comments.length) list.innerHTML = `<p class="no-comments">No comments yet.</p>`;
           else {
-            comments.forEach((c) => {
+            comments.forEach(c => {
               const commentEl = el("div", "comment");
               commentEl.innerHTML = `<b>${c.name || "Guest"}:</b> ${c.content}`;
               list.appendChild(commentEl);
             });
           }
 
-          // Comment form
           const form = el("form", "comment-form");
           form.innerHTML = `
             <input type="text" class="comment-name" placeholder="Your name (optional)" />
             <input type="text" class="comment-content" placeholder="Write a comment…" required />
             <button type="submit">Post</button>
           `;
-          form.onsubmit = async (e) => {
+          form.onsubmit = async e => {
             e.preventDefault();
             const name = form.querySelector(".comment-name").value.trim() || "Guest";
             const content = form.querySelector(".comment-content").value.trim();
@@ -169,14 +201,22 @@ export async function initPicturePosts(container) {
 
       commentBtn.addEventListener("click", () => {
         const isOpen = commentsBox.classList.toggle("open");
-        if (isOpen) stopAutoplay();
-        else startAutoplay();
+        if (isOpen) stopAutoplay(); else startAutoplay();
         if (isOpen) loadComments();
       });
 
-      // --- Share button ---
+      // --- Share ---
       shareBtn.addEventListener("click", () => {
         const postUrl = `${window.location.origin}/posts/${post.id}`;
+
+        // OG meta for in-page updates (WhatsApp uses server-rendered HTML)
+        setOpenGraphMeta({
+          title: post.title || "Check out this post",
+          description: post.description?.slice(0, 100) || "See this image!",
+          image: post.image_url || "",
+          url: postUrl
+        });
+
         if (navigator.share) {
           navigator.share({
             title: post.title || "Check out this post",
@@ -191,7 +231,7 @@ export async function initPicturePosts(container) {
       });
     }
 
-    // --- Mobile swipe ---
+    // --- Mobile swipe support ---
     if (isMobile) {
       container.style.overflow = "hidden";
       container.style.position = "relative";
@@ -206,19 +246,17 @@ export async function initPicturePosts(container) {
         card.style.transform = i === currentIndex ? "translateY(0)" : `translateY(100%)`;
       });
 
-      container.addEventListener("touchstart", (e) => {
+      container.addEventListener("touchstart", e => {
         startY = e.touches[0].clientY;
         stopAutoplay();
       });
 
-      container.addEventListener("touchend", (e) => {
-        const endY = e.changedTouches[0].clientY;
-        const diff = startY - endY;
+      container.addEventListener("touchend", e => {
+        const diff = startY - e.changedTouches[0].clientY;
         if (Math.abs(diff) > 50) {
-          currentIndex =
-            diff > 0
-              ? (currentIndex + 1) % cards.length
-              : (currentIndex - 1 + cards.length) % cards.length;
+          currentIndex = diff > 0
+            ? (currentIndex + 1) % cards.length
+            : (currentIndex - 1 + cards.length) % cards.length;
           showCard(currentIndex);
         }
         startAutoplay();
@@ -226,12 +264,13 @@ export async function initPicturePosts(container) {
 
       startAutoplay();
     } else {
-      cards.forEach((card) => {
+      cards.forEach(card => {
         card.style.display = "block";
         card.style.position = "relative";
         card.style.width = "100%";
       });
     }
+
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load posts.</p>`;
     console.error(err);
