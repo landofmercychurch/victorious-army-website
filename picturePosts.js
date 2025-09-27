@@ -79,7 +79,6 @@ export async function initPicturePosts(container) {
       if (post.description) {
         const descEl = el("p", "picture-description");
         const maxLength = 200;
-
         const setDescription = (text) => {
           if (text.length > maxLength) {
             descEl.textContent = text.slice(0, maxLength) + "... ";
@@ -92,7 +91,6 @@ export async function initPicturePosts(container) {
             descEl.textContent = text;
           }
         };
-
         setDescription(post.description);
         card.appendChild(descEl);
       }
@@ -110,6 +108,7 @@ export async function initPicturePosts(container) {
       const commentsBox = el("div", "comments-box");
       card.appendChild(commentsBox);
 
+      // Append card to container
       container.appendChild(card);
       cards.push(card);
 
@@ -121,10 +120,19 @@ export async function initPicturePosts(container) {
       async function loadComments() {
         commentsBox.innerHTML = "<p>Loading comments…</p>";
         try {
-          const comments = await fetchPictureComments(post.id); // ✅ use commentsPublic.js
+          const comments = await fetchPictureComments(post.id);
           commentsBox.innerHTML = "";
-          const list = el("div", "comment-list");
 
+          // Close button
+          const closeBtn = el("button", "close-comments", "Close");
+          closeBtn.addEventListener("click", () => {
+            commentsBox.classList.remove("open");
+            startAutoplay();
+          });
+          commentsBox.appendChild(closeBtn);
+
+          // Comment list
+          const list = el("div", "comment-list");
           if (!comments.length) list.innerHTML = `<p class="no-comments">No comments yet.</p>`;
           else {
             comments.forEach((c) => {
@@ -134,6 +142,7 @@ export async function initPicturePosts(container) {
             });
           }
 
+          // Comment form
           const form = el("form", "comment-form");
           form.innerHTML = `
             <input type="text" class="comment-name" placeholder="Your name (optional)" />
@@ -146,9 +155,9 @@ export async function initPicturePosts(container) {
             const content = form.querySelector(".comment-content").value.trim();
             if (!content) return;
 
-            await postPictureComment({ post_id: post.id, name, content }); // ✅ post comment
+            await postPictureComment({ post_id: post.id, name, content });
             form.querySelector(".comment-content").value = "";
-            loadComments(); // reload comments
+            loadComments();
           };
 
           commentsBox.append(list, form);
@@ -218,4 +227,3 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("picture-feed");
   initPicturePosts(container);
 });
-
