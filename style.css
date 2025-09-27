@@ -290,16 +290,13 @@ footer {
 ==================================*/
 .picture-feed {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* slightly wider for better layout */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* wider cards for readability */
   gap: 16px;
   padding: 8px;
-  position: relative; /* for mobile absolute cards */
+  position: relative; /* for mobile swipe absolute cards */
   overflow: hidden;
+  transition: height 0.3s ease; /* smooth height change on mobile */
 }
-
-
-
-
 
 /* ================================
    Picture Card
@@ -312,7 +309,7 @@ footer {
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  position: relative; /* for mobile swipe positioning */
+  position: relative; /* for mobile swipe */
 }
 
 .picture-card:hover {
@@ -326,9 +323,9 @@ footer {
   width: 100%;
   height: auto;
   display: block;
-  object-fit: contain; /* show full image content */
+  object-fit: contain; /* shows full image content */
   border-bottom: 1px solid #eee;
-  max-height: 500px; /* taller images for full visibility */
+  max-height: none; /* allow full height for tall images */
 }
 
 /* ================================
@@ -419,7 +416,7 @@ footer {
 }
 
 /* ================================
-   Progress Bar for Autoplay (Mobile)
+   Autoplay Progress Bar (Mobile)
 ==================================*/
 .picture-card::after {
   content: '';
@@ -429,7 +426,7 @@ footer {
   height: 4px;
   background: #0077cc;
   width: 0;
-  transition: width 3s linear; /* matches autoplay interval */
+  transition: width 4s linear; /* matches autoplay interval */
 }
 .picture-card.active::after {
   width: 100%;
@@ -440,39 +437,40 @@ footer {
 ==================================*/
 @media (max-width: 768px) {
   .picture-feed {
-    grid-template-columns: 1fr; /* single column on small screens */
+    grid-template-columns: 1fr;
     gap: 12px;
     padding: 6px;
-    height: auto; /* will be set dynamically by JS */
+    height: auto; /* dynamically set by JS */
   }
-  
+
   .picture-card {
     max-width: 100%;
   }
 
   .picture-img {
-    max-height: 400px; /* a bit taller for mobile */
+    max-height: none; /* show full image height */
   }
-  
+
   .picture-caption {
     font-size: 13px;
   }
-  
+
   .like-btn,
   .comment-btn {
     font-size: 13px;
   }
-  
+
   .like-count,
   .comment-count {
     font-size: 12px;
   }
-  
+
   .comment-form input,
   .comment-form button {
     font-size: 12px;
   }
 }
+
 
 
 
