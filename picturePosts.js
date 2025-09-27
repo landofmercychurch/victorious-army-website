@@ -34,9 +34,14 @@ export async function initPicturePosts(container) {
         } else {
           const offset = ((i - index + cards.length) % cards.length) * 100;
           card.style.transform = `translateY(${offset}%)`;
-          card.classList.toggle("active", i === index); // for progress bar
+          card.classList.toggle("active", i === index);
         }
       });
+
+      // Adjust mobile container height dynamically
+      if (isMobile && cards[index]) {
+        container.style.height = `${cards[index].scrollHeight}px`;
+      }
     }
 
     // --- Autoplay functions ---
@@ -45,7 +50,7 @@ export async function initPicturePosts(container) {
       autoplayInterval = setInterval(() => {
         currentIndex = (currentIndex + 1) % cards.length;
         showCard(currentIndex);
-      }, 4000);
+      }, 5000); // slower interval so users can read
     }
 
     function stopAutoplay() {
@@ -95,7 +100,6 @@ export async function initPicturePosts(container) {
           likeCount.textContent = "0 Likes";
         }
       }
-
       likeBtn.addEventListener("click", async () => {
         await api.post("/likes", { post_id: post.id });
         updateLikeCount();
@@ -143,7 +147,7 @@ export async function initPicturePosts(container) {
 
       commentBtn.addEventListener("click", () => {
         const isOpen = commentsBox.classList.toggle("open");
-        if (isOpen) stopAutoplay(); // pause autoplay while reading comments
+        if (isOpen) stopAutoplay();
         else startAutoplay();
         if (isOpen) loadComments();
       });
@@ -153,18 +157,16 @@ export async function initPicturePosts(container) {
     if (isMobile) {
       container.style.overflow = "hidden";
       container.style.position = "relative";
-      container.style.height = `${cards[0].offsetHeight}px`;
+      showCard(currentIndex);
 
       cards.forEach((card, i) => {
         card.style.position = "absolute";
         card.style.top = "0";
         card.style.left = "0";
         card.style.width = "100%";
-        card.style.transition = "transform 0.3s ease-in-out";
+        card.style.transition = "transform 0.3s ease, height 0.3s ease";
         card.style.transform = i === currentIndex ? "translateY(0)" : "translateY(100%)";
       });
-
-      showCard(currentIndex);
 
       container.addEventListener("touchstart", e => {
         startY = e.touches[0].clientY;
@@ -185,7 +187,7 @@ export async function initPicturePosts(container) {
 
       startAutoplay();
     } else {
-      // Desktop: display all cards in grid with readable sizes
+      // Desktop: show all cards fully
       cards.forEach(card => {
         card.style.display = "block";
         card.style.position = "relative";
