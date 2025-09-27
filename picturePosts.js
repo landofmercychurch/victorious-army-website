@@ -1,13 +1,13 @@
 // js/picturePosts.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
+import { refreshPostLikes, handlePostLike } from "./likes.js"; // import reusable likes functions
 
 export async function initPicturePosts(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading posts…</p>";
 
   try {
-    // Fetch public posts
     let posts = await api.get("/posts");
     posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -24,7 +24,6 @@ export async function initPicturePosts(container) {
     const isMobile = window.innerWidth < 768;
     let startY = 0;
 
-    // --- Show card ---
     function showCard(index) {
       cards.forEach((card, i) => {
         if (!isMobile) {
@@ -36,7 +35,6 @@ export async function initPicturePosts(container) {
           card.classList.toggle("active", i === index);
         }
       });
-
       if (isMobile && cards[index]) {
         container.style.height = `${cards[index].scrollHeight}px`;
       }
@@ -54,7 +52,6 @@ export async function initPicturePosts(container) {
       if (autoplayInterval) clearInterval(autoplayInterval);
     }
 
-    // --- Build cards ---
     for (const post of posts) {
       const card = el("div", "picture-card");
 
@@ -69,7 +66,7 @@ export async function initPicturePosts(container) {
       if (post.image_url) {
         const img = el("img", "picture-img", {
           src: post.image_url,
-          alt: post.title || "Image description"
+          alt: post.title || "Image description",
         });
         img.loading = "lazy";
         card.appendChild(img);
@@ -79,20 +76,18 @@ export async function initPicturePosts(container) {
       if (post.description) {
         const descEl = el("p", "picture-description");
         const maxLength = 200;
-
-        function setDescription(fullText) {
-          if (fullText.length > maxLength) {
-            descEl.textContent = fullText.slice(0, maxLength) + "... ";
+        const setDescription = (text) => {
+          if (text.length > maxLength) {
+            descEl.textContent = text.slice(0, maxLength) + "... ";
             const readMoreBtn = el("button", "load-more-btn", "Read more");
             readMoreBtn.addEventListener("click", () => {
-              descEl.textContent = fullText;
+              descEl.textContent = text;
             });
             descEl.appendChild(readMoreBtn);
           } else {
-            descEl.textContent = fullText;
+            descEl.textContent = text;
           }
-        }
-
+        };
         setDescription(post.description);
         card.appendChild(descEl);
       }
@@ -113,25 +108,9 @@ export async function initPicturePosts(container) {
       container.appendChild(card);
       cards.push(card);
 
-      // --- Likes ---
-      async function updateLikeCount() {
-        try {
-          const res = await api.get(`/likes/count/${post.id}?type=post`);
-          likeCount.textContent = `${res.count || 0} Likes`;
-        } catch {
-          likeCount.textContent = "0 Likes";
-        }
-      }
-
-      likeBtn.addEventListener("click", async () => {
-        try {
-          await api.post("/likes", { post_id: post.id });
-          updateLikeCount();
-        } catch (err) {
-          console.error("Like failed:", err);
-        }
-      });
-      updateLikeCount();
+      // --- Likes using likes.js ---
+      refreshPostLikes(post.id, likeCount); // initialize count
+      likeBtn.addEventListener("click", () => handlePostLike(post.id, likeCount));
 
       // --- Comments ---
       async function loadComments() {
@@ -143,7 +122,7 @@ export async function initPicturePosts(container) {
 
           if (!comments.length) list.innerHTML = `<p class="no-comments">No comments yet.</p>`;
           else {
-            comments.forEach(c => {
+            comments.forEach((c) => {
               const commentEl = el("div", "comment");
               commentEl.innerHTML = `<b>${c.name || "Guest"}:</b> ${c.content}`;
               list.appendChild(commentEl);
@@ -156,18 +135,14 @@ export async function initPicturePosts(container) {
             <input type="text" class="comment-content" placeholder="Write a comment…" required />
             <button type="submit">Post</button>
           `;
-          form.onsubmit = async e => {
+          form.onsubmit = async (e) => {
             e.preventDefault();
             const name = form.querySelector(".comment-name").value.trim() || "Guest";
             const content = form.querySelector(".comment-content").value.trim();
             if (!content) return;
-            try {
-              await api.post("/comments", { post_id: post.id, name, content });
-              form.querySelector(".comment-content").value = "";
-              loadComments();
-            } catch (err) {
-              console.error("Post comment failed:", err);
-            }
+            await api.post("/comments", { post_id: post.id, name, content });
+            form.querySelector(".comment-content").value = "";
+            loadComments();
           };
 
           commentsBox.append(list, form);
@@ -201,18 +176,19 @@ export async function initPicturePosts(container) {
         card.style.transform = i === currentIndex ? "translateY(0)" : `translateY(100%)`;
       });
 
-      container.addEventListener("touchstart", e => {
+      container.addEventListener("touchstart", (e) => {
         startY = e.touches[0].clientY;
         stopAutoplay();
       });
 
-      container.addEventListener("touchend", e => {
+      container.addEventListener("touchend", (e) => {
         const endY = e.changedTouches[0].clientY;
         const diff = startY - endY;
         if (Math.abs(diff) > 50) {
-          currentIndex = diff > 0
-            ? (currentIndex + 1) % cards.length
-            : (currentIndex - 1 + cards.length) % cards.length;
+          currentIndex =
+            diff > 0
+              ? (currentIndex + 1) % cards.length
+              : (currentIndex - 1 + cards.length) % cards.length;
           showCard(currentIndex);
         }
         startAutoplay();
@@ -220,13 +196,12 @@ export async function initPicturePosts(container) {
 
       startAutoplay();
     } else {
-      cards.forEach(card => {
+      cards.forEach((card) => {
         card.style.display = "block";
         card.style.position = "relative";
         card.style.width = "100%";
       });
     }
-
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load posts.</p>`;
     console.error(err);
