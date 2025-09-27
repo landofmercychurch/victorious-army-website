@@ -1,10 +1,13 @@
 // js/sermons.js
+// js/sermons.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
+import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
 async function loadSermons() {
   try {
-    const sermons = await api.get("/sermons");
+    const sermonsRes = await api.get("/sermons");
+    const sermons = sermonsRes.data; // ✅ use .data
     const container = document.getElementById("sermon-feed");
 
     container.innerHTML = sermons.map(sermon => `
@@ -35,75 +38,72 @@ async function loadSermons() {
       const commentsBox = card.querySelector(".comments-box");
       const shareBtn = card.querySelector(".share-btn");
 
-    // --- Likes ---
-async function refreshLikes() {
-  try {
-    const res = await api.get(`/likes/count/${sermon.id}?type=sermon`); 
-    likeCountEl.textContent = (res.count || 0) + " Likes";
-  } catch {
-    likeCountEl.textContent = "0 Likes";
-  }
-}
-
-likeBtn.addEventListener("click", async () => {
-  try {
-    await api.post("/likes", { sermon_id: sermon.id });
-    refreshLikes();
-  } catch (err) {
-    console.error("Failed to like:", err);
-  }
-});
-
-refreshLikes();
-
-
-// --- Comments ---
-async function refreshComments() {
-  try {
-    // 👇 change from /comments/post to /comments/sermon
-    const comments = await api.get(`/comments/${sermon.id}?type=sermon`);
-    commentCountEl.textContent = comments.length + " Comments";
-
-    commentsBox.innerHTML = `
-      <div class="comment-list">
-        ${comments.map(c => `<div class="comment"><b>${c.name || "Anon"}:</b> ${c.content}</div>`).join("")}
-      </div>
-      <form class="comment-form">
-        <input type="text" placeholder="Write a comment…" required />
-        <button type="submit">Post</button>
-      </form>
-    `;
-
-    const form = commentsBox.querySelector(".comment-form");
-    form.onsubmit = async e => {
-      e.preventDefault();
-      const input = form.querySelector("input");
-      const content = input.value.trim();
-      if (!content) return;
-      try {
-        await api.post("/comments", {
-          sermon_id: sermon.id,  // 👈 send sermon_id not post_id
-          name: "Guest",
-          content,
-        });
-        input.value = "";
-        refreshComments();
-      } catch (err) {
-        console.error("Failed to post comment:", err);
+      // --- Likes ---
+      async function refreshLikes() {
+        try {
+          const res = await api.get(`/likes/count/${sermon.id}?type=sermon`);
+          likeCountEl.textContent = (res.data.count || 0) + " Likes"; // ✅ use res.data
+        } catch {
+          likeCountEl.textContent = "0 Likes";
+        }
       }
-    };
-  } catch (err) {
-    console.error("Failed to load comments:", err);
-    commentsBox.innerHTML = `<p style="color:red">Error loading comments</p>`;
-  }
-}
 
-commentBtn.addEventListener("click", () => {
-  commentsBox.style.display =
-    commentsBox.style.display === "none" ? "block" : "none";
-  if (commentsBox.style.display === "block") refreshComments();
-});
+      likeBtn.addEventListener("click", async () => {
+        try {
+          await api.post("/likes", { sermon_id: sermon.id });
+          refreshLikes();
+        } catch (err) {
+          console.error("Failed to like:", err);
+        }
+      });
 
+      refreshLikes();
+
+      // --- Comments ---
+      async function refreshComments() {
+        try {
+          const comments = await fetchSermonComments(sermon.id); // ✅ reuse helper
+          commentCountEl.textContent = comments.length + " Comments";
+
+          commentsBox.innerHTML = `
+            <div class="comment-list">
+              ${comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> ${c.content}</div>`).join("")}
+            </div>
+            <form class="comment-form">
+              <input type="text" placeholder="Write a comment…" required />
+              <button type="submit">Post</button>
+            </form>
+          `;
+
+          const form = commentsBox.querySelector(".comment-form");
+          form.onsubmit = async e => {
+            e.preventDefault();
+            const input = form.querySelector("input");
+            const content = input.value.trim();
+            if (!content) return;
+            try {
+              await postSermonComment({
+                sermon_id: sermon.id,
+                name: "Guest",
+                content,
+              });
+              input.value = "";
+              refreshComments();
+            } catch (err) {
+              console.error("Failed to post comment:", err);
+            }
+          };
+        } catch (err) {
+          console.error("Failed to load comments:", err);
+          commentsBox.innerHTML = `<p style="color:red">Error loading comments</p>`;
+        }
+      }
+
+      commentBtn.addEventListener("click", () => {
+        commentsBox.style.display =
+          commentsBox.style.display === "none" ? "block" : "none";
+        if (commentsBox.style.display === "block") refreshComments();
+      });
 
       refreshComments();
 
@@ -123,7 +123,6 @@ commentBtn.addEventListener("click", () => {
             console.warn("Share canceled:", err);
           }
         } else {
-          // fallback: copy to clipboard
           navigator.clipboard.writeText(shareUrl).then(() => {
             alert("Link copied to clipboard!");
           });
@@ -135,10 +134,10 @@ commentBtn.addEventListener("click", () => {
         refreshLikes();
         refreshComments();
       }, 10000); // every 10s
-    }); // ✅ closes forEach
+    });
   } catch (err) {
     console.error("Failed to load sermons:", err);
   }
-} // ✅ closes loadSermons
+}
 
 document.addEventListener("DOMContentLoaded", loadSermons);
