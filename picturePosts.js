@@ -8,7 +8,7 @@ export async function initPicturePosts(container) {
 
   try {
     // Fetch public posts
-    let posts = await api.get("/posts"); // <-- public route
+    let posts = await api.get("/posts");
     posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     container.innerHTML = "";
@@ -75,20 +75,25 @@ export async function initPicturePosts(container) {
         card.appendChild(img);
       }
 
-      // Description
+      // Description with "Read more"
       if (post.description) {
         const descEl = el("p", "picture-description");
         const maxLength = 200;
-        if (post.description.length > maxLength) {
-          descEl.textContent = post.description.slice(0, maxLength) + "... ";
-          const loadMoreBtn = el("button", "load-more-btn", "Read more");
-          loadMoreBtn.addEventListener("click", () => {
-            descEl.textContent = post.description;
-          });
-          descEl.appendChild(loadMoreBtn);
-        } else {
-          descEl.textContent = post.description;
+
+        function setDescription(fullText) {
+          if (fullText.length > maxLength) {
+            descEl.textContent = fullText.slice(0, maxLength) + "... ";
+            const readMoreBtn = el("button", "load-more-btn", "Read more");
+            readMoreBtn.addEventListener("click", () => {
+              descEl.textContent = fullText;
+            });
+            descEl.appendChild(readMoreBtn);
+          } else {
+            descEl.textContent = fullText;
+          }
         }
+
+        setDescription(post.description);
         card.appendChild(descEl);
       }
 
@@ -193,7 +198,7 @@ export async function initPicturePosts(container) {
         card.style.left = "0";
         card.style.width = "100%";
         card.style.transition = "transform 0.3s ease, height 0.3s ease";
-        card.style.transform = i === currentIndex ? "translateY(0)" : "translateY(100%)";
+        card.style.transform = i === currentIndex ? "translateY(0)" : `translateY(100%)`;
       });
 
       container.addEventListener("touchstart", e => {
