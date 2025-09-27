@@ -25,14 +25,15 @@ export async function initPicturePosts(container) {
 
       // Image
       if (post.image_url) {
-        const img = el("img", "picture-img", { src: post.image_url, alt: post.caption || "Post" });
+        const img = el("img", "picture-img", { src: post.image_url, alt: post.caption || "Image description" });
         card.appendChild(img);
       }
 
-      // Caption
+      // Description / Caption
       if (post.caption) {
-        const caption = el("p", "picture-caption", { text: post.caption });
-        card.appendChild(caption);
+        const description = el("p", "picture-caption");
+        description.textContent = post.caption; // now used as description
+        card.appendChild(description);
       }
 
       // Actions
