@@ -1,29 +1,26 @@
 // commentsPublic.js
-import { api } from "./api.js";
-import { showNotification } from "./config.js";
-
 /**
- * Post a comment on a sermon
+ * Fetch comments for a sermon
  */
-export async function postSermonComment({ name = "Guest", content, sermon_id }) {
-  if (!content) throw new Error("No content");
+export async function fetchSermonComments(sermon_id) {
   try {
-    return await api.post("/comments", { name, content, sermon_id });
+    const res = await api.get(`/comments/${sermon_id}?type=sermon`);
+    return res.data;
   } catch (err) {
-    showNotification?.("Failed to post sermon comment", "error");
+    showNotification?.("Failed to load sermon comments", "error");
     throw err;
   }
 }
 
 /**
- * Post a comment on a picture post
+ * Fetch comments for a picture post
  */
-export async function postPictureComment({ name = "Guest", content, post_id }) {
-  if (!content) throw new Error("No content");
+export async function fetchPictureComments(post_id) {
   try {
-    return await api.post("/comments", { name, content, post_id });
+    const res = await api.get(`/comments/${post_id}?type=post`);
+    return res.data;
   } catch (err) {
-    showNotification?.("Failed to post post comment", "error");
+    showNotification?.("Failed to load post comments", "error");
     throw err;
   }
 }
