@@ -40,3 +40,43 @@ export async function universalShare(fallbackText, url) {
   }
   return false;
 }
+
+/**
+ * Show a simple notification on screen
+ */
+export function showNotification(message, type = "info") {
+  const el = document.createElement("div");
+  el.className = `notification ${type}`;
+  el.textContent = message;
+
+  // Basic inline styles (you can move to CSS later)
+  Object.assign(el.style, {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    background: type === "error" ? "#f44336" :
+                type === "success" ? "#4CAF50" :
+                "#333",
+    color: "#fff",
+    padding: "10px 15px",
+    borderRadius: "6px",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+    zIndex: 9999,
+    fontSize: "14px",
+    opacity: "0",
+    transition: "opacity 0.3s ease-in-out",
+  });
+
+  document.body.appendChild(el);
+
+  // Fade in
+  requestAnimationFrame(() => {
+    el.style.opacity = "1";
+  });
+
+  // Auto remove after 3s
+  setTimeout(() => {
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), 300);
+  }, 3000);
+}
