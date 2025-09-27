@@ -7,7 +7,7 @@ export async function initPicturePosts(container) {
   container.innerHTML = "<p>Loading posts…</p>";
 
   try {
-    // Fetch posts from the backend
+    // Fetch posts
     let posts = await api.get("/posts");
     posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -19,7 +19,6 @@ export async function initPicturePosts(container) {
 
     container.classList.add("picture-feed");
     const cards = [];
-
     let autoplayInterval;
     let currentIndex = 0;
     const isMobile = window.innerWidth < 768;
@@ -57,7 +56,7 @@ export async function initPicturePosts(container) {
     }
 
     // --- Build cards ---
-    posts.forEach(post => {
+    for (const post of posts) {
       const card = el("div", "picture-card");
 
       // Title
@@ -69,28 +68,29 @@ export async function initPicturePosts(container) {
 
       // Image
       if (post.image_url) {
-        const img = el("img", "picture-img", { src: post.image_url, alt: post.title || "Image description" });
+        const img = el("img", "picture-img", {
+          src: post.image_url,
+          alt: post.title || "Image description"
+        });
         img.loading = "lazy";
         card.appendChild(img);
       }
 
-      // Description with load more
+      // Description with "Load more"
       if (post.description) {
-        const description = el("p", "picture-description");
-        description.textContent = post.description;
-        description.dataset.full = post.description;
-
+        const descEl = el("p", "picture-description");
         const maxLength = 200;
         if (post.description.length > maxLength) {
-          description.textContent = post.description.slice(0, maxLength) + "... ";
-          const loadMore = el("button", "load-more-btn", "Read more");
-          loadMore.addEventListener("click", () => {
-            description.textContent = description.dataset.full;
+          descEl.textContent = post.description.slice(0, maxLength) + "... ";
+          const loadMoreBtn = el("button", "load-more-btn", "Read more");
+          loadMoreBtn.addEventListener("click", () => {
+            descEl.textContent = post.description;
           });
-          description.appendChild(loadMore);
+          descEl.appendChild(loadMoreBtn);
+        } else {
+          descEl.textContent = post.description;
         }
-
-        card.appendChild(description);
+        card.appendChild(descEl);
       }
 
       // Actions
@@ -120,8 +120,12 @@ export async function initPicturePosts(container) {
       }
 
       likeBtn.addEventListener("click", async () => {
-        await api.post("/likes", { post_id: post.id });
-        updateLikeCount();
+        try {
+          await api.post("/likes", { post_id: post.id });
+          updateLikeCount();
+        } catch (err) {
+          console.error("Like failed:", err);
+        }
       });
       updateLikeCount();
 
@@ -134,11 +138,13 @@ export async function initPicturePosts(container) {
           const list = el("div", "comment-list");
 
           if (!comments.length) list.innerHTML = `<p class="no-comments">No comments yet.</p>`;
-          else comments.forEach(c => {
-            const commentEl = el("div", "comment");
-            commentEl.innerHTML = `<b>${c.name || "Guest"}:</b> ${c.content}`;
-            list.appendChild(commentEl);
-          });
+          else {
+            comments.forEach(c => {
+              const commentEl = el("div", "comment");
+              commentEl.innerHTML = `<b>${c.name || "Guest"}:</b> ${c.content}`;
+              list.appendChild(commentEl);
+            });
+          }
 
           const form = el("form", "comment-form");
           form.innerHTML = `
@@ -151,9 +157,13 @@ export async function initPicturePosts(container) {
             const name = form.querySelector(".comment-name").value.trim() || "Guest";
             const content = form.querySelector(".comment-content").value.trim();
             if (!content) return;
-            await api.post("/comments", { post_id: post.id, name, content });
-            form.querySelector(".comment-content").value = "";
-            loadComments();
+            try {
+              await api.post("/comments", { post_id: post.id, name, content });
+              form.querySelector(".comment-content").value = "";
+              loadComments();
+            } catch (err) {
+              console.error("Post comment failed:", err);
+            }
           };
 
           commentsBox.append(list, form);
@@ -170,7 +180,7 @@ export async function initPicturePosts(container) {
         else startAutoplay();
         if (isOpen) loadComments();
       });
-    });
+    }
 
     // --- Mobile swipe ---
     if (isMobile) {
