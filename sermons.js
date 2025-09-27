@@ -6,13 +6,14 @@ import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
 async function loadSermons() {
   try {
-    let sermons = await api.get("/sermons"); // ✅ fetch all sermons
-    sermons = sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // latest first
+    let sermons = await api.get("/sermons");
+    // Sort latest first
+    sermons = sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const container = document.getElementById("sermon-feed");
 
     container.innerHTML = sermons.map(sermon => `
       <div class="sermon-card" data-id="${sermon.id}">
-        <video src="${sermon.video_url}" controls playsinline poster="${sermon.thumbnail_url || ""}"></video>
+        <video src="${sermon.video_url}" playsinline poster="${sermon.thumbnail_url || ""}"></video>
         <div class="sermon-overlay">
           <div class="sermon-title">${sermon.title}</div>
           <div class="sermon-desc">${sermon.description || ""}</div>
@@ -68,6 +69,7 @@ async function loadSermons() {
           commentCountEl.textContent = comments.length + " Comments";
 
           commentsBox.innerHTML = `
+            <button class="close-btn">✖</button>
             <div class="comment-list">
               ${
                 comments.length > 0
@@ -81,6 +83,10 @@ async function loadSermons() {
               <button type="submit">Post</button>
             </form>
           `;
+
+          // Close button
+          const closeBtn = commentsBox.querySelector(".close-btn");
+          closeBtn.addEventListener("click", () => commentsBox.style.display = "none");
 
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async e => {
