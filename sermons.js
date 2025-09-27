@@ -60,12 +60,20 @@ async function loadSermons() {
       // --- Comments ---
       async function refreshComments() {
         try {
-          const comments = await fetchSermonComments(sermon.id); // ✅ already array
+          let comments = await fetchSermonComments(sermon.id);
+
+          // ✅ ensure comments is always an array
+          if (!Array.isArray(comments)) comments = [];
+
           commentCountEl.textContent = comments.length + " Comments";
 
           commentsBox.innerHTML = `
             <div class="comment-list">
-              ${comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> ${c.content}</div>`).join("")}
+              ${
+                comments.length > 0
+                  ? comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> ${c.content}</div>`).join("")
+                  : `<p class="no-comments">No comments yet. Be the first!</p>`
+              }
             </div>
             <form class="comment-form">
               <input type="text" class="comment-name" placeholder="Your name (optional)" />
