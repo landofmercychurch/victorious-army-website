@@ -7,8 +7,8 @@ export async function initPicturePosts(container) {
   container.innerHTML = "<p>Loading posts…</p>";
 
   try {
-    // Fetch posts
-    let posts = await api.get("/posts");
+    // Fetch public posts
+    let posts = await api.get("/posts"); // <-- public route
     posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     container.innerHTML = "";
@@ -42,7 +42,6 @@ export async function initPicturePosts(container) {
       }
     }
 
-    // --- Autoplay ---
     function startAutoplay() {
       stopAutoplay();
       autoplayInterval = setInterval(() => {
@@ -76,7 +75,7 @@ export async function initPicturePosts(container) {
         card.appendChild(img);
       }
 
-      // Description with "Load more"
+      // Description
       if (post.description) {
         const descEl = el("p", "picture-description");
         const maxLength = 200;
