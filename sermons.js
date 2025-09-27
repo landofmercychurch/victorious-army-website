@@ -55,24 +55,20 @@ async function loadSermons() {
       </div>
     `).join("");
 
-    // Update OG tags if direct link has ?sermon=ID
-    function updateOGFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      const sermonId = params.get("sermon");
-      if (!sermonId) return;
-
+    // --- Update OG tags if direct link has ?sermon=ID ---
+    const params = new URLSearchParams(window.location.search);
+    const sermonId = params.get("sermon");
+    if (sermonId) {
       const sermon = sermons.find(s => s.id === sermonId);
-      if (!sermon) return;
-
-      setOpenGraphMeta({
-        title: sermon.title,
-        description: sermon.description || "Watch our latest sermon!",
-        image: sermon.thumbnail_url || "",
-        url: `${window.location.origin}/?sermon=${sermon.id}`
-      });
+      if (sermon) {
+        setOpenGraphMeta({
+          title: sermon.title,
+          description: sermon.description || "Watch our latest sermon!",
+          image: sermon.thumbnail_url || "",
+          url: `${window.location.origin}/?sermon=${sermon.id}`
+        });
+      }
     }
-
-    updateOGFromURL();
 
     sermons.forEach(sermon => {
       const card = container.querySelector(`.sermon-card[data-id="${sermon.id}"]`);
@@ -164,7 +160,7 @@ async function loadSermons() {
 
       refreshComments();
 
-      // --- Share with OG tags ---
+      // --- Share with OG tags and social links ---
       shareBtn.addEventListener("click", async () => {
         const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
         const shareData = {
@@ -173,6 +169,7 @@ async function loadSermons() {
           url: shareUrl,
         };
 
+        // Set Open Graph meta tags dynamically
         setOpenGraphMeta({
           title: sermon.title,
           description: sermon.description || "Watch our latest sermon!",
@@ -180,16 +177,25 @@ async function loadSermons() {
           url: shareUrl
         });
 
+        // Native share
         if (navigator.share) {
           try { await navigator.share(shareData); } 
           catch (err) { console.warn("Share canceled:", err); }
         } else {
+          // Clipboard fallback
           navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied to clipboard!"));
+
+          // Optional: WhatsApp / Facebook share links
+          const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(sermon.title + " - " + shareUrl)}`;
+          const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+          const choice = confirm("Open WhatsApp share? Click Cancel for Facebook share.");
+          if (choice) window.open(whatsappUrl, "_blank");
+          else window.open(facebookUrl, "_blank");
         }
       });
     });
 
-    // --- TikTok-style autoplay ---
+    // --- TikTok-style autoplay for videos ---
     const videos = document.querySelectorAll(".sermon-card video");
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
