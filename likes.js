@@ -2,31 +2,30 @@
 import { api } from "./api.js";
 
 /**
- * Refresh the like count for a specific sermon
- * @param {string} sermonId
+ * Refresh the like count for a specific picture post
+ * @param {string} postId
  * @param {HTMLElement} likeCountEl
  */
-export async function refreshLikes(sermonId, likeCountEl) {
+export async function refreshPostLikes(postId, likeCountEl) {
   try {
-    // Use query params instead of path param
-    const res = await api.get(`/likes/count?type=sermon&sermon_id=${sermonId}`);
+    const res = await api.get(`/likes/count?type=post&post_id=${postId}`);
     likeCountEl.textContent = (res.count || 0) + " Likes";
   } catch (err) {
-    console.error("Failed to fetch like count:", err);
+    console.error("Failed to fetch post like count:", err);
     likeCountEl.textContent = "0 Likes";
   }
 }
 
 /**
- * Handle like button click for sermons
- * @param {string} sermonId
+ * Handle like button click for picture posts
+ * @param {string} postId
  * @param {HTMLElement} likeCountEl
  */
-export async function handleLike(sermonId, likeCountEl) {
+export async function handlePostLike(postId, likeCountEl) {
   try {
-    await api.post("/likes", { sermon_id: sermonId }); // post the like
-    refreshLikes(sermonId, likeCountEl);
+    await api.post("/likes", { post_id: postId });
+    refreshPostLikes(postId, likeCountEl);
   } catch (err) {
-    console.error("Failed to like sermon:", err);
+    console.error("Failed to like post:", err);
   }
 }
