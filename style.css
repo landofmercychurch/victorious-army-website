@@ -290,12 +290,12 @@ footer {
 ==================================*/
 .picture-feed {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* wider cards for readability */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
   padding: 8px;
-  position: relative; /* for mobile swipe absolute cards */
+  position: relative;
   overflow: hidden;
-  transition: height 0.3s ease; /* smooth height change on mobile */
+  transition: height 0.3s ease;
 }
 
 /* ================================
@@ -309,7 +309,7 @@ footer {
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  position: relative; /* for mobile swipe */
+  position: relative;
 }
 
 .picture-card:hover {
@@ -323,9 +323,8 @@ footer {
   width: 100%;
   height: auto;
   display: block;
-  object-fit: contain; /* shows full image content */
+  object-fit: contain;
   border-bottom: 1px solid #eee;
-  max-height: none; /* allow full height for tall images */
 }
 
 /* ================================
@@ -379,12 +378,56 @@ footer {
   display: none;
   flex-direction: column;
   gap: 6px;
-  background: #f9f9f9;
-  padding: 8px;
+  background: #f0f4f8; /* soft background for better readability */
+  padding: 10px;
   border-top: 1px solid #ccc;
+  border-radius: 0 0 8px 8px;
+  font-size: 14px;
+  color: #222;
+  position: relative;
 }
+
 .comments-box.open {
   display: flex;
+}
+
+/* ================================
+   Close Comment Button
+==================================*/
+.comments-box .close-comments {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.comments-box .close-comments:hover {
+  background: #c0392b;
+}
+
+/* ================================
+   Comment List
+==================================*/
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.comment {
+  background: #fff;
+  padding: 4px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* ================================
@@ -393,8 +436,9 @@ footer {
 .comment-form {
   display: flex;
   gap: 5px;
-  margin-top: 5px;
+  margin-top: 6px;
 }
+
 .comment-form input {
   flex: 1;
   padding: 6px;
@@ -402,6 +446,7 @@ footer {
   border: 1px solid #ccc;
   font-size: 13px;
 }
+
 .comment-form button {
   padding: 6px 12px;
   background: #0077cc;
@@ -411,6 +456,7 @@ footer {
   cursor: pointer;
   font-size: 13px;
 }
+
 .comment-form button:hover {
   background: #005fa3;
 }
@@ -426,8 +472,9 @@ footer {
   height: 4px;
   background: #0077cc;
   width: 0;
-  transition: width 4s linear; /* matches autoplay interval */
+  transition: width 4s linear;
 }
+
 .picture-card.active::after {
   width: 100%;
 }
@@ -440,7 +487,7 @@ footer {
     grid-template-columns: 1fr;
     gap: 12px;
     padding: 6px;
-    height: auto; /* dynamically set by JS */
+    height: auto;
   }
 
   .picture-card {
@@ -448,7 +495,7 @@ footer {
   }
 
   .picture-img {
-    max-height: none; /* show full image height */
+    max-height: none;
   }
 
   .picture-caption {
@@ -468,6 +515,15 @@ footer {
   .comment-form input,
   .comment-form button {
     font-size: 12px;
+  }
+
+  .comments-box {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .comment-list {
+    max-height: 150px;
   }
 }
 
