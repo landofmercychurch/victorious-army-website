@@ -450,6 +450,10 @@ footer {
   margin-top: -10px;
 }
 
+
+
+
+
 /* ================================
    COMMENTS BOX
 ==================================*/
@@ -459,27 +463,49 @@ footer {
   left: 0;
   right: 0;
   max-height: 50%;
-  background: rgba(0,0,0,0.85);
-  padding: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 12px;
   overflow-y: auto;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  font-size: 0.9rem;
-  color: #fff;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  font-size: 0.95rem;
+  color: #f1f1f1;
+  backdrop-filter: blur(5px);
+}
+
+/* Smooth scroll for better UX */
+.comments-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comments-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
 }
 
 .comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin-bottom: 10px;
 }
 
 .comment {
-  margin-bottom: 6px;
-  padding: 6px 8px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  line-height: 1.3;
+  word-break: break-word;
+  transition: background 0.2s;
+}
+
+.comment:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .comment b {
   color: #ffd369;
+  margin-right: 4px;
 }
 
 /* ================================
@@ -487,32 +513,49 @@ footer {
 ==================================*/
 .comment-form {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   margin-top: 8px;
 }
 
 .comment-form input {
-  flex: 1;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
   border: none;
   outline: none;
   font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.comment-form input:focus {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .comment-form button {
+  align-self: flex-end;
   background: #ffd369;
   color: #000;
   border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
+  border-radius: 8px;
+  padding: 8px 14px;
   cursor: pointer;
-  transition: background 0.3s;
   font-weight: bold;
+  transition: background 0.3s, transform 0.15s;
 }
 
 .comment-form button:hover {
   background: #ffb703;
+  transform: scale(1.05);
+}
+
+/* No comments placeholder */
+.comment-list .no-comments {
+  text-align: center;
+  color: #ccc;
+  font-style: italic;
+  padding: 6px 0;
 }
 
 
