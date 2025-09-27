@@ -1,5 +1,4 @@
 // js/picturePosts.js
-// js/picturePosts.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 
@@ -8,7 +7,8 @@ export async function initPicturePosts(container) {
   container.innerHTML = "<p>Loading posts…</p>";
 
   try {
-    let posts = await api.get("/picture-posts");
+    // Fetch posts from the backend
+    let posts = await api.get("/posts");
     posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     container.innerHTML = "";
@@ -25,7 +25,7 @@ export async function initPicturePosts(container) {
     const isMobile = window.innerWidth < 768;
     let startY = 0;
 
-    // --- Show card function ---
+    // --- Show card ---
     function showCard(index) {
       cards.forEach((card, i) => {
         if (!isMobile) {
@@ -38,19 +38,18 @@ export async function initPicturePosts(container) {
         }
       });
 
-      // Adjust mobile container height dynamically
       if (isMobile && cards[index]) {
         container.style.height = `${cards[index].scrollHeight}px`;
       }
     }
 
-    // --- Autoplay functions ---
+    // --- Autoplay ---
     function startAutoplay() {
       stopAutoplay();
       autoplayInterval = setInterval(() => {
         currentIndex = (currentIndex + 1) % cards.length;
         showCard(currentIndex);
-      }, 5000); // slower interval so users can read
+      }, 5000);
     }
 
     function stopAutoplay() {
@@ -61,17 +60,36 @@ export async function initPicturePosts(container) {
     posts.forEach(post => {
       const card = el("div", "picture-card");
 
+      // Title
+      if (post.title) {
+        const titleEl = el("h3", "picture-title");
+        titleEl.textContent = post.title;
+        card.appendChild(titleEl);
+      }
+
       // Image
       if (post.image_url) {
-        const img = el("img", "picture-img", { src: post.image_url, alt: post.caption || "Image description" });
+        const img = el("img", "picture-img", { src: post.image_url, alt: post.title || "Image description" });
         img.loading = "lazy";
         card.appendChild(img);
       }
 
-      // Caption
-      if (post.caption) {
-        const description = el("p", "picture-caption");
-        description.textContent = post.caption;
+      // Description with load more
+      if (post.description) {
+        const description = el("p", "picture-description");
+        description.textContent = post.description;
+        description.dataset.full = post.description;
+
+        const maxLength = 200;
+        if (post.description.length > maxLength) {
+          description.textContent = post.description.slice(0, maxLength) + "... ";
+          const loadMore = el("button", "load-more-btn", "Read more");
+          loadMore.addEventListener("click", () => {
+            description.textContent = description.dataset.full;
+          });
+          description.appendChild(loadMore);
+        }
+
         card.appendChild(description);
       }
 
@@ -100,6 +118,7 @@ export async function initPicturePosts(container) {
           likeCount.textContent = "0 Likes";
         }
       }
+
       likeBtn.addEventListener("click", async () => {
         await api.post("/likes", { post_id: post.id });
         updateLikeCount();
@@ -153,7 +172,7 @@ export async function initPicturePosts(container) {
       });
     });
 
-    // --- Mobile swipe setup ---
+    // --- Mobile swipe ---
     if (isMobile) {
       container.style.overflow = "hidden";
       container.style.position = "relative";
@@ -187,7 +206,6 @@ export async function initPicturePosts(container) {
 
       startAutoplay();
     } else {
-      // Desktop: show all cards fully
       cards.forEach(card => {
         card.style.display = "block";
         card.style.position = "relative";
