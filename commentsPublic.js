@@ -1,4 +1,5 @@
 // commentsPublic.js
+// commentsPublic.js
 
 import { api } from "./api.js";
 import { showNotification } from "./utils.js";
@@ -41,7 +42,24 @@ export async function postSermonComment({ sermon_id, name, content }) {
     });
     return res;
   } catch (err) {
-    showNotification?.("Failed to post comment", "error");
+    showNotification?.("Failed to post sermon comment", "error");
+    throw err;
+  }
+}
+
+/**
+ * Post a comment on a picture post
+ */
+export async function postPictureComment({ post_id, name, content }) {
+  try {
+    const res = await api.post("/comments", {
+      post_id,
+      name,
+      content,
+    });
+    return res;
+  } catch (err) {
+    showNotification?.("Failed to post picture comment", "error");
     throw err;
   }
 }
