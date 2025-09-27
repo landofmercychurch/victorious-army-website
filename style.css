@@ -279,142 +279,93 @@ footer {
   .section { padding: 20px 10px; }
 }
 
-/* --- Picture Posts --- */
-#picture-feed {
-  display: flex;
-  flex-direction: column;
+
+
+
+
+/* --- Picture Feed --- */
+.picture-feed {
+  display: grid;
   gap: 16px;
-  margin: 20px 0;
 }
 
+/* Desktop grid */
+@media (min-width: 768px) {
+  .picture-feed {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+/* Mobile TikTok-style */
+@media (max-width: 767px) {
+  .picture-feed {
+    display: block;
+  }
+  .picture-card {
+    height: 100vh; /* full-screen */
+    scroll-snap-align: start;
+  }
+}
+
+/* Picture Card */
 .picture-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   overflow: hidden;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 500px; /* cards won't stretch too wide on large screens */
-  margin: 0 auto;
+  position: relative;
 }
 
+/* Image */
 .picture-img {
   width: 100%;
-  height: auto;
-  object-fit: cover; /* maintain aspect ratio, cover card width */
-  border-radius: 8px;
-  margin-bottom: 10px;
+  display: block;
+  object-fit: cover;
 }
 
+/* Caption */
 .picture-caption {
+  padding: 8px;
   font-size: 14px;
-  margin-bottom: 10px;
-  word-wrap: break-word;
-  text-align: left;
-  color: #333;
 }
 
+/* Actions */
 .picture-actions {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-  flex-wrap: wrap; /* ensures buttons wrap on small screens */
-}
-
-.like-btn, .comment-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #0077cc;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.like-btn:hover, .comment-btn:hover {
-  text-decoration: underline;
-}
-
-.like-count, .comment-count {
-  font-size: 13px;
-  color: #555;
+  gap: 10px;
+  padding: 0 8px 8px 8px;
 }
 
 /* Comments */
 .comments-box {
   display: none;
-  margin-top: 10px;
   background: #f9f9f9;
   padding: 8px;
-  border-radius: 8px;
+  border-top: 1px solid #ccc;
 }
-
 .comments-box.open {
   display: block;
 }
 
-.comment-list {
-  margin-bottom: 10px;
-}
-
-.comment {
-  background: #f1f1f1;
-  padding: 6px 10px;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  font-size: 13px;
-  word-wrap: break-word;
-}
-
-.comment b {
-  color: #0077cc;
-}
-
+/* Comment form */
 .comment-form {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
 }
-
 .comment-form input {
-  flex: 1 1 auto;
-  padding: 6px 8px;
-  border-radius: 6px;
+  flex: 1;
+  padding: 6px;
+  border-radius: 4px;
   border: 1px solid #ccc;
-  min-width: 100px;
 }
-
 .comment-form button {
   padding: 6px 12px;
   background: #0077cc;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-}
-
-.comment-form button:hover {
-  background: #005fa3;
-}
-
-/* Ensure responsiveness on mobile */
-@media (max-width: 480px) {
-  .picture-card {
-    padding: 10px;
-  }
-  .picture-caption {
-    font-size: 13px;
-  }
-  .like-btn, .comment-btn {
-    font-size: 13px;
-  }
-  .like-count, .comment-count {
-    font-size: 12px;
-  }
 }
 
 
