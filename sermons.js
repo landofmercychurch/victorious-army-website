@@ -36,26 +36,27 @@ async function loadSermons() {
       const commentsBox = card.querySelector(".comments-box");
       const shareBtn = card.querySelector(".share-btn");
 
-      // --- Likes ---
-      async function refreshLikes() {
-        try {
-          const res = await api.get(`/likes/count/${sermon.id}?type=sermon`);
-          likeCountEl.textContent = (res.count || 0) + " Likes"; // ✅ res.count directly
-        } catch {
-          likeCountEl.textContent = "0 Likes";
-        }
-      }
+     // --- Likes ---
+async function refreshLikes() {
+  try {
+    const res = await api.get(`/likes/count?type=sermon&sermon_id=${sermon.id}`);
+    likeCountEl.textContent = (res.count || 0) + " Likes";
+  } catch {
+    likeCountEl.textContent = "0 Likes";
+  }
+}
 
-      likeBtn.addEventListener("click", async () => {
-        try {
-          await api.post("/likes", { sermon_id: sermon.id });
-          refreshLikes();
-        } catch (err) {
-          console.error("Failed to like:", err);
-        }
-      });
+likeBtn.addEventListener("click", async () => {
+  try {
+    await api.post("/likes", { sermon_id: sermon.id });
+    refreshLikes();
+  } catch (err) {
+    console.error("Failed to like:", err);
+  }
+});
 
-      refreshLikes();
+refreshLikes();
+
 
       // --- Comments ---
       async function refreshComments() {
