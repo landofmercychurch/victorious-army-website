@@ -8,7 +8,7 @@ export async function initPicturePosts(container) {
 
   try {
     let posts = await api.get("/picture-posts");
-    posts = posts.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     container.innerHTML = "";
     if (!posts.length) {
@@ -16,52 +16,58 @@ export async function initPicturePosts(container) {
       return;
     }
 
-    const cards = [];
+    container.style.display = "grid";
+    container.style.gridTemplateColumns = "repeat(auto-fill, minmax(250px, 1fr))";
+    container.style.gap = "16px";
 
     posts.forEach(post => {
       const card = el("div", "picture-card");
 
+      // Image
       if (post.image_url) {
-        const img = el("img", "picture-img");
-        img.src = post.image_url;
-        img.alt = post.caption || "Post";
+        const img = el("img", "picture-img", { src: post.image_url, alt: post.caption || "Post" });
         card.appendChild(img);
       }
 
+      // Caption
       if (post.caption) {
-        const caption = el("p", "picture-caption");
-        caption.textContent = post.caption;
+        const caption = el("p", "picture-caption", { text: post.caption });
         card.appendChild(caption);
       }
 
+      // Actions
       const actions = el("div", "picture-actions");
 
-      const likeBtn = el("button", "like-btn", "❤️ Like");
+      const likeBtn = el("button", "like-btn", "❤️");
       const likeCount = el("span", "like-count", "0 Likes");
 
-      const commentBtn = el("button", "comment-btn", "💬 Comment");
+      const commentBtn = el("button", "comment-btn", "💬");
       const commentCount = el("span", "comment-count", "0 Comments");
 
       actions.append(likeBtn, likeCount, commentBtn, commentCount);
       card.appendChild(actions);
 
+      // Comments box
       const commentsBox = el("div", "comments-box");
       card.appendChild(commentsBox);
 
       container.appendChild(card);
-      cards.push(card);
 
       // --- Likes ---
       async function updateLikeCount() {
         try {
           const res = await api.get(`/likes/count/${post.id}?type=post`);
           likeCount.textContent = `${res.count || 0} Likes`;
-        } catch { likeCount.textContent = "0 Likes"; }
+        } catch {
+          likeCount.textContent = "0 Likes";
+        }
       }
+
       likeBtn.addEventListener("click", async () => {
         await api.post("/likes", { post_id: post.id });
         updateLikeCount();
       });
+
       updateLikeCount();
 
       // --- Comments ---
@@ -102,38 +108,15 @@ export async function initPicturePosts(container) {
           commentsBox.innerHTML = "<p style='color:red'>Failed to load comments.</p>";
         }
       }
-      commentBtn.addEventListener("click", loadComments);
-    });
 
-    // --- Mobile swipe scroll ---
-    if (window.innerWidth < 768) {
-      let currentIndex = 0;
-      let startY = 0;
-      const total = cards.length;
-
-      function showCard(index) {
-        cards.forEach((c, i) => c.style.display = i === index ? "block" : "none");
-      }
-      showCard(currentIndex);
-
-      container.addEventListener("touchstart", e => {
-        startY = e.touches[0].clientY;
-      });
-
-      container.addEventListener("touchend", e => {
-        const endY = e.changedTouches[0].clientY;
-        const diff = startY - endY;
-
-        if (Math.abs(diff) > 50) { // swipe threshold
-          if (diff > 0) {
-            currentIndex = (currentIndex + 1) % total; // swipe up → next
-          } else {
-            currentIndex = (currentIndex - 1 + total) % total; // swipe down → prev
-          }
-          showCard(currentIndex);
+      commentBtn.addEventListener("click", () => {
+        if (commentsBox.classList.contains("open")) {
+          commentsBox.classList.remove("open");
+        } else {
+          loadComments();
         }
       });
-    }
+    });
 
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load posts.</p>`;
