@@ -1,13 +1,11 @@
-// js/picturePosts.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 import { refreshPostLikes, handlePostLike } from "./likes.js";
 import { fetchPictureComments, postPictureComment } from "./commentsPublic.js";
 
 /**
- * Dynamically set Open Graph and Twitter meta tags (for sharing previews)
- * Note: Only WhatsApp, Messenger, and social scrapers read OG meta from server HTML,
- * so this is mostly for in-page updates if needed.
+ * Dynamically set Open Graph and Twitter meta tags (for in-page updates)
+ * Note: WhatsApp and social media scrapers use server-rendered OG meta.
  */
 function setOpenGraphMeta({ title, description, image, url }) {
   const head = document.head;
@@ -50,7 +48,6 @@ export async function initPicturePosts(container) {
 
     container.classList.add("picture-feed");
 
-    // --- Check URL param ?post=ID for direct link
     const params = new URLSearchParams(window.location.search);
     const postId = params.get("post");
     if (postId) {
@@ -97,7 +94,7 @@ export async function initPicturePosts(container) {
       if (autoplayInterval) clearInterval(autoplayInterval);
     }
 
-    // --- Build cards ---
+    // --- Build post cards ---
     for (const post of posts) {
       const card = el("div", "picture-card");
 
@@ -205,17 +202,9 @@ export async function initPicturePosts(container) {
         if (isOpen) loadComments();
       });
 
-      // --- Share ---
+      // --- Share button now points to server-rendered preview page ---
       shareBtn.addEventListener("click", () => {
-        const postUrl = `${window.location.origin}/posts/${post.id}`;
-
-        // OG meta for in-page updates (WhatsApp uses server-rendered HTML)
-        setOpenGraphMeta({
-          title: post.title || "Check out this post",
-          description: post.description?.slice(0, 100) || "See this image!",
-          image: post.image_url || "",
-          url: postUrl
-        });
+        const postUrl = `${window.location.origin}/posts/preview/${post.id}`;
 
         if (navigator.share) {
           navigator.share({
@@ -281,3 +270,4 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("picture-feed");
   initPicturePosts(container);
 });
+
