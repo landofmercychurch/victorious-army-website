@@ -427,6 +427,7 @@ footer {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  z-index: 5;
 }
 
 .sermon-actions button {
@@ -580,6 +581,24 @@ footer {
 
 .comments-box .close-btn:hover {
   background: rgba(255, 255, 255, 0.4);
+}
+
+/* ================================
+   RESPONSIVE ADJUSTMENTS
+==================================*/
+@media (max-width: 480px) {
+  .sermon-card {
+    height: 500px;
+  }
+  .sermon-actions {
+    right: 5px;
+    bottom: 60px;
+    gap: 15px;
+  }
+  .comments-box {
+    max-height: 60%;
+    padding: 10px;
+  }
 }
 
 
