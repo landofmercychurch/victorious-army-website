@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabaseUrl = "YOUR_SUPABASE_URL";
-const supabaseKey = "YOUR_SUPABASE_ANON_KEY"; // Can be public for frontend
+const supabaseUrl = "https://lsjtgjpugwydzqjzzssl.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzanRnanB1Z3d5ZHpxanp6c3NsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NzU5MjAsImV4cCI6MjA3NDI1MTkyMH0.E6Ycr-X3UXnZJ7vDKaVG7RNpOmded8bcqQzxpMwosgI"; // Can be public for frontend
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const adminPanel = document.getElementById("adminPanel");
