@@ -30,3 +30,10 @@ import { initDailyVerse } from "./dailyVerse.js";
 document.addEventListener("DOMContentLoaded", () => {
   initDailyVerse(document.getElementById("dailyVerseContainer"));
 });
+
+
+import { initEbooks } from "./ebooks.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initEbooks(document.getElementById("ebooksContainer"));
+});
