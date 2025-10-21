@@ -1,7 +1,7 @@
 // ebooks.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
-import { showNotification } from "./config.js";
+
 
 export async function initEbooks(container) {
   if (!container) return;
