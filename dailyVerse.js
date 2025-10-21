@@ -1,36 +1,33 @@
-// js/dailyVerse.js
-import { db } from "./firebaseConfig.js";
-import { collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+// dailyVerse.js
+import { api } from "./api.js";
+import { el } from "./utils.js";
 
+/**
+ * Display today's verse on the church homepage
+ */
 export async function initDailyVerse(container) {
   if (!container) return;
-  container.innerHTML = "<p>Loading daily verse…</p>";
+
+  container.innerHTML = "<p>Loading today’s verse…</p>";
 
   try {
-    const q = query(collection(db, "daily_verses"), orderBy("created_at", "desc"), limit(1));
-    const snapshot = await getDocs(q);
+    const verse = await api.get("/daily-verse");
+    container.innerHTML = "";
 
-    if (snapshot.empty) {
-      container.innerHTML = "<p>No verse uploaded yet.</p>";
+    if (!verse) {
+      container.innerHTML = "<p>No daily verse has been added yet.</p>";
       return;
     }
 
-    const doc = snapshot.docs[0].data();
+    const wrapper = el("div", "daily-verse-card");
+    const textEl = el("p", "verse-text", { text: `“${verse.text}”` });
+    const refEl = el("p", "verse-ref", { text: verse.reference });
 
-    container.innerHTML = `
-      <div class="verse-card">
-        <h3>${doc.reference}</h3>
-        <p class="verse-text">${doc.text}</p>
-      </div>
-    `;
+    wrapper.appendChild(textEl);
+    wrapper.appendChild(refEl);
+    container.appendChild(wrapper);
   } catch (err) {
-    console.error("Error loading daily verse:", err);
-    container.innerHTML = `<p style="color:red;">Failed to load verse.</p>`;
+    console.error("❌ Failed to load daily verse:", err);
+    container.innerHTML = `<p style="color:red;">Could not load today's verse.</p>`;
   }
 }
-
-// Auto-run on load
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("dailyVerseContainer");
-  initDailyVerse(container);
-});
