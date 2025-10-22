@@ -1,3 +1,4 @@
+// js/sermons.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
@@ -11,8 +12,7 @@ function setOpenGraphMeta({ title, description, image, url }) {
     let meta = head.querySelector(selector);
     if (!meta) {
       meta = document.createElement("meta");
-      if (isName) meta.setAttribute("name", property);
-      else meta.setAttribute("property", property);
+      isName ? meta.setAttribute("name", property) : meta.setAttribute("property", property);
       head.appendChild(meta);
     }
     meta.setAttribute("content", content);
@@ -47,15 +47,21 @@ export async function initSermons(container) {
       const card = el("div", "sermon-card");
       card.dataset.id = sermon.id;
 
-      // Video
+      // Video or placeholder
       const video = el("video");
-      if (!sermon.video_url) {
-        console.warn(`Sermon ${sermon.id} missing video_url`);
-        video.textContent = "Video not available";
-      } else {
+      video.playsInline = true;
+      if (sermon.video_url) {
         video.src = sermon.video_url;
-        video.playsInline = true;
         if (sermon.thumbnail_url) video.poster = sermon.thumbnail_url;
+      } else {
+        // Placeholder message if no video
+        video.style.background = "#000";
+        video.style.color = "#fff";
+        video.style.height = "180px";
+        video.style.display = "flex";
+        video.style.alignItems = "center";
+        video.style.justifyContent = "center";
+        video.textContent = "Video not available";
       }
       card.appendChild(video);
 
@@ -100,7 +106,6 @@ export async function initSermons(container) {
           likeCountEl.textContent = "0 Likes";
         }
       }
-
       likeBtn.addEventListener("click", async () => {
         try {
           await api.post("/likes", { sermon_id: sermon.id });
@@ -116,7 +121,6 @@ export async function initSermons(container) {
         try {
           let comments = await fetchSermonComments(sermon.id);
           if (!Array.isArray(comments)) comments = [];
-
           commentCountEl.textContent = comments.length + " Comments";
 
           commentsBox.innerHTML = `
@@ -161,7 +165,6 @@ export async function initSermons(container) {
           commentsBox.innerHTML = `<p style="color:red">Error loading comments</p>`;
         }
       }
-
       commentBtn.addEventListener("click", () => {
         commentsBox.style.display = commentsBox.style.display === "none" ? "block" : "none";
         if (commentsBox.style.display === "block") refreshComments();
@@ -192,7 +195,7 @@ export async function initSermons(container) {
       });
     });
 
-    // TikTok-style autoplay
+    // Autoplay videos when mostly in view
     const videos = container.querySelectorAll("video");
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
