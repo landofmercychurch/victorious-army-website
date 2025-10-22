@@ -27,6 +27,23 @@ export function el(tag, className = "", attrs = {}) {
 }
 
 /**
+ * Format a date/time string into a readable format
+ * Example: "2025-10-22T18:00" → "22 Oct 2025, 6:00 PM"
+ */
+export function formatDateTime(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
+/**
  * Copy text to clipboard (with fallback)
  */
 export async function copyToClipboard(text) {
