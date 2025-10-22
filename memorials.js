@@ -1,4 +1,3 @@
-// js/memorials.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 
@@ -10,17 +9,14 @@ export async function initMemorials(container) {
     const memorials = await api.get("/memorials");
     container.innerHTML = "";
 
-    if (!memorials.length) {
+    if (!Array.isArray(memorials) || memorials.length === 0) {
       container.innerHTML = "<p>No memorials yet.</p>";
       return;
     }
 
-    // Carousel container
+    // Carousel container (first 10)
     const carousel = el("div", "memorial-carousel");
-    memorials.slice(0, 10).forEach(m => {
-      const item = renderMemorial(m);
-      carousel.appendChild(item);
-    });
+    memorials.slice(0, 10).forEach(m => carousel.appendChild(renderMemorial(m)));
     container.appendChild(carousel);
 
     // Older memorials
@@ -32,8 +28,8 @@ export async function initMemorials(container) {
       container.appendChild(older);
     }
   } catch (err) {
+    console.error("Failed to load memorials:", err);
     container.innerHTML = `<p style="color:red">Failed to load memorials.</p>`;
-    console.error(err);
   }
 }
 
@@ -42,7 +38,7 @@ function renderMemorial(m, fullWidth = false) {
 
   // Image
   const img = document.createElement("img");
-  img.src = m.image_url;
+  img.src = m.image_url || "";
   img.alt = m.title || "Memorial Image";
   img.className = "memorial-image";
   img.onclick = () => openPreview(m);
@@ -58,18 +54,19 @@ function renderMemorial(m, fullWidth = false) {
   return card;
 }
 
-// --- Fullscreen Preview ---
+// Fullscreen preview
 function openPreview(m) {
   const overlay = el("div", "memorial-overlay");
   overlay.innerHTML = `
     <div class="memorial-preview">
       <span class="close-btn">&times;</span>
-      <img src="${m.image_url}" alt="${m.title}" />
+      <img src="${m.image_url || ""}" alt="${m.title || "Memorial"}" />
       <h4>${m.title || "Memorial"}</h4>
       <p>${new Date(m.created_at).toLocaleString()}</p>
     </div>
   `;
   document.body.appendChild(overlay);
+
   overlay.querySelector(".close-btn").onclick = () => overlay.remove();
   overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
 }
