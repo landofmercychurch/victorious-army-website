@@ -3,7 +3,7 @@ import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
-/** Set Open Graph / Twitter meta tags */
+/** Set Open Graph / Twitter meta tags for sharing */
 function setOpenGraphMeta({ title, description, image, url }) {
   const head = document.head;
 
@@ -40,6 +40,7 @@ export async function initSermons(container) {
       return;
     }
 
+    // Sort newest first
     sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
 
@@ -47,33 +48,37 @@ export async function initSermons(container) {
       const card = el("div", "sermon-card");
       card.dataset.id = sermon.id;
 
-      // Video or placeholder
+      // Video element
       const video = el("video");
       video.playsInline = true;
+      video.controls = true;
+
       if (sermon.video_url) {
         video.src = sermon.video_url;
-        if (sermon.thumbnail_url) video.poster = sermon.thumbnail_url;
+        video.poster = sermon.thumbnail_url || ""; // empty string if no thumbnail
       } else {
-        // Placeholder message if no video
+        // Fallback placeholder for missing video
         video.style.background = "#000";
         video.style.color = "#fff";
         video.style.height = "180px";
         video.style.display = "flex";
         video.style.alignItems = "center";
         video.style.justifyContent = "center";
-        video.textContent = "Video not available";
+        const fallbackText = el("span", null, "Video not available");
+        video.appendChild(fallbackText);
       }
+
       card.appendChild(video);
 
-      // Overlay
+      // Overlay info
       const overlay = el("div", "sermon-overlay");
       overlay.innerHTML = `
-        <div class="sermon-title">${sermon.title}</div>
+        <div class="sermon-title">${sermon.title || "Untitled Sermon"}</div>
         <div class="sermon-desc">${sermon.description || ""}</div>
       `;
       card.appendChild(overlay);
 
-      // Actions
+      // Action buttons
       const actions = el("div", "sermon-actions");
       actions.innerHTML = `
         <button class="like-btn">❤️</button>
@@ -97,15 +102,16 @@ export async function initSermons(container) {
       const commentCountEl = actions.querySelector(".comment-count");
       const shareBtn = actions.querySelector(".share-btn");
 
-      // Likes
+      // --- Likes ---
       async function refreshLikes() {
         try {
           const res = await api.get(`/likes/count?type=sermon&sermon_id=${sermon.id}`);
-          likeCountEl.textContent = (res.count || 0) + " Likes";
+          likeCountEl.textContent = `${res.count || 0} Likes`;
         } catch {
           likeCountEl.textContent = "0 Likes";
         }
       }
+
       likeBtn.addEventListener("click", async () => {
         try {
           await api.post("/likes", { sermon_id: sermon.id });
@@ -116,18 +122,18 @@ export async function initSermons(container) {
       });
       refreshLikes();
 
-      // Comments
+      // --- Comments ---
       async function refreshComments() {
         try {
           let comments = await fetchSermonComments(sermon.id);
           if (!Array.isArray(comments)) comments = [];
-          commentCountEl.textContent = comments.length + " Comments";
+          commentCountEl.textContent = `${comments.length} Comments`;
 
           commentsBox.innerHTML = `
             <button class="close-btn">✖</button>
             <div class="comment-list">
               ${
-                comments.length > 0
+                comments.length
                   ? comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> ${c.content}</div>`).join("")
                   : `<p class="no-comments">No comments yet. Be the first!</p>`
               }
@@ -139,9 +145,7 @@ export async function initSermons(container) {
             </form>
           `;
 
-          commentsBox.querySelector(".close-btn").addEventListener("click", () => {
-            commentsBox.style.display = "none";
-          });
+          commentsBox.querySelector(".close-btn").onclick = () => commentsBox.style.display = "none";
 
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async e => {
@@ -151,6 +155,7 @@ export async function initSermons(container) {
             const name = nameInput.value.trim() || "Guest";
             const content = contentInput.value.trim();
             if (!content) return;
+
             try {
               await postSermonComment({ sermon_id: sermon.id, name, content });
               nameInput.value = "";
@@ -165,13 +170,14 @@ export async function initSermons(container) {
           commentsBox.innerHTML = `<p style="color:red">Error loading comments</p>`;
         }
       }
+
       commentBtn.addEventListener("click", () => {
         commentsBox.style.display = commentsBox.style.display === "none" ? "block" : "none";
         if (commentsBox.style.display === "block") refreshComments();
       });
       refreshComments();
 
-      // Share
+      // --- Share ---
       shareBtn.addEventListener("click", async () => {
         const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
         setOpenGraphMeta({
@@ -195,7 +201,7 @@ export async function initSermons(container) {
       });
     });
 
-    // Autoplay videos when mostly in view
+    // --- Autoplay videos in view ---
     const videos = container.querySelectorAll("video");
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
