@@ -55,30 +55,6 @@ function renderMemorial(m, fullWidth = false) {
   info.append(title, date);
   card.appendChild(info);
 
-  // Actions
-  const actions = el("div", "memorial-actions");
-  const likeBtn = el("button", "like-btn", "❤️ Like");
-  const likeCount = el("span", "like-count", "0 Likes");
-
-  likeBtn.onclick = async () => {
-    await api.post("/likes", { memorial_id: m.id });
-    updateLikeCount();
-  };
-
-  async function updateLikeCount() {
-    const result = await api.get(`/likes/count/${m.id}?type=memorial`);
-    likeCount.textContent = `${result.count} Likes`;
-  }
-  updateLikeCount();
-
-  const commentBtn = el("button", "comment-btn", "💬 Comments");
-  const commentsBox = el("div", "comments-box");
-  commentBtn.onclick = () => toggleComments(m.id, commentsBox);
-
-  actions.append(likeBtn, likeCount, commentBtn);
-  card.appendChild(actions);
-  card.appendChild(commentsBox);
-
   return card;
 }
 
@@ -96,51 +72,4 @@ function openPreview(m) {
   document.body.appendChild(overlay);
   overlay.querySelector(".close-btn").onclick = () => overlay.remove();
   overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
-}
-
-// --- Comments ---
-async function toggleComments(memorialId, box) {
-  if (box.dataset.loaded === "true") {
-    box.classList.toggle("open");
-    return;
-  }
-
-  box.innerHTML = "<p>Loading comments…</p>";
-
-  try {
-    const comments = await api.get(`/comments/memorial/${memorialId}`);
-    box.innerHTML = "";
-
-    const list = document.createElement("div");
-    list.className = "comment-list";
-
-    comments.forEach(c => {
-      const item = document.createElement("div");
-      item.className = "comment";
-      item.textContent = c.text;
-      list.appendChild(item);
-    });
-
-    const form = document.createElement("form");
-    form.className = "comment-form";
-    form.innerHTML = `
-      <input type="text" placeholder="Write a comment…" required />
-      <button type="submit">Post</button>
-    `;
-    form.onsubmit = async e => {
-      e.preventDefault();
-      const input = form.querySelector("input");
-      const text = input.value.trim();
-      if (!text) return;
-      await api.post("/comments", { memorial_id: memorialId, text });
-      input.value = "";
-      toggleComments(memorialId, box);
-    };
-
-    box.append(list, form);
-    box.dataset.loaded = "true";
-    box.classList.add("open");
-  } catch (err) {
-    box.innerHTML = "<p style='color:red'>Failed to load comments.</p>";
-  }
 }
