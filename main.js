@@ -1,39 +1,26 @@
 import { initMemorials } from "./memorials.js";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initMemorials(document.getElementById("memorialsContainer"));
-});
-
-
 import { initSermons } from "./sermons.js";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initSermons(document.getElementById("sermonsContainer"));
-});
-
-
 import { initPicturePosts } from "./picturePosts.js";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initPicturePosts(document.getElementById("picturePostsContainer"));
-});
-
 import { initEvents } from "./events.js";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initEvents(document.getElementById("eventsContainer"));
-});
-
-
 import { initDailyVerse } from "./dailyVerse.js";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initDailyVerse(document.getElementById("dailyVerseContainer"));
-});
-
-
 import { initEbooks } from "./ebooks.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  initEbooks(document.getElementById("ebooksContainer"));
+  const memorialsContainer = document.getElementById("memorialsContainer");
+  if (memorialsContainer) initMemorials(memorialsContainer);
+
+  const sermonsContainer = document.getElementById("sermonsContainer");
+  if (sermonsContainer) initSermons(sermonsContainer);
+
+  const picturePostsContainer = document.getElementById("picturePostsContainer");
+  if (picturePostsContainer) initPicturePosts(picturePostsContainer);
+
+  const eventsContainer = document.getElementById("eventsContainer");
+  if (eventsContainer) initEvents(eventsContainer);
+
+  const dailyVerseContainer = document.getElementById("dailyVerseContainer");
+  if (dailyVerseContainer) initDailyVerse(dailyVerseContainer);
+
+  const ebooksContainer = document.getElementById("ebooksContainer");
+  if (ebooksContainer) initEbooks(ebooksContainer);
 });
