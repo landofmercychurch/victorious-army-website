@@ -39,7 +39,7 @@ p {
 }
 
 /* ================================
-   NAVBAR
+   HEADER / NAVBAR
 ================================ */
 .navbar {
   background: var(--primary);
@@ -72,7 +72,7 @@ p {
 }
 
 /* ================================
-   HERO
+   HERO SECTION
 ================================ */
 .hero {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -106,9 +106,8 @@ p {
   }
 }
 
-
 /* ================================
-   SECTIONS
+   GLOBAL SECTIONS (common styles)
 ================================ */
 .section {
   max-width: 1000px;
@@ -126,18 +125,22 @@ p {
 }
 
 /* ================================
-   GRID CARDS
+   EBOOKS SECTION
 ================================ */
-.card-grid {
+#ebooks {
+  /* Container-specific adjustments if needed */
+}
+
+.ebook-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
 }
 
-.card {
+.ebook-card {
   flex: 1 1 220px;
-  max-width: 300px;
+  max-width: 280px;
   background: #f9f9ff;
   border-radius: var(--radius);
   padding: 20px;
@@ -146,108 +149,130 @@ p {
   transition: var(--transition);
 }
 
-.card:hover {
+.ebook-card:hover {
   transform: translateY(-6px) scale(1.02);
   box-shadow: var(--shadow-md);
 }
 
-
-
-
-
-
-
-
-/* ================================
-   SERVICES LIST
-================================ */
-.services ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  list-style: none;
+.ebook-card h4 {
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+  color: var(--primary);
 }
 
-.services li {
-  flex: 1 1 220px;
-  max-width: 280px;
-  background: #f0f8ff;
-  border-radius: var(--radius);
-  padding: 15px;
-  text-align: center;
-  font-weight: 500;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+.ebook-card p.meta {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
 }
 
-.services li:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
+.ebook-card a.btn {
+  text-decoration: none;
+  color: #0077cc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #0077cc;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
-/* ================================
-   CONTACT
-================================ */
-#contact p {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  background: #f0f8ff;
-  border: 1px solid #90cdf4;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-/* ================================
-   SOCIAL BOXES
-================================ */
-.social-area {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px;
-}
-
-.social-box {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 220px;
-  max-width: 400px;
-  padding: 14px;
-  border-radius: 10px;
+.ebook-card a.btn:hover {
+  background: #0077cc;
   color: #fff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transition: var(--transition);
 }
 
-.social-box:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
+/* ================================
+   POSTS / PICTURES SECTION
+================================ */
+.picture-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: height 0.3s ease;
 }
 
-.social-box .icon svg {
-  width: 32px;
-  height: 32px;
-  transition: transform 0.25s ease;
+.picture-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  position: relative;
 }
 
-.social-box:hover .icon svg {
-  transform: scale(1.2);
+.picture-card:hover { transform: translateY(-3px); }
+
+.picture-img { width: 100%; height: auto; display: block; object-fit: contain; border-bottom: 1px solid #eee; }
+.picture-caption { padding: 8px; font-size: 14px; line-height: 1.4; color: #333; }
+
+.picture-actions { display: flex; align-items: center; justify-content: flex-start; gap: 10px; padding: 0 8px 8px 8px; }
+.like-btn, .comment-btn { background: none; border: none; color: #0077cc; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 4px; }
+.like-btn:hover, .comment-btn:hover { text-decoration: underline; }
+
+/* ================================
+   SERMONS SECTION
+================================ */
+#sermons { margin: 20px 0; padding: 10px; }
+
+.sermon-feed { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+.sermon-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-.social-box .social-text {
-  text-align: left;
+.sermon-card video { width: 100%; height: 100%; object-fit: cover; }
+
+.sermon-overlay { position: absolute; bottom: 10px; left: 10px; right: 10px; color: #fff; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 10px; border-radius: 8px; }
+
+.sermon-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
+
+.sermon-actions { position: absolute; right: 10px; bottom: 80px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 5; }
+.sermon-actions button { background: rgba(255,255,255,0.2); border: none; border-radius: 50%; padding: 12px; cursor: pointer; transition: background 0.3s, transform 0.2s; font-size: 1.2rem; color: #fff; }
+.sermon-actions button:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+
+/* ================================
+   MEMORIALS SECTION
+================================ */
+.memorial-carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; }
+.memorial-carousel::-webkit-scrollbar { display: none; }
+
+.memorial-card { flex: 0 0 auto; width: 180px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); scroll-snap-align: start; padding: 8px; text-align: center; }
+.memorial-card.full { width: 100%; }
+
+.memorial-image { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; cursor: pointer; }
+
+.memorial-info h4 { margin: 6px 0 2px; font-size: 15px; }
+.memorial-date { font-size: 12px; color: #777; }
+
+.memorial-actions { display: flex; align-items: center; gap: 10px; margin-top: 6px; justify-content: center; }
+.like-btn, .comment-btn { background: none; border: none; cursor: pointer; color: #0077cc; font-size: 13px; }
+.like-count { font-size: 12px; color: #555; }
+
+/* ================================
+   DAILY VERSES SECTION
+================================ */
+#daily-verse {
+  padding: 20px;
+  background: #fdfdfd;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
 }
 
-.social-box.facebook { background: #1877f2; }
-.social-box.youtube { background: #ff0000; }
-.social-box.whatsapp { background: #25D366; }
-.social-box.tiktok { background: #000; }
+#daily-verse h3 { font-size: 1.1rem; margin-bottom: 6px; color: var(--primary); }
+#daily-verse p { font-size: 0.95rem; color: var(--text-light); }
 
 /* ================================
    FOOTER
@@ -270,6 +295,8 @@ footer {
   .hero p { font-size: 1rem; }
   .section { padding: 25px 15px; width: 95%; }
   .card, .services li, .social-box { flex: 1 1 100%; max-width: 100%; }
+  .picture-feed { grid-template-columns: 1fr; gap: 12px; padding: 6px; height: auto; }
+  .picture-card { max-width: 100%; }
 }
 
 @media (max-width: 480px) {
@@ -277,613 +304,7 @@ footer {
   .hero p { font-size: 0.9rem; }
   .navbar a { font-size: 0.8rem; padding: 4px 8px; }
   .section { padding: 20px 10px; }
+  .sermon-card { height: 500px; }
+  .sermon-actions { right: 5px; bottom: 60px; gap: 15px; }
+  .comments-box { max-height: 60%; padding: 10px; }
 }
-
-
-
-
-
-
-
-/* ================================
-   Picture Feed Grid
-==================================*/
-.picture-feed {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-  padding: 8px;
-  position: relative;
-  overflow: hidden;
-  transition: height 0.3s ease;
-}
-
-/* ================================
-   Picture Card
-==================================*/
-.picture-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  position: relative;
-}
-
-.picture-card:hover {
-  transform: translateY(-3px);
-}
-
-/* ================================
-   Image
-==================================*/
-.picture-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: contain;
-  border-bottom: 1px solid #eee;
-}
-
-/* ================================
-   Caption
-==================================*/
-.picture-caption {
-  padding: 8px;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #333;
-}
-
-/* ================================
-   Actions (Like / Comment)
-==================================*/
-.picture-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 0 8px 8px 8px;
-}
-
-.like-btn,
-.comment-btn {
-  background: none;
-  border: none;
-  color: #0077cc;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.like-btn:hover,
-.comment-btn:hover {
-  text-decoration: underline;
-}
-
-.like-count,
-.comment-count {
-  font-size: 13px;
-  color: #555;
-}
-
-/* ================================
-   Comments Box
-==================================*/
-.comments-box {
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  background: #f0f4f8; /* soft background for better readability */
-  padding: 10px;
-  border-top: 1px solid #ccc;
-  border-radius: 0 0 8px 8px;
-  font-size: 14px;
-  color: #222;
-  position: relative;
-}
-
-.comments-box.open {
-  display: flex;
-}
-
-/* ================================
-   Close Comment Button
-==================================*/
-.comments-box .close-comments {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 2px 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.comments-box .close-comments:hover {
-  background: #c0392b;
-}
-
-/* ================================
-   Comment List
-==================================*/
-.comment-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.comment {
-  background: #fff;
-  padding: 4px 6px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* ================================
-   Comment Form
-==================================*/
-.comment-form {
-  display: flex;
-  gap: 5px;
-  margin-top: 6px;
-}
-
-.comment-form input {
-  flex: 1;
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 13px;
-}
-
-.comment-form button {
-  padding: 6px 12px;
-  background: #0077cc;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.comment-form button:hover {
-  background: #005fa3;
-}
-
-/* ================================
-   Autoplay Progress Bar (Mobile)
-==================================*/
-.picture-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  background: #0077cc;
-  width: 0;
-  transition: width 4s linear;
-}
-
-.picture-card.active::after {
-  width: 100%;
-}
-
-/* ================================
-   Responsive Adjustments
-==================================*/
-@media (max-width: 768px) {
-  .picture-feed {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 6px;
-    height: auto;
-  }
-
-  .picture-card {
-    max-width: 100%;
-  }
-
-  .picture-img {
-    max-height: none;
-  }
-
-  .picture-caption {
-    font-size: 13px;
-  }
-
-  .like-btn,
-  .comment-btn {
-    font-size: 13px;
-  }
-
-  .like-count,
-  .comment-count {
-    font-size: 12px;
-  }
-
-  .comment-form input,
-  .comment-form button {
-    font-size: 12px;
-  }
-
-  .comments-box {
-    font-size: 13px;
-    padding: 8px;
-  }
-
-  .comment-list {
-    max-height: 150px;
-  }
-}
-.share-btn {
-  background: none;
-  border: none;
-  color: #28a745;
-  font-size: 14px;
-  cursor: pointer;
-}
-.share-btn:hover {
-  text-decoration: underline;
-}
-
-
-
-
-
-
-
-
-
-/* ================================
-   SERMON FEED (TikTok style)
-==================================*/
-#sermons {
-  margin: 20px 0;
-  padding: 10px;
-}
-
-.sermon-feed {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.sermon-card {
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-  height: 600px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-.sermon-card video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.sermon-overlay {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  color: #fff;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.sermon-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-/* ================================
-   SERMON ACTIONS (Likes, Comments, Share)
-==================================*/
-.sermon-actions {
-  position: absolute;
-  right: 10px;
-  bottom: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  z-index: 5;
-}
-
-.sermon-actions button {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  border-radius: 50%;
-  padding: 12px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-  font-size: 1.2rem;
-  color: #fff;
-}
-
-.sermon-actions button:hover {
-  background: rgba(255,255,255,0.4);
-  transform: scale(1.1);
-}
-
-.sermon-actions span {
-  color: #fff;
-  font-size: 0.9rem;
-  margin-top: -10px;
-}
-
-/* ================================
-   COMMENTS BOX
-==================================*/
-.comments-box {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  max-height: 50%;
-  background: rgba(0, 0, 0, 0.9);
-  padding: 12px;
-  overflow-y: auto;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  font-size: 0.95rem;
-  color: #f1f1f1;
-  backdrop-filter: blur(5px);
-  z-index: 10;
-}
-
-/* Smooth scroll for better UX */
-.comments-box::-webkit-scrollbar {
-  width: 6px;
-}
-
-.comments-box::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
-
-.comment-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.comment {
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  line-height: 1.3;
-  word-break: break-word;
-  transition: background 0.2s;
-}
-
-.comment:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.comment b {
-  color: #ffd369;
-  margin-right: 4px;
-}
-
-/* ================================
-   COMMENT FORM
-==================================*/
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.comment-form input {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  font-size: 0.9rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  transition: background 0.2s;
-}
-
-.comment-form input:focus {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.comment-form button {
-  align-self: flex-end;
-  background: #ffd369;
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.15s;
-}
-
-.comment-form button:hover {
-  background: #ffb703;
-  transform: scale(1.05);
-}
-
-/* No comments placeholder */
-.comment-list .no-comments {
-  text-align: center;
-  color: #ccc;
-  font-style: italic;
-  padding: 6px 0;
-}
-
-/* ================================
-   CLOSE BUTTON FOR COMMENTS
-==================================*/
-.comments-box .close-btn {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.comments-box .close-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-/* ================================
-   RESPONSIVE ADJUSTMENTS
-==================================*/
-@media (max-width: 480px) {
-  .sermon-card {
-    height: 500px;
-  }
-  .sermon-actions {
-    right: 5px;
-    bottom: 60px;
-    gap: 15px;
-  }
-  .comments-box {
-    max-height: 60%;
-    padding: 10px;
-  }
-}
-
-
-
-
-
-/* --- Memorials --- */
-.memorial-carousel {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 10px;
-}
-.memorial-carousel::-webkit-scrollbar {
-  display: none;
-}
-
-.memorial-card {
-  flex: 0 0 auto;
-  width: 180px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  scroll-snap-align: start;
-  padding: 8px;
-  text-align: center;
-}
-.memorial-card.full {
-  width: 100%;
-}
-
-.memorial-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.memorial-info h4 {
-  margin: 6px 0 2px;
-  font-size: 15px;
-}
-.memorial-date {
-  font-size: 12px;
-  color: #777;
-}
-
-.memorial-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 6px;
-  justify-content: center;
-}
-.like-btn, .comment-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #0077cc;
-  font-size: 13px;
-}
-.like-count {
-  font-size: 12px;
-  color: #555;
-}
-
-/* Fullscreen Preview */
-.memorial-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.memorial-preview {
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 90%;
-  max-height: 90%;
-}
-.memorial-preview img {
-  max-width: 100%;
-  max-height: 70vh;
-  border-radius: 6px;
-}
-.close-btn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 28px;
-  color: #fff;
-  cursor: pointer;
-}
-
-/* Comments */
-.comments-box { display: none; margin-top: 8px; }
-.comments-box.open { display: block; }
-.comment-list { margin-bottom: 8px; }
-.comment { background: #f5f5f5; padding: 5px 8px; border-radius: 6px; margin-bottom: 5px; font-size: 13px; }
-.comment-form { display: flex; gap: 5px; }
-.comment-form input { flex: 1; padding: 6px; border-radius: 4px; border: 1px solid #ccc; }
-.comment-form button { padding: 6px 12px; background: #0077cc; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-.comment-form button:hover { background: #005fa3; }
