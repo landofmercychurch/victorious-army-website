@@ -1,11 +1,8 @@
-// js/sermons.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
-/**
- * Dynamically set Open Graph and Twitter meta tags for sharing
- */
+/** Set Open Graph / Twitter meta tags */
 function setOpenGraphMeta({ title, description, image, url }) {
   const head = document.head;
 
@@ -31,12 +28,9 @@ function setOpenGraphMeta({ title, description, image, url }) {
   createOrUpdate("twitter:image", image, true);
 }
 
-/**
- * Initialize sermons feed
- */
+/** Initialize sermons feed */
 export async function initSermons(container) {
   if (!container) return;
-
   container.innerHTML = "<p>Loading sermons…</p>";
 
   try {
@@ -46,20 +40,26 @@ export async function initSermons(container) {
       return;
     }
 
-    // Sort by newest
-    sermons = sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
+    sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
+
     sermons.forEach(sermon => {
       const card = el("div", "sermon-card");
       card.dataset.id = sermon.id;
 
+      // Video
       const video = el("video");
-      video.src = sermon.video_url;
-      video.playsInline = true;
-      if (sermon.thumbnail_url) video.poster = sermon.thumbnail_url;
+      if (!sermon.video_url) {
+        console.warn(`Sermon ${sermon.id} missing video_url`);
+        video.textContent = "Video not available";
+      } else {
+        video.src = sermon.video_url;
+        video.playsInline = true;
+        if (sermon.thumbnail_url) video.poster = sermon.thumbnail_url;
+      }
       card.appendChild(video);
 
+      // Overlay
       const overlay = el("div", "sermon-overlay");
       overlay.innerHTML = `
         <div class="sermon-title">${sermon.title}</div>
@@ -67,6 +67,7 @@ export async function initSermons(container) {
       `;
       card.appendChild(overlay);
 
+      // Actions
       const actions = el("div", "sermon-actions");
       actions.innerHTML = `
         <button class="like-btn">❤️</button>
@@ -77,6 +78,7 @@ export async function initSermons(container) {
       `;
       card.appendChild(actions);
 
+      // Comments container
       const commentsBox = el("div", "comments-box");
       commentsBox.style.display = "none";
       card.appendChild(commentsBox);
@@ -133,12 +135,10 @@ export async function initSermons(container) {
             </form>
           `;
 
-          // Close button
           commentsBox.querySelector(".close-btn").addEventListener("click", () => {
             commentsBox.style.display = "none";
           });
 
-          // Submit comment
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async e => {
             e.preventDefault();
@@ -168,7 +168,7 @@ export async function initSermons(container) {
       });
       refreshComments();
 
-      // Share button
+      // Share
       shareBtn.addEventListener("click", async () => {
         const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
         setOpenGraphMeta({
@@ -201,7 +201,6 @@ export async function initSermons(container) {
         else video.pause();
       });
     }, { threshold: 0.7 });
-
     videos.forEach(video => observer.observe(video));
 
   } catch (err) {
