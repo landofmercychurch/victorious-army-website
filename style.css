@@ -200,17 +200,6 @@ p {
   color: #fff;
 }
 
-/* ================================
-   POSTS / PICTURES SECTION
-================================ */
-.picture-feed {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-  padding: 8px;
-}
-
-
 
 
 
@@ -218,10 +207,13 @@ p {
    PICTURE POSTS SECTION
 ================================ */
 #picture-feed {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  padding: 6px; /* reduced padding for app-like feel */
+  padding: 4px;           /* minimal padding for app feel */
+  max-width: 480px;       /* center feed like an app */
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 /* =============================
@@ -229,30 +221,32 @@ p {
 ============================= */
 .picture-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-height: 70vh;        /* portrait-style */
   position: relative;
 }
 
 .picture-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 16px rgba(0,0,0,0.18);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
 }
 
 .picture-img {
   width: 100%;
-  height: auto;
+  height: 50vh;            /* portrait height */
   object-fit: cover;
   display: block;
 }
 
 /* Title & description */
 .picture-title {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #222;
   margin: 8px 12px 4px 12px;
@@ -263,6 +257,9 @@ p {
   color: #444;
   margin: 0 12px 8px 12px;
   line-height: 1.4;
+  max-height: 3em;         /* prevent long text from breaking layout */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* =============================
@@ -272,9 +269,10 @@ p {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 12px;
   padding: 6px 12px;
   border-top: 1px solid #eee;
+  flex-wrap: wrap;
 }
 
 .like-btn, .comment-btn, .share-btn {
@@ -283,7 +281,7 @@ p {
   gap: 4px;
   background: none;
   border: none;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #007BFF;
   cursor: pointer;
@@ -296,8 +294,11 @@ p {
 }
 
 .like-count, .comment-count {
+  display: inline-block;
   font-size: 0.78rem;
   color: #555;
+  min-width: 30px;
+  text-align: center;
 }
 
 /* =============================
@@ -308,20 +309,20 @@ p {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 94%; /* slightly smaller */
-  max-width: 320px;
-  max-height: 50vh; /* smaller for app feel */
+  width: 94%;
+  max-width: 360px;
+  max-height: 55vh;
   min-height: 180px;
-  background: rgba(255,255,255,0.98);
+  background: rgba(255,255,255,0.97);
   backdrop-filter: blur(4px);
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
   overflow-y: auto;
   display: none;
   flex-direction: column;
   gap: 6px;
-  padding: 8px; /* tighter padding */
+  padding: 8px;
   z-index: 20;
-  box-shadow: 0 -3px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
 }
 
 .comments-box.open {
@@ -334,7 +335,7 @@ p {
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   padding-bottom: 4px;
   border-bottom: 1px solid #ddd;
 }
@@ -343,8 +344,8 @@ p {
   background: #eee;
   border: none;
   border-radius: 50%;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -388,9 +389,9 @@ p {
 .comment-form input,
 .comment-form textarea {
   width: 100%;
-  padding: 5px 8px;
+  padding: 5px 10px;
   font-size: 0.82rem;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #ccc;
   outline: none;
 }
@@ -403,12 +404,12 @@ p {
 /* Post button */
 .comment-form button {
   align-self: flex-end;
-  padding: 5px 12px;
+  padding: 5px 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   background: #007BFF;
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease;
@@ -435,6 +436,34 @@ p {
 .load-more-btn:hover {
   text-decoration: underline;
 }
+
+/* =============================
+   TikTok-like swipe (mobile)
+============================= */
+@media (max-width: 768px) {
+  #picture-feed {
+    overflow: hidden;
+    height: 100vh; /* full screen height for vertical swipe */
+  }
+
+  .picture-card {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0; /* full width like TikTok */
+    box-shadow: none;
+    transition: transform 0.25s ease;
+  }
+
+  .picture-img {
+    height: 65vh; /* main visible portion */
+  }
+
+  .picture-title, .picture-description, .picture-actions {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
 
 
 
