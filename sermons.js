@@ -72,7 +72,6 @@ export async function initSermons(container) {
 
       const setupVideo = () => {
         spinner.style.display = "flex";
-        // ✅ Check safely for global Hls
         if (hlsSource && window.Hls && window.Hls.isSupported()) {
           const hls = new window.Hls({ startLevel: -1, maxBufferLength: 30 });
           hls.loadSource(hlsSource);
@@ -172,7 +171,7 @@ export async function initSermons(container) {
           let comments = await fetchSermonComments(sermonId);
           if (!Array.isArray(comments)) comments = [];
 
-          commentCountEl.textContent = `${comments.length} Comments`;
+          commentCountEl.textContent = `${comments.length} Comment${comments.length !== 1 ? "s" : ""}`;
 
           commentsBox.innerHTML = `
             <div class="comments-header">
@@ -182,17 +181,11 @@ export async function initSermons(container) {
             <div class="comment-list">
               ${
                 comments.length
-                  ? comments
-                      .map(
-                        (c) => `
-                          <div class="comment">
-                            <b>${c.name || "Guest"}:</b>
-                            <span>${c.content}</span>
-                            <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div>
-                          </div>`
-                      )
-                      .join("")
-                  : `<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>`
+                  ? comments.map(
+                      c => `<div class="comment"><b>${c.name || "Guest"}:</b> <span>${c.content}</span>
+                      <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div></div>`
+                    ).join("")
+                  : `<p class="no-comments">No comments yet. Be the first!</p>`
               }
             </div>
             <form class="comment-form">
@@ -202,12 +195,13 @@ export async function initSermons(container) {
             </form>
           `;
 
-          const closeBtn = commentsBox.querySelector(".close-btn");
-          closeBtn.addEventListener("click", () => {
+          // Close button
+          commentsBox.querySelector(".close-btn").onclick = () => {
             commentsBox.style.display = "none";
             video.play().catch(() => {});
-          });
+          };
 
+          // Post new comment
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async (e) => {
             e.preventDefault();
@@ -216,7 +210,7 @@ export async function initSermons(container) {
             if (!content) return;
 
             try {
-              const newComment = await postSermonComment({ sermon_id: sermonId, name, content });
+              const newComment = await postSermonComment({ sermon_id: sermon.id, name, content });
               const list = commentsBox.querySelector(".comment-list");
               list.insertAdjacentHTML(
                 "afterbegin",
@@ -227,9 +221,9 @@ export async function initSermons(container) {
                 </div>`
               );
               form.reset();
-              commentCountEl.textContent = `${comments.length + 1} Comments`;
+              commentCountEl.textContent = `${list.children.length} Comment${list.children.length !== 1 ? "s" : ""}`;
             } catch (err) {
-              console.error("❌ Failed to post comment:", err);
+              console.error("Failed to post comment:", err);
               commentsBox.insertAdjacentHTML(
                 "beforeend",
                 `<p style="color:red;">Error posting comment. Please try again.</p>`
@@ -242,9 +236,8 @@ export async function initSermons(container) {
         }
       }
 
-      commentBtn.addEventListener("click", () => {
-        const hidden = commentsBox.style.display === "none";
-        if (hidden) {
+      commentBtn.onclick = () => {
+        if (commentsBox.style.display === "none") {
           video.pause();
           commentsBox.style.display = "block";
           refreshComments();
@@ -252,7 +245,7 @@ export async function initSermons(container) {
           commentsBox.style.display = "none";
           video.play().catch(() => {});
         }
-      });
+      };
 
       /** 🔗 Share */
       shareBtn.addEventListener("click", async () => {
@@ -275,9 +268,7 @@ export async function initSermons(container) {
             await navigator.share(shareData);
           } catch {}
         } else {
-          navigator.clipboard
-            .writeText(shareUrl)
-            .then(() => alert("Link copied to clipboard!"));
+          navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied to clipboard!"));
         }
       });
 
@@ -298,6 +289,7 @@ export async function initSermons(container) {
       { threshold: 0.7 }
     );
     videos.forEach((v) => observer.observe(v));
+
   } catch (err) {
     console.error("Failed to load sermons:", err);
     container.innerHTML = `<p style="color:red;">Failed to load sermons</p>`;
