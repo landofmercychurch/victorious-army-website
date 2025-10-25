@@ -220,8 +220,8 @@ p {
 #picture-feed {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  padding: 10px;
+  gap: 12px;
+  padding: 6px; /* reduced padding for app-like feel */
 }
 
 /* =============================
@@ -230,32 +230,39 @@ p {
 .picture-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   position: relative;
 }
 
 .picture-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.18);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(0,0,0,0.18);
 }
 
 .picture-img {
   width: 100%;
   height: auto;
   object-fit: cover;
-  border-bottom: 1px solid #eee;
   display: block;
 }
 
-.picture-caption {
-  padding: 8px 12px;
+/* Title & description */
+.picture-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #222;
+  margin: 8px 12px 4px 12px;
+}
+
+.picture-description {
   font-size: 0.88rem;
+  color: #444;
+  margin: 0 12px 8px 12px;
   line-height: 1.4;
-  color: #333;
 }
 
 /* =============================
@@ -265,8 +272,8 @@ p {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: 10px;
+  padding: 6px 12px;
   border-top: 1px solid #eee;
 }
 
@@ -301,9 +308,9 @@ p {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 92%;
+  width: 94%; /* slightly smaller */
   max-width: 320px;
-  max-height: 55vh;
+  max-height: 50vh; /* smaller for app feel */
   min-height: 180px;
   background: rgba(255,255,255,0.98);
   backdrop-filter: blur(4px);
@@ -311,8 +318,8 @@ p {
   overflow-y: auto;
   display: none;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 8px; /* tighter padding */
   z-index: 20;
   box-shadow: 0 -3px 12px rgba(0,0,0,0.15);
 }
@@ -336,8 +343,8 @@ p {
   background: #eee;
   border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -356,8 +363,8 @@ p {
 .comment-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin: 8px 0;
+  gap: 5px;
+  margin: 6px 0;
   font-size: 0.82rem;
 }
 
@@ -375,18 +382,17 @@ p {
 .comment-form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .comment-form input,
 .comment-form textarea {
   width: 100%;
-  padding: 6px 10px;
+  padding: 5px 8px;
   font-size: 0.82rem;
   border-radius: 10px;
   border: 1px solid #ccc;
   outline: none;
-  transition: border-color 0.2s ease;
 }
 
 .comment-form input:focus,
@@ -394,12 +400,12 @@ p {
   border-color: #007BFF;
 }
 
-/* Post button (modern) */
+/* Post button */
 .comment-form button {
   align-self: flex-end;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #007BFF;
   color: #fff;
   font-size: 0.85rem;
@@ -415,9 +421,7 @@ p {
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* =============================
-   Read More Button
-============================= */
+/* Read More Button */
 .load-more-btn {
   background: none;
   border: none;
@@ -425,13 +429,12 @@ p {
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 500;
-  margin-left: 4px;
+  margin-left: 2px;
 }
 
 .load-more-btn:hover {
   text-decoration: underline;
 }
-
 
 
 
