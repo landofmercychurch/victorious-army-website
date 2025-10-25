@@ -28,6 +28,11 @@ export async function initEbooks(container) {
       }
     });
 
+    // Sort each series by series_order
+    Object.values(seriesMap).forEach(books => {
+      books.sort((a, b) => (a.series_order || 0) - (b.series_order || 0));
+    });
+
     // Helper to create book card
     function createBookCard(book) {
       const card = el("div", "ebook-card");
@@ -39,6 +44,7 @@ export async function initEbooks(container) {
         title: book.title,
       });
       cover.style.backgroundImage = `url(${book.cover_url || 'https://via.placeholder.com/180x240?text=No+Cover'})`;
+      cover.loading = "lazy"; // lazy load
       card.appendChild(cover);
 
       // Title
@@ -51,6 +57,12 @@ export async function initEbooks(container) {
         card.appendChild(authorEl);
       }
 
+      // Optional series part
+      if (book.series_order) {
+        const partEl = el("p", "ebook-part", { text: `Part ${book.series_order}` });
+        card.appendChild(partEl);
+      }
+
       return card;
     }
 
@@ -61,8 +73,21 @@ export async function initEbooks(container) {
       section.appendChild(header);
 
       const grid = el("div", "ebook-grid");
-      books.forEach(book => grid.appendChild(createBookCard(book)));
+      // Limit to first 5 books initially to prevent page overload
+      books.slice(0, 5).forEach(book => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
+
+      // Optional "View All" button for series
+      if (books.length > 5) {
+        const viewAllBtn = el("button", "view-all-btn", { text: "View All" });
+        viewAllBtn.addEventListener("click", () => {
+          grid.innerHTML = ""; // clear current limited display
+          books.forEach(book => grid.appendChild(createBookCard(book)));
+          viewAllBtn.style.display = "none"; // hide button after viewing all
+        });
+        section.appendChild(viewAllBtn);
+      }
+
       container.appendChild(section);
     }
 
@@ -73,7 +98,18 @@ export async function initEbooks(container) {
       section.appendChild(header);
 
       const grid = el("div", "ebook-grid");
-      standalone.forEach(book => grid.appendChild(createBookCard(book)));
+      standalone.slice(0, 8).forEach(book => grid.appendChild(createBookCard(book)));
+
+      if (standalone.length > 8) {
+        const viewAllBtn = el("button", "view-all-btn", { text: "View All" });
+        viewAllBtn.addEventListener("click", () => {
+          grid.innerHTML = "";
+          standalone.forEach(book => grid.appendChild(createBookCard(book)));
+          viewAllBtn.style.display = "none";
+        });
+        section.appendChild(viewAllBtn);
+      }
+
       section.appendChild(grid);
       container.appendChild(section);
     }
