@@ -36,7 +36,7 @@ export async function initSermons(container) {
   container.innerHTML = "<p>Loading sermons…</p>";
 
   try {
-    let sermons = await api.get("/sermons");
+    const sermons = await api.get("/sermons");
     if (!Array.isArray(sermons) || sermons.length === 0) {
       container.innerHTML = "<p>No sermons available.</p>";
       return;
@@ -99,7 +99,7 @@ export async function initSermons(container) {
       );
       lazyObserver.observe(video);
 
-      /** Hover preview (short play) */
+      /** Hover preview */
       let previewTimeout;
       videoWrapper.addEventListener("mouseenter", () => {
         if (video.readyState >= 2) {
@@ -165,6 +165,7 @@ export async function initSermons(container) {
       commentsBox.style.display = "none";
       card.appendChild(commentsBox);
 
+      /** Refresh comments safely */
       async function refreshComments() {
         try {
           const sermonId = String(sermon.id);
@@ -173,71 +174,75 @@ export async function initSermons(container) {
 
           commentCountEl.textContent = `${comments.length} Comment${comments.length !== 1 ? "s" : ""}`;
 
-          commentsBox.innerHTML = `
-            <div class="comments-header">
-              <strong>${comments.length} Comment${comments.length !== 1 ? "s" : ""}</strong>
-              <button class="close-btn">✖</button>
-            </div>
-            <div class="comment-list">
-              ${
-                comments.length
-                  ? comments.map(
-                      c => `<div class="comment"><b>${c.name || "Guest"}:</b> <span>${c.content}</span>
-                      <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div></div>`
-                    ).join("")
-                  : `<p class="no-comments">No comments yet. Be the first!</p>`
+          let commentList = commentsBox.querySelector(".comment-list");
+          if (!commentList) {
+            commentsBox.innerHTML = `
+              <div class="comments-header">
+                <strong>${comments.length} Comment${comments.length !== 1 ? "s" : ""}</strong>
+                <button class="close-btn">✖</button>
+              </div>
+              <div class="comment-list"></div>
+              <form class="comment-form">
+                <input type="text" class="comment-name" placeholder="Your name (optional)" />
+                <textarea class="comment-content" placeholder="Write your comment..." required></textarea>
+                <button type="submit" class="comment-submit">Post Comment</button>
+              </form>
+            `;
+            commentList = commentsBox.querySelector(".comment-list");
+
+            // Close button
+            commentsBox.querySelector(".close-btn").onclick = () => {
+              commentsBox.style.display = "none";
+              video.play().catch(() => {});
+            };
+
+            // Form submit handler
+            const form = commentsBox.querySelector(".comment-form");
+            form.onsubmit = async (e) => {
+              e.preventDefault();
+              const name = form.querySelector(".comment-name").value.trim() || "Guest";
+              const content = form.querySelector(".comment-content").value.trim();
+              if (!content) return;
+
+              try {
+                const newComment = await postSermonComment({ sermon_id: sermon.id, name, content });
+                commentList.insertAdjacentHTML(
+                  "afterbegin",
+                  `<div class="comment">
+                     <b>${newComment.name || "Guest"}:</b>
+                     <span>${newComment.content}</span>
+                     <div class="comment-time">${new Date(newComment.created_at).toLocaleString()}</div>
+                  </div>`
+                );
+                form.reset();
+                commentCountEl.textContent = `${commentList.children.length} Comment${commentList.children.length !== 1 ? "s" : ""}`;
+              } catch (err) {
+                console.error("Failed to post comment:", err);
               }
-            </div>
-            <form class="comment-form">
-              <input type="text" class="comment-name" placeholder="Your name (optional)" />
-              <textarea class="comment-content" placeholder="Write your comment..." required></textarea>
-              <button type="submit" class="comment-submit">Post Comment</button>
-            </form>
-          `;
+            };
+          }
 
-          // Close button
-          commentsBox.querySelector(".close-btn").onclick = () => {
-            commentsBox.style.display = "none";
-            video.play().catch(() => {});
-          };
-
-          // Post new comment
-          const form = commentsBox.querySelector(".comment-form");
-          form.onsubmit = async (e) => {
-            e.preventDefault();
-            const name = form.querySelector(".comment-name").value.trim() || "Guest";
-            const content = form.querySelector(".comment-content").value.trim();
-            if (!content) return;
-
-            try {
-              const newComment = await postSermonComment({ sermon_id: sermon.id, name, content });
-              const list = commentsBox.querySelector(".comment-list");
-              list.insertAdjacentHTML(
-                "afterbegin",
-                `<div class="comment">
-                  <b>${newComment.name || "Guest"}:</b>
-                  <span>${newComment.content}</span>
-                  <div class="comment-time">${new Date(newComment.created_at).toLocaleString()}</div>
-                </div>`
-              );
-              form.reset();
-              commentCountEl.textContent = `${list.children.length} Comment${list.children.length !== 1 ? "s" : ""}`;
-            } catch (err) {
-              console.error("Failed to post comment:", err);
-              commentsBox.insertAdjacentHTML(
-                "beforeend",
-                `<p style="color:red;">Error posting comment. Please try again.</p>`
-              );
-            }
-          };
+          // Update comment list
+          commentList.innerHTML = comments.length
+            ? comments
+                .map(
+                  (c) => `<div class="comment">
+                            <b>${c.name || "Guest"}:</b>
+                            <span>${c.content}</span>
+                            <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div>
+                          </div>`
+                )
+                .join("")
+            : `<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>`;
         } catch (err) {
           console.error("Failed to load comments:", err);
-          commentsBox.innerHTML = `<p style="color:red;">Error loading comments</p>`;
         }
       }
 
-      commentBtn.onclick = () => {
-        if (commentsBox.style.display === "none") {
+      // Toggle comment box
+      commentBtn.addEventListener("click", () => {
+        const hidden = commentsBox.style.display === "none";
+        if (hidden) {
           video.pause();
           commentsBox.style.display = "block";
           refreshComments();
@@ -245,7 +250,7 @@ export async function initSermons(container) {
           commentsBox.style.display = "none";
           video.play().catch(() => {});
         }
-      };
+      });
 
       /** 🔗 Share */
       shareBtn.addEventListener("click", async () => {
@@ -264,9 +269,7 @@ export async function initSermons(container) {
         };
 
         if (navigator.share) {
-          try {
-            await navigator.share(shareData);
-          } catch {}
+          try { await navigator.share(shareData); } catch {}
         } else {
           navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied to clipboard!"));
         }
@@ -275,14 +278,13 @@ export async function initSermons(container) {
       container.appendChild(card);
     }
 
-    /** Auto play videos when visible */
+    /** Auto-play videos when visible */
     const videos = container.querySelectorAll("video");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const vid = entry.target;
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.7)
-            vid.play().catch(() => {});
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.7) vid.play().catch(() => {});
           else vid.pause();
         });
       },
