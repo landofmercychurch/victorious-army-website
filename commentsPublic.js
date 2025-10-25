@@ -1,4 +1,4 @@
-// commentsPublic.js
+// src/js/commentsPublic.js
 import { api } from "./api.js";
 import { showNotification } from "./utils.js";
 
@@ -34,49 +34,6 @@ export async function fetchPictureComments(post_id) {
   } catch (err) {
     console.error("❌ Failed to fetch picture post comments:", err);
     showNotification?.("Failed to load post comments", "error");
-    return [];
-  }
-}
-
-/**
- * Post a comment on a sermon
- */
-export async function postSermonComment({ sermon_id, name, content }) {
-  try {
-    if (!content?.trim()) throw new Error("Comment content is required");
-    const res = await api.post("/comments", {
-      sermon_id,
-      name: name?.trim() || "Guest",
-      content: content.trim(),
-    });
-    showNotification?.("Comment posted successfully", "success");
-    return res;
-  } catch (err) {
-    console.error("❌ Failed to post sermon comment:", err);
-    showNotification?.("Failed to post sermon comment", "error");
-    throw err;
-  }
-}
-
-/**
- * Post a comment on a picture post
- */
-export async function postPictureComment({ post_id, name, content }) {
-  try {
-    if (!content?.trim()) throw new Error("Comment content is required");
-    const res = await api.post("/comments", {
-      post_id,
-      name: name?.trim() || "Guest",
-      content: content.trim(),
-    });
-    showNotification?.("Comment posted successfully", "success");
-    return res;
-  } catch (err) {
-    console.error("❌ Failed to post picture comment:", err);
-    showNotification?.("Failed to post picture comment", "error");
-    throw err;
-  }
-}
     return [];
   }
 }
