@@ -3,7 +3,6 @@ import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
-
 /** Set Open Graph / Twitter meta tags for sharing */
 function setOpenGraphMeta({ title, description, image, url }) {
   const head = document.head;
@@ -82,7 +81,6 @@ export async function initSermons(container) {
           hls.attachMedia(video);
           video.addEventListener("loadeddata", () => (spinner.style.display = "none"));
         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-          // Safari support
           video.src = hlsSource || mp4Source;
           video.addEventListener("loadeddata", () => (spinner.style.display = "none"));
         } else {
@@ -156,9 +154,7 @@ export async function initSermons(container) {
       /** Likes **/
       async function refreshLikes() {
         try {
-          const res = await api.get(
-            `/likes/count?type=sermon&sermon_id=${sermon.id}`
-          );
+          const res = await api.get(`/likes/count?type=sermon&sermon_id=${sermon.id}`);
           likeCountEl.textContent = `${res.count || 0} Likes`;
         } catch {
           likeCountEl.textContent = "0 Likes";
@@ -175,39 +171,49 @@ export async function initSermons(container) {
       });
       refreshLikes();
 
-      /** Comments **/
+      /** ✅ UPDATED COMMENTS SECTION **/
       async function refreshComments() {
         try {
-          let comments = await fetchSermonComments(sermon.id);
+          const sermonId = String(sermon.id);
+          console.log("🧩 Fetching comments for sermon:", sermonId);
+
+          let comments = await fetchSermonComments(sermonId);
           if (!Array.isArray(comments)) comments = [];
           commentCountEl.textContent = `${comments.length} Comments`;
 
           commentsBox.innerHTML = `
-            <button class="close-btn">✖</button>
+            <div class="comments-header">
+              <strong>${comments.length} Comment${comments.length !== 1 ? "s" : ""}</strong>
+              <button class="close-btn" title="Close comments">✖</button>
+            </div>
             <div class="comment-list">
               ${
                 comments.length
                   ? comments
                       .map(
-                        (c) =>
-                          `<div class="comment"><b>${c.name || "Guest"}:</b> ${
-                            c.content
-                          }</div>`
+                        (c) => `
+                          <div class="comment">
+                            <b>${c.name || "Guest"}:</b>
+                            <span>${c.content}</span>
+                            <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div>
+                          </div>
+                        `
                       )
                       .join("")
-                  : `<p class="no-comments">No comments yet. Be the first!</p>`
+                  : `<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>`
               }
             </div>
             <form class="comment-form">
               <input type="text" class="comment-name" placeholder="Your name (optional)" />
-              <input type="text" class="comment-content" placeholder="Write a comment…" required />
-              <button type="submit">Post</button>
+              <textarea class="comment-content" placeholder="Write your comment..." required></textarea>
+              <button type="submit" class="comment-submit">Post Comment</button>
             </form>
           `;
 
-          commentsBox
-            .querySelector(".close-btn")
-            .addEventListener("click", () => (commentsBox.style.display = "none"));
+          const closeBtn = commentsBox.querySelector(".close-btn");
+          closeBtn.addEventListener("click", () => {
+            commentsBox.style.display = "none";
+          });
 
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async (e) => {
@@ -217,27 +223,33 @@ export async function initSermons(container) {
             const name = nameInput.value.trim() || "Guest";
             const content = contentInput.value.trim();
             if (!content) return;
+
             try {
-              await postSermonComment({ sermon_id: sermon.id, name, content });
+              console.log("📝 Posting comment:", { sermon_id: sermonId, name, content });
+              await postSermonComment({ sermon_id: sermonId, name, content });
               nameInput.value = "";
               contentInput.value = "";
-              refreshComments();
+              await refreshComments();
             } catch (err) {
-              console.error("Failed to post comment:", err);
+              console.error("❌ Failed to post comment:", err);
+              commentsBox.insertAdjacentHTML(
+                "beforeend",
+                `<p style="color:red;">Error posting comment. Please try again.</p>`
+              );
             }
           };
         } catch (err) {
           console.error("Failed to load comments:", err);
-          commentsBox.innerHTML = `<p style="color:red">Error loading comments</p>`;
+          commentsBox.innerHTML = `<p style="color:red;">Error loading comments</p>`;
         }
       }
 
+      // ✅ Comment button toggle
       commentBtn.addEventListener("click", () => {
-        commentsBox.style.display =
-          commentsBox.style.display === "none" ? "block" : "none";
-        if (commentsBox.style.display === "block") refreshComments();
+        const isHidden = commentsBox.style.display === "none";
+        commentsBox.style.display = isHidden ? "block" : "none";
+        if (isHidden) refreshComments();
       });
-      refreshComments();
 
       /** Share **/
       shareBtn.addEventListener("click", async () => {
