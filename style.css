@@ -240,14 +240,19 @@ p {
 =============================== */
 #ebooks-container {
   max-width: 500px;
-  margin: 0 auto;
+  margin: 20px auto;
+  padding: 12px;
+  background: #f9f9f9; /* soft app-like background */
+  border-radius: 12px;
 }
+
 
 @media (max-width: 768px) {
   .ebook-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
+
 
 
 
