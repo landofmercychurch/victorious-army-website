@@ -150,14 +150,12 @@ p {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 12px; /* app-like spacing */
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  background: #f9f9f9;
+  padding: 12px;
 }
 
 /* ================================
    Series Section
-================================ */
+=============================== */
 .ebook-series-section {
   display: flex;
   flex-direction: column;
@@ -168,99 +166,89 @@ p {
   font-size: 1.2rem;
   font-weight: 600;
   color: #222;
-  margin-left: 4px;
+  margin-bottom: 8px;
+  padding-left: 4px;
 }
 
 /* ================================
    Ebook Grid
-================================ */
+=============================== */
 .ebook-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 12px;
 }
 
 /* ================================
    Ebook Card
-================================ */
+=============================== */
 .ebook-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .ebook-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
 /* ================================
-   Ebook Cover
-================================ */
+   Cover Image
+=============================== */
 .ebook-cover {
   display: block;
   width: 100%;
-  padding-top: 140%; /* Portrait ratio */
+  aspect-ratio: 3/4; /* Portrait style like Apple Books */
   background-size: cover;
   background-position: center;
   border-bottom: 1px solid #eee;
-  border-radius: 12px 12px 0 0;
+  border-radius: 14px 14px 0 0;
+  transition: transform 0.2s ease;
+}
+
+.ebook-cover:hover {
+  transform: scale(1.03);
 }
 
 /* ================================
    Title & Author
-================================ */
+=============================== */
 .ebook-title {
   font-size: 0.95rem;
   font-weight: 600;
   color: #222;
-  margin: 8px 6px 2px 6px;
+  margin: 8px 4px 4px 4px;
   text-align: center;
-  line-height: 1.2;
-  min-height: 2.4em; /* two lines height */
 }
 
 .ebook-author {
   font-size: 0.82rem;
-  font-weight: 400;
   color: #555;
   margin-bottom: 8px;
   text-align: center;
 }
 
 /* ================================
-   Responsive
-================================ */
+   Scroll for Mobile / App Feel
+=============================== */
+#ebooks-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
 @media (max-width: 768px) {
   .ebook-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
-
-  .series-title {
-    font-size: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
 
-@media (max-width: 480px) {
-  .ebook-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  }
-
-  .ebook-title {
-    font-size: 0.88rem;
-    min-height: 2em;
-  }
-
-  .ebook-author {
-    font-size: 0.78rem;
-  }
-}
 
 
 
