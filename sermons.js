@@ -3,36 +3,34 @@ import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
 
-/** Set Open Graph / Twitter meta tags for sharing */
+/** 🧩 Helper: Update OpenGraph/Twitter meta tags for sharing */
 function setOpenGraphMeta({ title, description, image, url }) {
   const head = document.head;
-
-  function createOrUpdate(property, content, isName = false) {
+  function setMeta(property, content, isName = false) {
     const selector = isName
       ? `meta[name="${property}"]`
       : `meta[property="${property}"]`;
     let meta = head.querySelector(selector);
     if (!meta) {
       meta = document.createElement("meta");
-      isName
-        ? meta.setAttribute("name", property)
-        : meta.setAttribute("property", property);
+      if (isName) meta.setAttribute("name", property);
+      else meta.setAttribute("property", property);
       head.appendChild(meta);
     }
     meta.setAttribute("content", content);
   }
 
-  createOrUpdate("og:title", title);
-  createOrUpdate("og:description", description);
-  createOrUpdate("og:image", image);
-  createOrUpdate("og:url", url);
-  createOrUpdate("twitter:card", "summary_large_image", true);
-  createOrUpdate("twitter:title", title, true);
-  createOrUpdate("twitter:description", description, true);
-  createOrUpdate("twitter:image", image, true);
+  setMeta("og:title", title);
+  setMeta("og:description", description);
+  setMeta("og:image", image);
+  setMeta("og:url", url);
+  setMeta("twitter:card", "summary_large_image", true);
+  setMeta("twitter:title", title, true);
+  setMeta("twitter:description", description, true);
+  setMeta("twitter:image", image, true);
 }
 
-/** Initialise sermons feed */
+/** 🎥 Initialise sermons feed */
 export async function initSermons(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading sermons…</p>";
@@ -48,11 +46,11 @@ export async function initSermons(container) {
     sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
 
-    sermons.forEach((sermon) => {
+    for (const sermon of sermons) {
       const card = el("div", "sermon-card");
       card.dataset.id = sermon.id;
 
-      /** 🎥 Video setup **/
+      /** 🎬 Video Setup */
       const videoWrapper = el("div", "video-wrapper");
       const video = el("video");
       video.playsInline = true;
@@ -68,14 +66,15 @@ export async function initSermons(container) {
       videoWrapper.append(video, spinner);
       card.appendChild(videoWrapper);
 
-      // Lazy load video
+      /** Lazy-load video source */
       const hlsSource = sermon.hls_url;
       const mp4Source = sermon.video_url;
 
       const setupVideo = () => {
         spinner.style.display = "flex";
-        if (hlsSource && Hls.isSupported()) {
-          const hls = new Hls({ startLevel: -1, maxBufferLength: 30 });
+        // ✅ Check safely for global Hls
+        if (hlsSource && window.Hls && window.Hls.isSupported()) {
+          const hls = new window.Hls({ startLevel: -1, maxBufferLength: 30 });
           hls.loadSource(hlsSource);
           hls.attachMedia(video);
           video.addEventListener("loadeddata", () => (spinner.style.display = "none"));
@@ -97,11 +96,11 @@ export async function initSermons(container) {
             }
           });
         },
-        { threshold: 0.2 }
+        { threshold: 0.25 }
       );
       lazyObserver.observe(video);
 
-      /** Hover preview **/
+      /** Hover preview (short play) */
       let previewTimeout;
       videoWrapper.addEventListener("mouseenter", () => {
         if (video.readyState >= 2) {
@@ -117,7 +116,7 @@ export async function initSermons(container) {
         video.currentTime = 0;
       });
 
-      /** Overlay info **/
+      /** Info overlay */
       const overlay = el("div", "sermon-overlay");
       overlay.innerHTML = `
         <div class="sermon-title">${sermon.title || "Untitled Sermon"}</div>
@@ -125,7 +124,7 @@ export async function initSermons(container) {
       `;
       card.appendChild(overlay);
 
-      /** Actions **/
+      /** Actions (Like, Comment, Share) */
       const actions = el("div", "sermon-actions");
       actions.innerHTML = `
         <button class="like-btn">❤️</button>
@@ -142,7 +141,7 @@ export async function initSermons(container) {
       const commentCountEl = actions.querySelector(".comment-count");
       const shareBtn = actions.querySelector(".share-btn");
 
-      /** Likes **/
+      /** ❤️ Likes */
       async function refreshLikes() {
         try {
           const res = await api.get(`/likes/count?type=sermon&sermon_id=${sermon.id}`);
@@ -162,7 +161,7 @@ export async function initSermons(container) {
       });
       refreshLikes();
 
-      /** 💬 TikTok-style Comments **/
+      /** 💬 Comments */
       const commentsBox = el("div", "comments-box");
       commentsBox.style.display = "none";
       card.appendChild(commentsBox);
@@ -178,7 +177,7 @@ export async function initSermons(container) {
           commentsBox.innerHTML = `
             <div class="comments-header">
               <strong>${comments.length} Comment${comments.length !== 1 ? "s" : ""}</strong>
-              <button class="close-btn" title="Close comments">✖</button>
+              <button class="close-btn">✖</button>
             </div>
             <div class="comment-list">
               ${
@@ -190,8 +189,7 @@ export async function initSermons(container) {
                             <b>${c.name || "Guest"}:</b>
                             <span>${c.content}</span>
                             <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div>
-                          </div>
-                        `
+                          </div>`
                       )
                       .join("")
                   : `<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>`
@@ -204,14 +202,12 @@ export async function initSermons(container) {
             </form>
           `;
 
-          // 🔹 Close comments + resume video
           const closeBtn = commentsBox.querySelector(".close-btn");
           closeBtn.addEventListener("click", () => {
             commentsBox.style.display = "none";
             video.play().catch(() => {});
           });
 
-          // 🔹 Handle posting new comment
           const form = commentsBox.querySelector(".comment-form");
           form.onsubmit = async (e) => {
             e.preventDefault();
@@ -221,17 +217,15 @@ export async function initSermons(container) {
 
             try {
               const newComment = await postSermonComment({ sermon_id: sermonId, name, content });
-
-              const commentList = commentsBox.querySelector(".comment-list");
-              const newCommentHTML = `
-                <div class="comment">
+              const list = commentsBox.querySelector(".comment-list");
+              list.insertAdjacentHTML(
+                "afterbegin",
+                `<div class="comment">
                   <b>${newComment.name || "Guest"}:</b>
                   <span>${newComment.content}</span>
                   <div class="comment-time">${new Date(newComment.created_at).toLocaleString()}</div>
-                </div>
-              `;
-              commentList.insertAdjacentHTML("afterbegin", newCommentHTML);
-
+                </div>`
+              );
               form.reset();
               commentCountEl.textContent = `${comments.length + 1} Comments`;
             } catch (err) {
@@ -248,10 +242,9 @@ export async function initSermons(container) {
         }
       }
 
-      // 🎬 Pause video + open comments
       commentBtn.addEventListener("click", () => {
-        const isHidden = commentsBox.style.display === "none";
-        if (isHidden) {
+        const hidden = commentsBox.style.display === "none";
+        if (hidden) {
           video.pause();
           commentsBox.style.display = "block";
           refreshComments();
@@ -261,7 +254,7 @@ export async function initSermons(container) {
         }
       });
 
-      /** Share **/
+      /** 🔗 Share */
       shareBtn.addEventListener("click", async () => {
         const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
         setOpenGraphMeta({
@@ -287,22 +280,24 @@ export async function initSermons(container) {
             .then(() => alert("Link copied to clipboard!"));
         }
       });
-    });
 
-    /** Auto-play visible videos **/
+      container.appendChild(card);
+    }
+
+    /** Auto play videos when visible */
     const videos = container.querySelectorAll("video");
-    const autoObserver = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const video = entry.target;
+          const vid = entry.target;
           if (entry.isIntersecting && entry.intersectionRatio >= 0.7)
-            video.play().catch(() => {});
-          else video.pause();
+            vid.play().catch(() => {});
+          else vid.pause();
         });
       },
       { threshold: 0.7 }
     );
-    videos.forEach((video) => autoObserver.observe(video));
+    videos.forEach((v) => observer.observe(v));
   } catch (err) {
     console.error("Failed to load sermons:", err);
     container.innerHTML = `<p style="color:red;">Failed to load sermons</p>`;
