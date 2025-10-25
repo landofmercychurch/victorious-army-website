@@ -2,7 +2,7 @@
 import { api } from "./api.js";
 import { el } from "./utils.js";
 import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
-import Hls from "https://cdn.jsdelivr.net/npm/hls.js@1.5.4/dist/hls.min.js";
+
 
 /** Set Open Graph / Twitter meta tags for sharing */
 function setOpenGraphMeta({ title, description, image, url }) {
