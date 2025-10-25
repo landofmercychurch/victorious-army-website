@@ -258,7 +258,7 @@ p {
   position: relative;
   width: 95%;
   max-width: 360px;             /* responsive width */
-  height: 60vh;                 /* responsive height */
+  height: 60vh;                 /* fills ~60% of viewport */
   max-height: 500px;            /* prevent too tall on large screens */
   min-height: 300px;            /* don't get too short on small phones */
   border-radius: 14px;
@@ -315,7 +315,7 @@ p {
 .sermon-actions {
   position: absolute;
   right: 10px;
-  bottom: 10%;
+  bottom: 10%;                  /* relative to card height */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -353,37 +353,31 @@ p {
 }
 
 /* =============================
-   Comments Box Modal (Slide Up)
+   Comments Box (Responsive & Scrollable)
 ============================= */
 .comments-box {
-  position: fixed;             /* fixed to viewport for mobile modal feel */
-  bottom: -100%;               /* start hidden below screen */
+  position: absolute;          /* inside sermon card */
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 95%;
-  max-width: 360px;
-  max-height: 70vh;            /* responsive height for many comments */
-  min-height: 200px;
+  max-width: 320px;
+  max-height: 55vh;            /* responsive height */
+  min-height: 180px;
   background: rgba(255,255,255,0.97);
-  backdrop-filter: blur(4px);
-  overflow-y: auto;            /* scrollable if comments exceed height */
+  backdrop-filter: blur(3px);
+  overflow-y: auto;            /* scrollable if many comments */
   padding: 12px 10px;
-  display: flex;
+  display: none;               /* toggled by JS */
   flex-direction: column;
   gap: 8px;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  z-index: 1000;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.25);
-  transition: bottom 0.3s ease-in-out;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  z-index: 10;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
 }
 
-/* show modal */
-.comments-box.active {
-  bottom: 10px;                /* slide up into view */
-}
-
-/* header & close button */
+/* Comments Header & Close Button */
 .comments-header {
   display: flex;
   justify-content: space-between;
@@ -412,6 +406,7 @@ p {
   transform: scale(1.15);
 }
 
+/* Comment List */
 .comment-list {
   display: flex;
   flex-direction: column;
@@ -451,7 +446,7 @@ p {
   border: 1px solid #ccc;
 }
 
-/* Post button (modern) */
+/* Post Button */
 .comment-form button {
   align-self: flex-end;
   padding: 6px 12px;
