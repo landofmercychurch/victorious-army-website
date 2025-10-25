@@ -114,14 +114,21 @@ p {
   margin: 20px auto;
   padding: 30px 25px;
   background: #fff;
-  border-radius: 16px;       /* slightly rounded corners for app feel */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* subtle app-like shadow */
+  border-radius: 16px;                 /* slightly rounded corners for app feel */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* subtle app-like shadow */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;                    /* prevent overflow from children */
 }
 
 .section:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12); /* a little more depth on hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); /* a little more depth on hover */
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 25px 20px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -129,6 +136,7 @@ p {
     padding: 20px 15px;
   }
 }
+
 
 
 
