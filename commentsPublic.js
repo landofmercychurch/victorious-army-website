@@ -1,4 +1,4 @@
-#//commentsPublic.js
+#//commentsPublic.js//
 import { api } from "./api.js";
 import { showNotification } from "./utils.js";
 
