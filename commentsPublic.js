@@ -1,8 +1,14 @@
-// commentsPublic.js
-// commentsPublic.js
-
+#//commentsPublic.js
 import { api } from "./api.js";
 import { showNotification } from "./utils.js";
+
+/**
+ * Safely parse API responses to arrays
+ */
+function toArray(data) {
+  if (!data) return [];
+  return Array.isArray(data) ? data : (data.data && Array.isArray(data.data)) ? data.data : [];
+}
 
 /**
  * Fetch comments for a sermon
@@ -10,10 +16,11 @@ import { showNotification } from "./utils.js";
 export async function fetchSermonComments(sermon_id) {
   try {
     const res = await api.get(`/comments/${sermon_id}?type=sermon`);
-    return Array.isArray(res) ? res : []; // ✅ always return array
+    return toArray(res);
   } catch (err) {
+    console.error("❌ Failed to fetch sermon comments:", err);
     showNotification?.("Failed to load sermon comments", "error");
-    return []; // ✅ fallback empty array
+    return [];
   }
 }
 
@@ -23,8 +30,9 @@ export async function fetchSermonComments(sermon_id) {
 export async function fetchPictureComments(post_id) {
   try {
     const res = await api.get(`/comments/${post_id}?type=post`);
-    return Array.isArray(res) ? res : [];
+    return toArray(res);
   } catch (err) {
+    console.error("❌ Failed to fetch picture post comments:", err);
     showNotification?.("Failed to load post comments", "error");
     return [];
   }
@@ -35,13 +43,16 @@ export async function fetchPictureComments(post_id) {
  */
 export async function postSermonComment({ sermon_id, name, content }) {
   try {
+    if (!content?.trim()) throw new Error("Comment content is required");
     const res = await api.post("/comments", {
       sermon_id,
-      name,
-      content,
+      name: name?.trim() || "Guest",
+      content: content.trim(),
     });
+    showNotification?.("Comment posted successfully", "success");
     return res;
   } catch (err) {
+    console.error("❌ Failed to post sermon comment:", err);
     showNotification?.("Failed to post sermon comment", "error");
     throw err;
   }
@@ -52,13 +63,16 @@ export async function postSermonComment({ sermon_id, name, content }) {
  */
 export async function postPictureComment({ post_id, name, content }) {
   try {
+    if (!content?.trim()) throw new Error("Comment content is required");
     const res = await api.post("/comments", {
       post_id,
-      name,
-      content,
+      name: name?.trim() || "Guest",
+      content: content.trim(),
     });
+    showNotification?.("Comment posted successfully", "success");
     return res;
   } catch (err) {
+    console.error("❌ Failed to post picture comment:", err);
     showNotification?.("Failed to post picture comment", "error");
     throw err;
   }
