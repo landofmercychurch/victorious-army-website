@@ -210,14 +210,27 @@ p {
   padding: 8px;
 }
 
-/* =============================
-   Picture Card
-============================= */
+
+
+
+
+/* ================================
+   POSTS / PICTURES SECTION
+================================ */
+.picture-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 8px;
+  position: relative;
+}
+
+/* Picture Card */
 .picture-card {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-  overflow: hidden;
+  overflow: visible; /* <-- allow comment box to appear outside */
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -244,19 +257,19 @@ p {
   color: #333;
 }
 
-/* =============================
-   Actions: Like / Comment / Share
-============================= */
+/* Actions: Like / Comment / Share */
 .picture-actions {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
   padding: 6px 8px;
+  position: relative; /* allow clicks */
+  z-index: 5;
 }
 
 .like-btn, .comment-btn, .share-btn {
-  background: rgba(0, 123, 255, 0.08);
+  background: rgba(0,123,255,0.08);
   border: none;
   border-radius: 8px;
   padding: 4px 8px;
@@ -279,9 +292,7 @@ p {
   color: #555;
 }
 
-/* =============================
-   Comments Box (scrollable & clean)
-============================= */
+/* Comments Box */
 .comments-box {
   position: absolute;
   bottom: 0;
@@ -300,7 +311,7 @@ p {
   gap: 8px;
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
-  z-index: 10;
+  z-index: 20; /* higher z-index so buttons inside are clickable */
   box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
 }
 
@@ -355,9 +366,7 @@ p {
   color: #555;
 }
 
-/* =============================
-   Comment Form
-============================= */
+/* Comment Form */
 .comment-form {
   display: flex;
   flex-direction: column;
@@ -393,6 +402,7 @@ p {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
 
 
 
