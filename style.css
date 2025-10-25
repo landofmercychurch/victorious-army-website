@@ -146,60 +146,121 @@ p {
 /* ================================
    EBOOKS SECTION
 ================================ */
-#ebooks {
-  /* Container-specific adjustments if needed */
-}
-
-.ebook-grid {
+#ebooks-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  padding: 12px; /* app-like spacing */
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  background: #f9f9f9;
 }
 
+/* ================================
+   Series Section
+================================ */
+.ebook-series-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.series-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+  margin-left: 4px;
+}
+
+/* ================================
+   Ebook Grid
+================================ */
+.ebook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+/* ================================
+   Ebook Card
+================================ */
 .ebook-card {
-  flex: 1 1 220px;
-  max-width: 280px;
-  background: #f9f9ff;
-  border-radius: var(--radius);
-  padding: 20px;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
 }
 
 .ebook-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
 }
 
-.ebook-card h4 {
-  margin-bottom: 6px;
-  font-size: 1.1rem;
-  color: var(--primary);
+/* ================================
+   Ebook Cover
+================================ */
+.ebook-cover {
+  display: block;
+  width: 100%;
+  padding-top: 140%; /* Portrait ratio */
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid #eee;
+  border-radius: 12px 12px 0 0;
 }
 
-.ebook-card p.meta {
-  font-size: 0.9rem;
-  color: var(--text-light);
+/* ================================
+   Title & Author
+================================ */
+.ebook-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #222;
+  margin: 8px 6px 2px 6px;
+  text-align: center;
+  line-height: 1.2;
+  min-height: 2.4em; /* two lines height */
+}
+
+.ebook-author {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: #555;
   margin-bottom: 8px;
+  text-align: center;
 }
 
-.ebook-card a.btn {
-  text-decoration: none;
-  color: #0077cc;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid #0077cc;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+/* ================================
+   Responsive
+================================ */
+@media (max-width: 768px) {
+  .ebook-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .series-title {
+    font-size: 1rem;
+  }
 }
 
-.ebook-card a.btn:hover {
-  background: #0077cc;
-  color: #fff;
-}
+@media (max-width: 480px) {
+  .ebook-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
 
+  .ebook-title {
+    font-size: 0.88rem;
+    min-height: 2em;
+  }
+
+  .ebook-author {
+    font-size: 0.78rem;
+  }
+}
 
 
 
