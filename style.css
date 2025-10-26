@@ -680,6 +680,28 @@ p {
   z-index: 10;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
 }
+.youtube-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(255, 0, 0, 0.85);
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 10;
+}
+
+.youtube-btn:hover {
+  background: rgba(255, 0, 0, 1);
+  transform: scale(1.05);
+}
 
 
 
