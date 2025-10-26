@@ -7,8 +7,7 @@ export async function initEbooks(container) {
   container.innerHTML = "<p>Loading ebooks…</p>";
 
   try {
-    const seriesData = await api.get("/ebooks"); // backend now returns grouped by series
-
+    const seriesData = await api.get("/ebooks"); // backend returns grouped by series
     container.innerHTML = "";
 
     if (!seriesData || Object.keys(seriesData).length === 0) {
@@ -16,7 +15,7 @@ export async function initEbooks(container) {
       return;
     }
 
-    // Helper: create a single ebook card
+    // Helper: create a single ebook card with read & download options
     const createBookCard = (book) => {
       const card = el("div", "ebook-card");
 
@@ -38,6 +37,25 @@ export async function initEbooks(container) {
 
       // Part number if series_order exists
       if (book.series_order) card.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
+
+      // --- Read online iframe ---
+      if (book.pdf_url) {
+        const iframe = document.createElement("iframe");
+        iframe.src = book.pdf_url;
+        iframe.width = "100%";
+        iframe.height = "400px";
+        iframe.style.marginTop = "10px";
+        card.appendChild(iframe);
+
+        // --- Download link with metadata-friendly filename ---
+        const downloadLink = document.createElement("a");
+        downloadLink.href = book.pdf_url;
+        downloadLink.download = `${book.title || "ebook"}.pdf`;
+        downloadLink.textContent = "Download PDF";
+        downloadLink.style.display = "block";
+        downloadLink.style.marginTop = "5px";
+        card.appendChild(downloadLink);
+      }
 
       return card;
     };
@@ -68,8 +86,10 @@ export async function initEbooks(container) {
       container.appendChild(section);
     }
 
+    console.log("[INIT] Ebooks loaded:", Object.keys(seriesData).length, "series");
+
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
-    console.error(err);
+    console.error("[INIT ERROR] Ebooks:", err);
   }
 }
