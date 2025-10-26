@@ -28,6 +28,7 @@ function setOpenGraphMeta({ title, description, image, url }) {
 }
 
 /** 🎥 Initialise sermons feed */
+/** 🎥 Initialise sermons feed */
 export async function initSermons(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading sermons…</p>";
@@ -96,7 +97,17 @@ export async function initSermons(container) {
       `;
       card.appendChild(actions);
 
-      /** Like */
+      /** YouTube Full Video button */
+      if (sermon.youtube_url) {
+        const ytBtn = el("a", "youtube-btn");
+        ytBtn.href = sermon.youtube_url;
+        ytBtn.target = "_blank";
+        ytBtn.rel = "noopener noreferrer";
+        ytBtn.innerHTML = "📺 Full Sermon";
+        card.appendChild(ytBtn);
+      }
+
+      /** Like & comments logic (unchanged) */
       const likeBtn = actions.querySelector(".like-btn");
       const likeCountEl = actions.querySelector(".like-count");
       async function refreshLikes() {
@@ -107,7 +118,6 @@ export async function initSermons(container) {
       likeBtn.addEventListener("click", async ()=>{ await api.post("/likes",{sermon_id:sermon.id}); refreshLikes(); });
       refreshLikes();
 
-      /** Comments */
       const commentBtn = actions.querySelector(".comment-btn");
       const commentCountEl = actions.querySelector(".comment-count");
       const commentsBox = el("div","comments-box");
@@ -160,7 +170,7 @@ export async function initSermons(container) {
         const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
         setOpenGraphMeta({ title: sermon.title, description: sermon.description||"Watch our latest sermon!", image: sermon.thumbnail_url||"", url: shareUrl });
         const shareData={ title: sermon.title, text: sermon.description||"Watch our latest sermon!", url: shareUrl };
-        if(navigator.share){ try{ await navigator.share(shareData); }catch{} } 
+        if(navigator.share){ try{ await navigator.share(shareData);}catch{} } 
         else { navigator.clipboard.writeText(shareUrl).then(()=>alert("Link copied!")); }
       });
 
