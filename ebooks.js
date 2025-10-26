@@ -7,7 +7,7 @@ export async function initEbooks(container) {
   container.innerHTML = "<p>Loading ebooks…</p>";
 
   try {
-    const seriesData = await api.get("/ebooks"); // backend returns grouped by series
+    const seriesData = await api.get("/ebooks"); // backend returns ebooks grouped by series
     container.innerHTML = "";
 
     if (!seriesData || Object.keys(seriesData).length === 0) {
@@ -15,11 +15,11 @@ export async function initEbooks(container) {
       return;
     }
 
-    // Helper: create a single ebook card with read & download options
+    // Helper: create a single ebook card with read & download
     const createBookCard = (book) => {
       const card = el("div", "ebook-card");
 
-      // Book cover clickable
+      // Book cover clickable (opens PDF in new tab)
       const cover = el("a", "ebook-cover", {
         href: book.pdf_url || "#",
         target: "_blank",
@@ -45,6 +45,7 @@ export async function initEbooks(container) {
         iframe.width = "100%";
         iframe.height = "400px";
         iframe.style.marginTop = "10px";
+        iframe.style.border = "1px solid #ccc";
         card.appendChild(iframe);
 
         // --- Download link with metadata-friendly filename ---
@@ -54,6 +55,8 @@ export async function initEbooks(container) {
         downloadLink.textContent = "Download PDF";
         downloadLink.style.display = "block";
         downloadLink.style.marginTop = "5px";
+        downloadLink.style.color = "#007BFF";
+        downloadLink.style.textDecoration = "underline";
         card.appendChild(downloadLink);
       }
 
@@ -68,11 +71,10 @@ export async function initEbooks(container) {
       const grid = el("div", "ebook-grid");
 
       // Show first 5 books for series to avoid overload
-      const initialBooks = books.slice(0, 5);
-      initialBooks.forEach(book => grid.appendChild(createBookCard(book)));
+      books.slice(0, 5).forEach(book => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
 
-      // Optional "View All" button
+      // Optional "View All" button if more than 5
       if (books.length > 5) {
         const viewAllBtn = el("button", "view-all-btn", { text: "View All" });
         viewAllBtn.addEventListener("click", () => {
