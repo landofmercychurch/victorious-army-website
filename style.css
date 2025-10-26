@@ -686,23 +686,24 @@ p {
   right: 12px;
   background: rgba(255, 0, 0, 0.85);
   color: #fff;
-  padding: 6px 10px;
-  font-size: 0.75rem;
-  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;       /* Slightly bigger for readability */
+  border-radius: 8px;      /* Softer rounded corners */
   text-decoration: none;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
-  transition: transform 0.2s ease, background 0.2s ease;
+  gap: 6px;                /* More space between icon and text */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* Subtle shadow for depth */
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   z-index: 10;
 }
 
 .youtube-btn:hover {
   background: rgba(255, 0, 0, 1);
-  transform: scale(1.05);
+  transform: scale(1.08); /* Slightly larger on hover for modern feel */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35); /* Hover shadow more pronounced */
 }
-
 
 
 
