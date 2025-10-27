@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Victorious Army Revival Movement – Sermon</title>
+
+  <!-- Default OG/Twitter -->
+  <meta property="og:type" content="video.other">
+  <meta property="og:title" content="Watch Our Sermon">
+  <meta property="og:description" content="Experience inspiring sermons from Victorious Army Revival Movement.">
+  <meta property="og:image" content="https://yourwebsite.com/default-sermon-thumbnail.jpg">
+  <meta property="og:url" content="https://victoriousarmyrevivalmovementchurch.netlify.app/">
+  <meta property="og:video" content="https://yourwebsite.com/default-sermon-video.mp4">
+  <meta property="og:video:type" content="video/mp4">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Watch Our Sermon">
+  <meta name="twitter:description" content="Experience inspiring sermons from Victorious Army Revival Movement.">
+  <meta name="twitter:image" content="https://yourwebsite.com/default-sermon-thumbnail.jpg">
+
+  <script>
+    // Redirect real users to the interactive main page
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const sermonId = params.get('sermon');
+      if (sermonId) {
+        // Redirect to your main site with the sermon parameter
+        window.location.replace(`/?sermon=${sermonId}`);
+      } else {
+        // No ID? Redirect to main page
+        window.location.replace('/');
+      }
+    });
+  </script>
+</head>
+<body>
+  <p>If you are not redirected automatically, <a id="manualLink" href="/">click here</a>.</p>
+</body>
+</html>
