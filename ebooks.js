@@ -18,65 +18,75 @@ export async function initEbooks(container) {
     const createBookCard = (book) => {
       const card = el("div", "ebook-card");
 
-      // ✅ Display Cover Image
+      // Cover
       const cover = el("a", "ebook-cover", {
         href: book.pdf_url ? book.pdf_url.replace("/upload/", "/upload/fl_attachment:false/") : "#",
         target: "_blank",
         title: book.title,
       });
-
       cover.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"})`;
       cover.loading = "lazy";
       card.appendChild(cover);
 
-      // Info
-      card.appendChild(el("h4", "ebook-title", { text: book.title }));
-      if (book.author) card.appendChild(el("p", "ebook-author", { text: book.author }));
-      if (book.series_order)
-        card.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
+      // Info container
+      const info = el("div", "ebook-info");
+      info.appendChild(el("h4", "ebook-title", { text: book.title }));
+      if (book.author) info.appendChild(el("p", "ebook-author", { text: book.author }));
+      if (book.series_order) info.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
+      card.appendChild(info);
 
       // Buttons
       const btnContainer = el("div", "ebook-btns");
-
-      // ✅ Read Online (opens inline)
       if (book.pdf_url) {
         const inlineUrl = book.pdf_url.replace("/upload/", "/upload/fl_attachment:false/");
-        const readBtn = el("a", "read-btn", { text: "📖 Read Online", href: inlineUrl, target: "_blank" });
-        btnContainer.appendChild(readBtn);
-
-        // ✅ Download Button
-        const downloadBtn = el("a", "download-btn", {
-          text: "⬇️ Download PDF",
-          href: `/api/ebooks/download/${book.id}`,
-        });
-        btnContainer.appendChild(downloadBtn);
+        btnContainer.appendChild(el("a", "read-btn", { text: "📖 Read Online", href: inlineUrl, target: "_blank" }));
+        btnContainer.appendChild(el("a", "download-btn", { text: "⬇️ Download PDF", href: `/api/ebooks/download/${book.id}` }));
       }
-
       card.appendChild(btnContainer);
 
       return card;
     };
 
-    // Render sections by series
-    for (const [seriesName, books] of Object.entries(seriesData)) {
+    // Render a series or standalone section
+    const renderSection = (sectionTitle, books) => {
       const section = el("div", "ebook-series-section");
-      section.appendChild(el("h3", "series-title", { text: seriesName }));
+      section.appendChild(el("h3", "series-title", { text: sectionTitle }));
 
       const grid = el("div", "ebook-grid");
-      books.slice(0, 5).forEach((book) => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
 
-      if (books.length > 5) {
-        const viewAllBtn = el("button", "view-all-btn", { text: "View All" });
-        viewAllBtn.addEventListener("click", () => {
-          grid.innerHTML = "";
-          books.forEach((book) => grid.appendChild(createBookCard(book)));
-          viewAllBtn.style.display = "none";
+      const VISIBLE_COUNT = 6; // initially show 6 books
+      let showingAll = false;
+
+      const renderBooks = (count) => {
+        grid.innerHTML = "";
+        books.slice(0, count).forEach(book => grid.appendChild(createBookCard(book)));
+      };
+
+      renderBooks(VISIBLE_COUNT);
+
+      if (books.length > VISIBLE_COUNT) {
+        const toggleBtn = el("button", "view-all-btn", { text: "View More" });
+        toggleBtn.addEventListener("click", () => {
+          if (!showingAll) {
+            renderBooks(books.length);
+            toggleBtn.textContent = "Collapse";
+            showingAll = true;
+          } else {
+            renderBooks(VISIBLE_COUNT);
+            toggleBtn.textContent = "View More";
+            showingAll = false;
+          }
         });
-        section.appendChild(viewAllBtn);
+        section.appendChild(toggleBtn);
       }
 
       container.appendChild(section);
+    };
+
+    // Loop over series
+    for (const [seriesName, books] of Object.entries(seriesData)) {
+      renderSection(seriesName, books);
     }
 
     console.log("[INIT] Ebooks loaded:", Object.keys(seriesData).length, "series");
@@ -85,3 +95,4 @@ export async function initEbooks(container) {
     console.error("[INIT ERROR] Ebooks:", err);
   }
 }
+
