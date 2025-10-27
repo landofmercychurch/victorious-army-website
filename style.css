@@ -11,6 +11,7 @@
   --shadow-sm: 0 3px 12px rgba(0,0,0,0.06);
   --shadow-md: 0 6px 20px rgba(0,0,0,0.1);
   --transition: 0.3s ease;
+  --max-content-width: 480px; /* limits content width like an app */
 }
 
 * {
@@ -25,8 +26,20 @@ body {
   color: var(--text);
   line-height: 1.6;
   scroll-behavior: smooth;
+  display: flex;
+  justify-content: center; /* center content horizontally */
+  padding: 0 12px;        /* small padding on sides for small screens */
 }
 
+main {
+  width: 100%;
+  max-width: var(--max-content-width);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Headings */
 h1, h2, h3, h4, h5 {
   margin: 0.5em 0;
   font-weight: 600;
@@ -43,7 +56,12 @@ p {
 ================================ */
 .navbar {
   background: var(--primary);
-  padding: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 12px auto;
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -78,23 +96,28 @@ p {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #fff;
   text-align: center;
-  padding: 60px 20px;
+  padding: 50px 20px;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 20px auto;
+  box-shadow: var(--shadow-md);
 }
 
 .hero h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #fff;
   animation: glowZoom 2s infinite;
 }
 
 .hero p {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-style: italic;
   color: #e0e8ff;
 }
 
 @keyframes glowZoom {
-  0%,100% {
+  0%, 100% {
     transform: scale(1);
     opacity: 1;
     text-shadow: 0 0 10px #fff, 0 0 20px #a66cff, 0 0 30px #4db8ff;
@@ -106,7 +129,6 @@ p {
   }
 }
 
-/* ================================
    GLOBAL SECTIONS (common styles)
 ================================ */
 .section {
