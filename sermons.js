@@ -64,18 +64,19 @@ export async function initSermons(container) {
 
       videos.push({ video, sermon });
 
-      /** Lazy-load + HLS + fallback MP4/MOV/WebM */
+      /** Lazy-load HLS first, fallback to MP4/WebM */
       const setupVideo = () => {
-        if (sermon.hls_url && window.Hls && Hls.isSupported()) {
+        const urls = sermon.urls || {};
+        if (urls.hls_url && window.Hls && Hls.isSupported()) {
           const hls = new Hls({ startLevel: -1, maxBufferLength: 30 });
-          hls.loadSource(sermon.hls_url);
+          hls.loadSource(urls.hls_url);
           hls.attachMedia(video);
           hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
-        } else if (sermon.hls_url && video.canPlayType("application/vnd.apple.mpegurl")) {
-          video.src = sermon.hls_url;
+        } else if (urls.hls_url && video.canPlayType("application/vnd.apple.mpegurl")) {
+          video.src = urls.hls_url;
         } else {
-          // fallback for free-plan approach
-          video.src = sermon.mp4_url || sermon.mov_url || sermon.webm_url || sermon.video_url || "";
+          // fallback: MP4 -> WebM
+          video.src = urls.mp4_url || urls.webm_url || sermon.video_url || "";
         }
       };
 
@@ -254,3 +255,4 @@ export async function initSermons(container) {
     container.innerHTML = `<p style="color:red;">Failed to load sermons</p>`;
   }
 }
+
