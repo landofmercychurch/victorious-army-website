@@ -6,40 +6,41 @@
   <title>Victorious Army Revival Movement – Land of Mercy</title>
   <meta name="description" content="Explore our digital auditorium. Meet pastors, view events, join livestreams, and feed your soul with daily scriptures at Victorious Army Revival Movement." />
   <meta name="keywords" content="Church, Christianity, Revival, Victorious Army, Land of Mercy"/>
+
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="popup.css" />
   <link rel="stylesheet" href="events-verse.css" />
-  <meta property="og:title" content="Post Title Here" />
-<meta property="og:description" content="Post description here..." />
-<meta property="og:image" content="https://your-site.com/path-to-post-image.jpg" />
-<meta property="og:url" content="https://your-site.com/posts/POST_ID" />
-<meta property="og:type" content="website" />
+  <link rel="icon" href="/favicon.ico">
 
-  
-
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="video.other">
-  <meta property="og:title" content="Welcome to Our Sermons">
-  <meta property="og:description" content="Watch inspiring sermons from our church.">
+  <!-- Default OG/Twitter for main page -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Victorious Army Revival Movement">
+  <meta property="og:description" content="Experience our digital auditorium and watch inspiring sermons.">
   <meta property="og:image" content="https://yourwebsite.com/default-sermon-thumbnail.jpg">
-  <meta property="og:url" content="https://yourwebsite.com/sermons">
-  <meta property="og:video" content="https://yourwebsite.com/default-sermon-video.mp4">
-  <meta property="og:video:type" content="video/mp4">
+  <meta property="og:url" content="https://victoriousarmyrevivalmovementchurch.netlify.app/">
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Welcome to Our Sermons">
-  <meta name="twitter:description" content="Watch inspiring sermons from our church.">
+  <meta name="twitter:title" content="Victorious Army Revival Movement">
+  <meta name="twitter:description" content="Experience our digital auditorium and watch inspiring sermons.">
   <meta name="twitter:image" content="https://yourwebsite.com/default-sermon-thumbnail.jpg">
 
-  <!-- Fallback favicon & CSS -->
-  <link rel="icon" href="/favicon.ico">
- 
+  <!-- Optional: redirect social bots to share-sermon.html for OG meta -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sermonId = params.get('sermon');
+
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isBot = /facebookexternalhit|twitterbot|linkedinbot|pinterest|slackbot/.test(userAgent);
+
+    if (sermonId && isBot) {
+      // Send social bots to share-sermon.html with correct sermon ID
+      window.location.replace(`/share-sermon.html?sermon=${sermonId}`);
+    }
+  </script>
 </head>
 
 
-</head>
+
 <body>
 
 <!-- Tawk.to Script -->
