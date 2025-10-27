@@ -324,234 +324,135 @@ main {
 
 
 
-
-
-/* ================================
-   SECTION CONTENT – APP-LIKE STYLING
-================================ */
-
-/* Headings inside sections */
-.section h1, 
-.section h2, 
-.section h3, 
-.section h4, 
-.section h5 {
-  font-weight: 600;
-  margin-bottom: 12px;
-  line-height: 1.3;
-  color: var(--primary);
-}
-
-/* Paragraphs inside sections */
-.section p {
-  font-size: 0.9rem;             /* slightly smaller for comfortable reading */
-  color: var(--text-light);
-  line-height: 1.5;
-  margin-bottom: 12px;
-}
-
-/* Buttons inside sections */
-.section button, 
-.section .btn {
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: 10px;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.section button:hover, 
-.section .btn:hover {
-  background: var(--secondary);
-  transform: scale(1.05);
-}
-
-/* Media (images/videos) inside sections */
-.section img, 
-.section video {
-  width: 100%;
-  max-width: 100%;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* Lists inside sections */
-.section ul, .section ol {
-  margin-left: 18px;
-  margin-bottom: 12px;
-  color: var(--text-light);
-  line-height: 1.5;
-}
-
-/* Cards or inner containers in section */
-.section .card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.section .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-}
-
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .section {
-    padding: 16px;
-  }
-
-  .section h1, .section h2, .section h3 {
-    font-size: 1.1rem;
-  }
-
-  .section p {
-    font-size: 0.88rem;
-  }
-
-  .section button, .section .btn {
-    font-size: 0.8rem;
-    padding: 7px 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .section {
-    padding: 14px;
-  }
-
-  .section h1, .section h2, .section h3 {
-    font-size: 1rem;
-  }
-
-  .section p {
-    font-size: 0.85rem;
-  }
-
-  .section button, .section .btn {
-    font-size: 0.78rem;
-    padding: 6px 12px;
-  }
-}
-
-
-
-
-
-
-
-/* --- EBOOKS SECTION --- */
+/* --- EBOOKS SECTION (App-like) --- */
 .ebook-series-section {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 480px; /* content width like an app */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 10px; /* small side padding for mobile */
 }
 
 .series-title {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   color: #2c3e50;
   border-bottom: 2px solid #3498db;
   display: inline-block;
-  padding-bottom: 0.3rem;
+  padding-bottom: 0.25rem;
 }
 
 .ebook-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 10px;
+  justify-content: center; /* center grid items */
 }
 
 .ebook-card {
-  width: 180px;
+  width: 160px;
   background: #fff;
-  border-radius: 1rem;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.25s, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
   cursor: pointer;
 }
 
 .ebook-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
 .ebook-cover {
   width: 100%;
-  height: 240px;
+  height: 200px;
   background-size: cover;
   background-position: center;
   border-bottom: 1px solid #eee;
   display: block;
+  border-radius: 12px 12px 0 0;
 }
 
 .ebook-title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin: 0.5rem 0 0.2rem 0;
-  padding: 0 0.5rem;
+  margin: 0.4rem 0 0.2rem 0;
+  padding: 0 0.4rem;
   text-align: center;
 }
 
 .ebook-author {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #555;
   text-align: center;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.2rem;
 }
 
 .ebook-part {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #888;
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .view-all-btn {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+  margin-top: 0.8rem;
+  padding: 0.45rem 0.9rem;
   background: #3498db;
   color: #fff;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.3s;
+  transition: background 0.25s, transform 0.25s;
 }
 
 .view-all-btn:hover {
   background: #2980b9;
+  transform: scale(1.03);
 }
 
-/* Responsive layout */
+/* Responsive adjustments for mobile (most important) */
 @media (max-width: 768px) {
   .ebook-grid {
     justify-content: center;
+    gap: 8px;
   }
 }
 
 @media (max-width: 480px) {
   .ebook-card {
-    width: 140px;
+    width: 130px;
   }
 
   .ebook-cover {
-    height: 190px;
+    height: 160px;
   }
 
   .series-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+  }
+
+  .ebook-title {
+    font-size: 0.85rem;
+  }
+
+  .ebook-author {
+    font-size: 0.75rem;
+  }
+
+  .ebook-part {
+    font-size: 0.7rem;
+  }
+
+  .view-all-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
   }
 }
 
