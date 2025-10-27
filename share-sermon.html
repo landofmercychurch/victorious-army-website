@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Victorious Army Revival Movement – Sermon</title>
 
-  <!-- Default OG/Twitter -->
+  <!-- Default OG/Twitter (fallback) -->
   <meta property="og:type" content="video.other">
   <meta property="og:title" content="Watch Our Sermon">
   <meta property="og:description" content="Experience inspiring sermons from Victorious Army Revival Movement.">
@@ -19,16 +19,59 @@
   <meta name="twitter:description" content="Experience inspiring sermons from Victorious Army Revival Movement.">
   <meta name="twitter:image" content="https://yourwebsite.com/default-sermon-thumbnail.jpg">
 
-  <script>
-    // Redirect real users to the interactive main page
+  <script type="module">
+    // Map of sermons
+    const sermons = {
+      "6196962b-d362-41f0-ab22-0d30dd82ea70": {
+        title: "The Power of Faith",
+        description: "Discover the impact of unwavering faith in our daily walk.",
+        thumbnail: "https://yourwebsite.com/thumbnails/faith.jpg",
+        video: "https://yourwebsite.com/videos/faith.mp4"
+      },
+      "jgumjwrt3rqiododh060": {
+        title: "Living in the Spirit",
+        description: "Learn to follow the guidance of the Holy Spirit in all areas of life.",
+        thumbnail: "https://yourwebsite.com/thumbnails/spirit.jpg",
+        video: "https://yourwebsite.com/videos/spirit.mp4"
+      }
+      // Add more sermons here...
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
       const sermonId = params.get('sermon');
+      const sermon = sermons[sermonId];
+
+      if (sermon) {
+        // Update OG/Twitter meta dynamically
+        const setMeta = (property, content, isName = false) => {
+          const selector = isName ? `meta[name="${property}"]` : `meta[property="${property}"]`;
+          let meta = document.head.querySelector(selector);
+          if (!meta) {
+            meta = document.createElement('meta');
+            if (isName) meta.setAttribute('name', property);
+            else meta.setAttribute('property', property);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        };
+
+        setMeta('og:title', sermon.title);
+        setMeta('og:description', sermon.description);
+        setMeta('og:image', sermon.thumbnail);
+        setMeta('og:url', `${window.location.origin}/share-sermon.html?sermon=${sermonId}`);
+        setMeta('og:video', sermon.video);
+        setMeta('og:video:type', 'video/mp4');
+
+        setMeta('twitter:title', sermon.title, true);
+        setMeta('twitter:description', sermon.description, true);
+        setMeta('twitter:image', sermon.thumbnail, true);
+      }
+
+      // Redirect real users to the main interactive site with the sermon playing
       if (sermonId) {
-        // Redirect to your main site with the sermon parameter
         window.location.replace(`/?sermon=${sermonId}`);
       } else {
-        // No ID? Redirect to main page
         window.location.replace('/');
       }
     });
