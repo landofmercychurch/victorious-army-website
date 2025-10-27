@@ -11,7 +11,6 @@
   --shadow-sm: 0 3px 12px rgba(0,0,0,0.06);
   --shadow-md: 0 6px 20px rgba(0,0,0,0.1);
   --transition: 0.3s ease;
-  --max-content-width: 480px; /* limits content width like an app */
 }
 
 * {
@@ -26,17 +25,7 @@ body {
   color: var(--text);
   line-height: 1.6;
   scroll-behavior: smooth;
-  display: flex;
-  justify-content: center; /* center content horizontally */
-  padding: 0 12px;        /* small padding on sides for small screens */
-}
-
-main {
-  width: 100%;
-  max-width: var(--max-content-width);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  padding: 0 12px; /* small horizontal padding for mobile */
 }
 
 /* Headings */
@@ -58,13 +47,11 @@ p {
   background: var(--primary);
   padding: 12px 16px;
   border-radius: var(--radius);
-  width: 100%;
-  max-width: var(--max-content-width);
-  margin: 12px auto;
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
 }
 
 .navbar ul {
@@ -96,12 +83,11 @@ p {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #fff;
   text-align: center;
-  padding: 50px 20px;
+  padding: 50px 16px;
   border-radius: var(--radius);
   width: 100%;
-  max-width: var(--max-content-width);
-  margin: 20px auto;
   box-shadow: var(--shadow-md);
+  margin-bottom: 20px;
 }
 
 .hero h1 {
@@ -128,6 +114,54 @@ p {
     text-shadow: 0 0 5px #fff, 0 0 10px #a66cff, 0 0 15px #4db8ff;
   }
 }
+
+/* ================================
+   MOBILE-RESPONSIVE APP-LIKE CONTAINER
+================================ */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 0 8px;
+  }
+
+  .hero {
+    padding: 40px 12px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 30px 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+}
+
+
+
+
+
+
+
 
    GLOBAL SECTIONS (common styles)
 ================================ */
