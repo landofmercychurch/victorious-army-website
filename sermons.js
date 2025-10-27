@@ -214,28 +214,36 @@ export async function initSermons(container) {
         }
       });
 
-      /** Share */
-      const shareBtn = actions.querySelector(".share-btn");
-      shareBtn.addEventListener("click", async () => {
-        const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
-        setOpenGraphMeta({
-          title: sermon.title,
-          description: sermon.description || "Watch our latest sermon!",
-          image: sermon.thumbnail_url || "",
-          url: shareUrl,
-        });
-        const shareData = { title: sermon.title, text: sermon.description || "Watch our latest sermon!", url: shareUrl };
-        if (navigator.share) {
-          try {
-            await navigator.share(shareData);
-          } catch {}
-        } else {
-          navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied!"));
-        }
-      });
+/** Share */
+const shareBtn = actions.querySelector(".share-btn");
+shareBtn.addEventListener("click", async () => {
+  const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`; // deep-link
 
-      container.appendChild(card);
-    }
+  // Update OpenGraph meta dynamically
+  setOpenGraphMeta({
+    title: sermon.title,
+    description: sermon.description || "Watch our latest sermon!",
+    image: sermon.thumbnail_url || "",
+    url: shareUrl,
+  });
+
+  const shareData = {
+    title: sermon.title,
+    text: sermon.description || "Watch our latest sermon!",
+    url: shareUrl,
+  };
+
+  // Native share dialog
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch {}
+  } else {
+    // Copy to clipboard fallback
+    navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied!"));
+  }
+});
+
 
     /** Auto-play only visible videos */
     const autoPlayObserver = new IntersectionObserver(
