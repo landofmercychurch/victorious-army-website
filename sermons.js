@@ -13,7 +13,7 @@ export async function initSermons(container) {
       return;
     }
 
-    sermons.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
 
     const scrollIndicator = el("div", "scroll-indicator");
@@ -26,6 +26,7 @@ export async function initSermons(container) {
       const card = el("div", "sermon-card");
       card.dataset.id = sermon.id;
 
+      /** Video wrapper */
       const videoWrapper = el("div", "video-wrapper");
       const video = el("video");
       video.playsInline = true;
@@ -38,7 +39,7 @@ export async function initSermons(container) {
 
       videos.push({ video, sermon });
 
-      // Lazy-load + HLS/MP4/MOV/WebM
+      /** Lazy-load + HLS + fallback to MP4/MOV/WebM */
       const setupVideo = () => {
         if (sermon.hls_url && window.Hls && Hls.isSupported()) {
           const hls = new Hls({ startLevel:-1, maxBufferLength:30 });
@@ -46,35 +47,36 @@ export async function initSermons(container) {
           hls.attachMedia(video);
         } else if (sermon.hls_url && video.canPlayType("application/vnd.apple.mpegurl")) {
           video.src = sermon.hls_url;
+        } else if (sermon.urls) {
+          // Fallback order: MP4 -> MOV -> WebM
+          video.src = sermon.urls.mp4_url || sermon.urls.mov_url || sermon.urls.webm_url || "";
         } else if (sermon.video_url) {
-          video.src = sermon.video_url; // fallback MP4, MOV, WebM
+          video.src = sermon.video_url;
         }
       };
-      const observer = new IntersectionObserver(entries => {
+
+      const lazyObserver = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
             setupVideo();
-            observer.unobserve(video);
+            lazyObserver.unobserve(video);
           }
         });
       }, { threshold: 0.25, root: container });
-      observer.observe(video);
+      lazyObserver.observe(video);
 
-      // Overlay, Actions, Comments, etc. (keep your existing logic)
-      // ... overlay + like/comment/share logic stays unchanged
+      /** Overlay + actions + comments (keep your previous logic here) */
+      // e.g. card.appendChild(overlay), like/comment/share logic
 
       container.appendChild(card);
     }
 
-    // IntersectionObserver for autoplay only visible video
+    /** Auto-play visible videos only, pause others */
     const autoPlayObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         const vid = entry.target;
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
-          vid.play().catch(()=>{});
-        } else {
-          vid.pause();
-        }
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.7) vid.play().catch(()=>{});
+        else vid.pause();
       });
     }, { threshold: 0.7, root: container });
 
