@@ -638,8 +638,10 @@ main {
   transform: translateY(-2px);
 }
 
+
+
 /* =========================================
-   GALLERY MODAL (Updated)
+   GALLERY MODAL (Updated & Scrollable)
 ========================================= */
 .gallery-modal {
   position: fixed;
@@ -651,6 +653,7 @@ main {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
+  padding: 10px;
 }
 
 .gallery-modal.show {
@@ -663,11 +666,13 @@ main {
   background: #fff;
   border-radius: 12px;
   max-width: 90%;
-  max-height: 90%;
+  max-height: 80vh; /* reduce height so scrolling works */
   overflow-y: auto;
-  padding: 20px;
+  padding: 20px 20px 30px; /* extra bottom padding for scroll */
   position: relative;
-  z-index: 2; /* ensure above backdrop */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Backdrop behind content */
@@ -675,28 +680,37 @@ main {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
-  z-index: 1; /* below inner content */
+  z-index: 1;
 }
 
-/* Close button */
+/* Close button - always visible */
 .gallery-close {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  background: none;
+  position: sticky; /* stays visible at top */
+  top: 10px;
+  align-self: flex-end;
+  background: #d33;
+  color: #fff;
   border: none;
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  z-index: 3; /* above inner content */
+  z-index: 3;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.gallery-close:hover {
+  background: #a00;
+  transform: scale(1.05);
 }
 
 /* Grid layout */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-  margin-top: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* smaller thumbnails */
+  gap: 10px;
+  margin-top: 20px;
 }
 
 /* Individual gallery item */
@@ -713,7 +727,7 @@ main {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: transform 0.25s ease;
 }
 
@@ -723,10 +737,36 @@ main {
 
 /* Thumbnail label */
 .gallery-label {
-  margin-top: 4px;
-  font-size: 0.85rem;
+  margin-top: 2px;
+  font-size: 0.75rem; /* smaller font */
   color: #333;
+  word-break: break-word;
 }
+
+/* =========================================
+   Responsive tweaks
+========================================= */
+@media (max-width: 768px) {
+  .gallery-inner {
+    max-height: 85vh;
+    padding: 15px 15px 25px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 8px;
+  }
+
+  .gallery-close {
+    font-size: 1.4rem;
+    padding: 5px 10px;
+  }
+
+  .gallery-label {
+    font-size: 0.7rem;
+  }
+}
+
 
 
 
