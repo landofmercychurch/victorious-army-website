@@ -275,9 +275,11 @@ function createGalleryModal(posts, onSelect) {
     label.textContent = p.title || "";
     item.append(img, label);
     item.addEventListener("click", () => {
-      console.log("🎯 Gallery select:", p.id);
-      onSelect(p);
-    });
+  console.log("🎯 Gallery select (open full modal):", p.id);
+  openPostModal(p, { openComments: false }); // open full post modal
+  closeGalleryModal(); // hide gallery after selecting
+});
+
     grid.appendChild(item);
   });
 
