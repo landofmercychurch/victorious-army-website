@@ -11,6 +11,7 @@ import { fetchPictureComments, postPictureComment } from "./commentsPublic.js";
  */
 
 function createMetaFallback(post) {
+  console.log("🧠 Creating OG meta tags for post:", post?.id);
   const head = document.head;
   const set = (prop, value, isName = false) => {
     const selector = isName ? `meta[name="${prop}"]` : `meta[property="${prop}"]`;
@@ -35,29 +36,38 @@ function createMetaFallback(post) {
 }
 
 export async function initPicturePosts(container) {
+  console.log("🚀 initPicturePosts called with container:", container);
   if (!container) return;
   container.innerHTML = "<p>Loading posts…</p>";
 
   try {
-    // ✅ Fetch from the correct route
+    console.log("📡 Fetching posts from backend /posts …");
     let posts = await api.get("/posts");
-    if (!Array.isArray(posts)) posts = posts.data || [];
+    console.log("📦 Raw response from API:", posts);
 
-    console.log("📸 Posts fetched:", posts);
+    if (!Array.isArray(posts)) {
+      console.warn("⚠️ posts is not an array, checking .data property …");
+      posts = posts.data || [];
+    }
+
+    console.log(`📸 Posts fetched successfully: ${posts.length} found`);
 
     if (!posts.length) {
+      console.warn("⚠️ No posts found in database.");
       container.innerHTML = "<p>No posts yet.</p>";
       return;
     }
 
     // Sort newest first
     posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    console.log("🗂️ Sorted posts:", posts.map(p => p.title || p.id));
 
     container.innerHTML = "";
     container.classList.add("picture-feed");
 
     // === Latest post (prominent) ===
     const latest = posts[0];
+    console.log("🌟 Displaying latest post:", latest);
     const latestCard = buildLargeCard(latest);
     container.appendChild(latestCard);
 
@@ -80,12 +90,15 @@ export async function initPicturePosts(container) {
     gridWrapper.appendChild(thumbGrid);
 
     // === Build thumbnails ===
-    posts.forEach((post) => {
+    console.log("🧱 Building thumbnail grid …");
+    posts.forEach((post, index) => {
+      console.log(`🖼️ [${index + 1}/${posts.length}] Rendering thumbnail:`, post.title || post.id);
       const thumb = el("div", "post-thumb");
       const img = el("img");
       img.src = post.image_url || "";
       img.alt = post.title || "Post image";
       img.loading = "lazy";
+      img.onerror = () => console.error("🚫 Failed to load image for post:", post);
       thumb.appendChild(img);
       thumb.addEventListener("click", () => openPostModal(post));
       thumbGrid.appendChild(thumb);
@@ -95,12 +108,14 @@ export async function initPicturePosts(container) {
 
     // === Handlers ===
     viewAllBtn.onclick = () => {
+      console.log("📂 Opening grid view …");
       gridWrapper.classList.remove("hidden");
       viewAllBtn.classList.add("hidden");
       setTimeout(() => thumbGrid.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
     };
 
     closeBtn.onclick = () => {
+      console.log("❎ Closing grid view");
       gridWrapper.classList.add("hidden");
       viewAllBtn.classList.remove("hidden");
     };
@@ -108,13 +123,17 @@ export async function initPicturePosts(container) {
     // Auto-open if ?post=id in URL
     const urlPostId = new URLSearchParams(window.location.search).get("post");
     if (urlPostId) {
+      console.log("🔗 URL includes post ID:", urlPostId);
       const target = posts.find((p) => String(p.id) === String(urlPostId));
       if (target) {
+        console.log("🎯 Found target post from URL:", target);
         if (target.id !== latest.id) {
           gridWrapper.classList.remove("hidden");
           viewAllBtn.classList.add("hidden");
         }
         openPostModal(target);
+      } else {
+        console.warn("⚠️ No matching post found for URL ID:", urlPostId);
       }
     }
   } catch (err) {
@@ -124,8 +143,8 @@ export async function initPicturePosts(container) {
 }
 
 /* --- helpers --- */
-
 function buildLargeCard(post) {
+  console.log("🧱 Building large card for:", post.title || post.id);
   const card = el("div", "picture-card");
 
   if (post.title) {
@@ -135,9 +154,13 @@ function buildLargeCard(post) {
   }
 
   if (post.image_url) {
+    console.log("🖼️ Adding image:", post.image_url);
     const img = el("img", "picture-img", { src: post.image_url, alt: post.title || "Image" });
     img.loading = "lazy";
+    img.onerror = () => console.error("🚫 Image failed to load:", post.image_url);
     card.appendChild(img);
+  } else {
+    console.warn("⚠️ Post has no image_url:", post);
   }
 
   if (post.description) {
@@ -174,11 +197,10 @@ function buildLargeCard(post) {
 
   refreshPostLikes(post.id, likeCount);
   likeBtn.addEventListener("click", () => handlePostLike(post.id, likeCount));
-
   commentBtn.addEventListener("click", () => openPostModal(post));
-
   shareBtn.addEventListener("click", async () => {
     const postUrl = `${window.location.origin}/?post=${post.id}`;
+    console.log("🔗 Sharing post:", postUrl);
     if (navigator.share) {
       try {
         await navigator.share({
@@ -186,7 +208,9 @@ function buildLargeCard(post) {
           text: post.description?.slice(0, 120) || "",
           url: postUrl,
         });
-      } catch {}
+      } catch (e) {
+        console.error("⚠️ Share failed:", e);
+      }
     } else {
       try {
         await navigator.clipboard.writeText(postUrl);
@@ -198,12 +222,12 @@ function buildLargeCard(post) {
   });
 
   card.querySelector(".picture-img")?.addEventListener("click", () => openPostModal(post));
-
   return card;
 }
 
 /* --- Modal --- */
 function openPostModal(post) {
+  console.log("🪟 Opening modal for post:", post);
   createMetaFallback(post);
   let modal = document.querySelector(".post-modal");
   if (!modal) {
@@ -239,6 +263,7 @@ function openPostModal(post) {
   const likeCountEl = body.querySelector(".modal-like-count");
   refreshPostLikes(post.id, likeCountEl);
   likeBtn.addEventListener("click", async () => {
+    console.log("❤️ Liking post:", post.id);
     await api.post("/likes", { post_id: post.id });
     refreshPostLikes(post.id, likeCountEl);
   });
@@ -247,14 +272,14 @@ function openPostModal(post) {
   commentsContainer.innerHTML = "<p>Loading comments…</p>";
 
   async function loadComments() {
+    console.log("💬 Fetching comments for post:", post.id);
     try {
       const comments = await fetchPictureComments(post.id);
+      console.log(`💬 ${comments.length} comments loaded for`, post.id);
       commentsContainer.innerHTML = `
         <div class="comments-header"><strong>${comments.length} Comments</strong></div>
         <div class="comment-list">
-          ${comments
-            .map((c) => `<div class="comment"><b>${c.name || "Guest"}:</b> ${escapeHtml(c.content)}</div>`)
-            .join("")}
+          ${comments.map((c) => `<div class="comment"><b>${c.name || "Guest"}:</b> ${escapeHtml(c.content)}</div>`).join("")}
         </div>
         <form class="comment-form">
           <input name="name" placeholder="Your name (optional)" />
@@ -268,36 +293,16 @@ function openPostModal(post) {
         const name = form.querySelector('input[name="name"]').value.trim() || "Guest";
         const content = form.querySelector('textarea[name="content"]').value.trim();
         if (!content) return;
+        console.log("✍️ Posting comment:", { post_id: post.id, name, content });
         await postPictureComment({ post_id: post.id, name, content });
         await loadComments();
       });
     } catch (err) {
+      console.error("💥 Comments load error:", err);
       commentsContainer.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
-      console.error("comments load error", err);
     }
   }
   loadComments();
-
-  const shareBtn = body.querySelector(".modal-share");
-  shareBtn.addEventListener("click", async () => {
-    const postUrl = `${window.location.origin}/?post=${post.id}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post.title || "Check this post",
-          text: post.description?.slice(0, 120) || "",
-          url: postUrl,
-        });
-      } catch {}
-    } else {
-      try {
-        await navigator.clipboard.writeText(postUrl);
-        alert("Post link copied to clipboard!");
-      } catch {
-        window.open(postUrl, "_blank");
-      }
-    }
-  });
 
   modal.classList.add("show");
 }
