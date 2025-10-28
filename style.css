@@ -509,10 +509,11 @@ main {
   flex-direction: column;
   gap: 16px;
   padding: 12px;
-  max-width: 480px;       /* center feed like an app */
+  max-width: 480px;
   margin: 0 auto;
   overflow: hidden;
   box-sizing: border-box;
+  align-items: center;
 }
 
 /* =============================
@@ -521,49 +522,59 @@ main {
 .picture-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   width: 100%;
-  max-height: 80vh;
   position: relative;
-  padding: 8px;
+  padding: 10px 12px 14px;
+  max-width: 100%;
 }
 
 .picture-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-/* Image responsive */
+/* Image smaller and balanced */
 .picture-img {
   width: 100%;
   height: auto;
-  max-height: 60vh;
+  max-height: 250px;
   object-fit: cover;
-  display: block;
   border-radius: 12px;
   margin-bottom: 8px;
 }
 
-/* Title & description */
+/* Title & Description */
 .picture-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #222;
-  margin: 4px 0 2px 0;
+  color: #111;
+  margin: 4px 0 6px 0;
+  text-align: left;
 }
 
 .picture-description {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: #444;
-  line-height: 1.4;
-  max-height: 3em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 6px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.picture-description button.read-more-btn {
+  background: none;
+  border: none;
+  color: #007BFF;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+.picture-description button.read-more-btn:hover {
+  color: #0056b3;
 }
 
 /* =============================
@@ -573,8 +584,9 @@ main {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .like-btn, .comment-btn, .share-btn {
@@ -606,72 +618,114 @@ main {
    Comments Box
 ============================= */
 .comments-box {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 94%;
-  max-width: 360px;
-  max-height: 55vh;
-  min-height: 180px;
-  background: rgba(255,255,255,0.97);
-  backdrop-filter: blur(4px);
-  border-radius: 16px 16px 0 0;
-  overflow-y: auto;
+  width: 100%;
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
   display: none;
   flex-direction: column;
   gap: 6px;
-  padding: 12px;
-  z-index: 20;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+  margin-top: 8px;
 }
 
-/* Comments header */
-.comments-header {
+.comments-box.open {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  font-size: 0.88rem;
-  padding-bottom: 4px;
-  border-bottom: 1px solid #ddd;
 }
 
-/* Comment form & list remain unchanged */
-.comment-list, .comment-form {
-  margin-top: 6px;
+.comments-box .close-comments {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: #444;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Comment form & list */
+.comment-list {
+  margin-top: 4px;
+}
+
+.comment {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.comment-form input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.comment-form button {
+  padding: 6px 10px;
+  border: none;
+  background: #007BFF;
+  color: #fff;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.comment-form button:hover {
+  background: #0056b3;
 }
 
 /* =============================
-   TikTok-like swipe (mobile)
+   View All Button
+============================= */
+.view-all-btn {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 10px 14px;
+  background: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s ease;
+}
+.view-all-btn:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* =============================
+   Responsive Tweaks
 ============================= */
 @media (max-width: 768px) {
   #picture-feed {
-    overflow-y: auto;
-    height: 100vh;
-    padding: 8px;
+    padding: 10px;
   }
 
   .picture-card {
-    width: 95%;
-    max-height: 85vh;
+    padding: 8px 10px;
     border-radius: 12px;
-    margin: 0 auto 16px auto;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-    padding: 6px;
   }
 
   .picture-img {
-    max-height: 50vh;
-    border-radius: 12px;
+    max-height: 220px;
   }
 
-  .picture-title, .picture-description, .picture-actions {
-    padding-left: 8px;
-    padding-right: 8px;
+  .picture-title {
+    font-size: 0.95rem;
+  }
+
+  .picture-description {
+    font-size: 0.86rem;
   }
 }
-
 
 
 
