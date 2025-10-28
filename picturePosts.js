@@ -2,8 +2,7 @@
 // src/picturePosts.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
-import { fetchPictureComments as fetchPostComments, postPictureComment as postPostComment } from "./commentsPublic.js";
-
+import { fetchPictureComments, postPictureComment } from "./commentsPublic.js";
 
 export async function initPicturePosts(container) {
   if (!container) return;
