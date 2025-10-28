@@ -501,36 +501,34 @@ main {
 
 
 
-/* ================================
-   PICTURE POSTS SECTION
-================================ */
+/* =========================================
+   PICTURE POSTS STYLESHEET (Updated)
+   Clean, Mobile-First + Modal Integration
+========================================= */
+
+/* --- Feed Wrapper --- */
 #picture-feed {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 16px;
   padding: 12px;
   max-width: 480px;
   margin: 0 auto;
-  overflow: hidden;
   box-sizing: border-box;
-  align-items: center;
 }
 
-/* =============================
-   Picture Card
-============================= */
+/* --- Picture Card --- */
 .picture-card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
   width: 100%;
-  position: relative;
   padding: 10px 12px 14px;
-  max-width: 100%;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .picture-card:hover {
@@ -538,7 +536,7 @@ main {
   box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-/* Image smaller and balanced */
+/* --- Image --- */
 .picture-img {
   width: 100%;
   height: auto;
@@ -548,12 +546,12 @@ main {
   margin-bottom: 8px;
 }
 
-/* Title & Description */
+/* --- Title & Description --- */
 .picture-title {
   font-size: 1rem;
   font-weight: 600;
   color: #111;
-  margin: 4px 0 6px 0;
+  margin: 4px 0 6px;
   text-align: left;
 }
 
@@ -564,7 +562,7 @@ main {
   margin-bottom: 10px;
 }
 
-.picture-description button.read-more-btn {
+.picture-description .read-more-btn {
   background: none;
   border: none;
   color: #007BFF;
@@ -573,13 +571,12 @@ main {
   font-size: 0.88rem;
   transition: color 0.2s;
 }
-.picture-description button.read-more-btn:hover {
+
+.picture-description .read-more-btn:hover {
   color: #0056b3;
 }
 
-/* =============================
-   Actions: Like / Comment / Share
-============================= */
+/* --- Actions (Like / Comment / Share) --- */
 .picture-actions {
   display: flex;
   align-items: center;
@@ -589,7 +586,9 @@ main {
   margin-top: 4px;
 }
 
-.like-btn, .comment-btn, .share-btn {
+.like-btn,
+.comment-btn,
+.share-btn {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -602,21 +601,22 @@ main {
   transition: color 0.2s ease, transform 0.15s ease;
 }
 
-.like-btn:hover, .comment-btn:hover, .share-btn:hover {
+.like-btn:hover,
+.comment-btn:hover,
+.share-btn:hover {
   color: #0056b3;
   transform: scale(1.05);
 }
 
-.like-count, .comment-count {
+.like-count,
+.comment-count {
   font-size: 0.78rem;
   color: #555;
   min-width: 30px;
   text-align: center;
 }
 
-/* =============================
-   Comments Box
-============================= */
+/* --- Comments Box --- */
 .comments-box {
   width: 100%;
   background: #fafafa;
@@ -641,7 +641,7 @@ main {
   cursor: pointer;
 }
 
-/* Comment form & list */
+/* --- Comments Content --- */
 .comment-list {
   margin-top: 4px;
 }
@@ -659,7 +659,8 @@ main {
   margin-top: 8px;
 }
 
-.comment-form input {
+.comment-form input,
+.comment-form textarea {
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -667,6 +668,7 @@ main {
 }
 
 .comment-form button {
+  align-self: flex-start;
   padding: 6px 10px;
   border: none;
   background: #007BFF;
@@ -676,13 +678,12 @@ main {
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .comment-form button:hover {
   background: #0056b3;
 }
 
-/* =============================
-   View All Button
-============================= */
+/* --- View All Button --- */
 .view-all-btn {
   display: inline-block;
   margin-top: 4px;
@@ -696,14 +697,131 @@ main {
   cursor: pointer;
   transition: background 0.2s, transform 0.15s ease;
 }
+
 .view-all-btn:hover {
   background: #0056b3;
   transform: translateY(-1px);
 }
 
-/* =============================
-   Responsive Tweaks
-============================= */
+/* --- Grid View (All Posts) --- */
+.all-posts-grid {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.all-posts-grid.show {
+  display: flex;
+}
+
+.post-thumb {
+  flex: 1 1 calc(20% - 10px);
+  min-width: 120px;
+  cursor: pointer;
+  position: relative;
+}
+
+.post-thumb img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.post-thumb:hover img {
+  transform: scale(1.05);
+}
+
+.grid-indicator {
+  width: 100%;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+/* --- Close Button for Grid --- */
+.close-all-btn {
+  margin: 10px auto;
+  display: block;
+  background: #d33;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================================
+   MODAL (Popup for Full Post View)
+========================================= */
+.post-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.post-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 20px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #444;
+}
+
+.modal-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+/* =========================================
+   Swipe Indicator (TikTok Style)
+========================================= */
+#swipe-indicator {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+  opacity: 0.7;
+  animation: bounce 1.8s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* --- Mobile Responsive Tweaks --- */
 @media (max-width: 768px) {
   #picture-feed {
     padding: 10px;
@@ -725,31 +843,7 @@ main {
   .picture-description {
     font-size: 0.86rem;
   }
-}
 
-
-
-/* =============================
-   Swipe Indicator (TikTok style)
-============================= */
-#swipe-indicator {
-  text-align: center;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #555;
-  margin-bottom: 8px;
-  opacity: 0.7;
-  animation: bounce 1.8s infinite;
-}
-
-/* Smooth vertical bounce animation */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-/* Mobile tweak */
-@media (max-width: 768px) {
   #swipe-indicator {
     font-size: 0.78rem;
     margin-bottom: 12px;
@@ -759,166 +853,7 @@ main {
 
 
 
-/* --- Picture Posts --- */
-.picture-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom: 1rem;
-  text-align: center;
-}
-.picture-card img {
-  width: 100%;
-  max-height: 320px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-.picture-title {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-.picture-desc {
-  margin: 10px 0;
-  color: #444;
-}
-.read-more-btn {
-  border: none;
-  background: none;
-  color: #0077cc;
-  cursor: pointer;
-}
-.picture-actions {
-  margin-top: 10px;
-}
-.picture-actions button {
-  margin-right: 10px;
-  border: none;
-  background: #f0f0f0;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
 
-/* --- Grid View --- */
-.all-posts-grid {
-  display: none;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
-}
-.all-posts-grid.show,
-.all-posts-grid:not(.hidden) {
-  display: flex;
-}
-.post-thumb {
-  flex: 1 1 calc(20% - 10px);
-  min-width: 120px;
-  cursor: pointer;
-  position: relative;
-}
-.post-thumb img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-}
-.post-thumb:hover img {
-  transform: scale(1.05);
-}
-.grid-indicator {
-  width: 100%;
-  text-align: center;
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-.view-all-btn,
-.close-all-btn {
-  margin: 10px auto;
-  display: block;
-  background: #0077cc;
-  color: #fff;
-  padding: 8px 15px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-.close-all-btn {
-  background: #d33;
-}
-
-/* --- Modal --- */
-.post-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.post-modal.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-.modal-content {
-  background: #fff;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  padding: 20px;
-}
-.modal-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-.modal-image {
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-.comments-box {
-  margin-top: 10px;
-}
-.comment {
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
-}
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 10px;
-}
-.comment-form input,
-.comment-form textarea {
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-.comment-form button {
-  align-self: flex-start;
-  background: #0077cc;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
 
 
 
