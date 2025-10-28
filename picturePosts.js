@@ -64,12 +64,25 @@ export async function initPicturePosts(container) {
     // sort newest first
     posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    // Determine selected/featured post (localStorage -> URL param -> newest)
-    const urlPostId = new URLSearchParams(window.location.search).get("post");
-    const storedId = localStorage.getItem(STORAGE_KEY);
-    let featuredId = urlPostId || storedId || posts[0].id;
-    let featured = posts.find(p => String(p.id) === String(featuredId)) || posts[0];
+    // Determine featured post
+const urlPostId = new URLSearchParams(window.location.search).get("post");
+let featured;
 
+// If user explicitly requested a post via URL, show it
+if (urlPostId) {
+  featured = posts.find(p => String(p.id) === String(urlPostId)) || posts[0];
+} else {
+  // Otherwise, always show the newest post
+  featured = posts[0];
+}
+
+// Persist selection (optional, only if you want the user to stay on this post)
+try {
+  localStorage.setItem(STORAGE_KEY, String(featured.id));
+} catch (e) { /* ignore */ }
+
+
+    
     // build UI shell
     container.innerHTML = "";
     container.classList.add("picture-feed");
