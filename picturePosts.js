@@ -264,18 +264,18 @@ function buildLargeCard(post, options = {}) {
   return card;
 }
 
-/* ---------- Gallery modal (fullscreen) ---------- */
+/* ---------- Gallery Modal (Scrollable Thumbnails) ---------- */
 function createGalleryModal(posts, onSelect) {
   const modal = el("div", "gallery-modal");
   modal.innerHTML = `
     <div class="gallery-backdrop"></div>
     <div class="gallery-inner">
       <button class="gallery-close" aria-label="Close gallery">✖ Close Gallery</button>
-      <div class="gallery-indicator">🖼️ Click a thumbnail to set as featured</div>
+      <div class="gallery-indicator">🖼️ Click a thumbnail to view post</div>
       <div class="gallery-grid"></div>
     </div>
   `;
-  // hide by default; CSS should manage .show to display
+
   const grid = modal.querySelector(".gallery-grid");
 
   // populate grid
@@ -284,19 +284,25 @@ function createGalleryModal(posts, onSelect) {
     const img = el("img", "gallery-thumb", { src: p.image_url || "", alt: p.title || "Post" });
     img.loading = "lazy";
     img.onerror = () => img.classList.add("thumb-error");
+
     const label = el("div", "gallery-label");
     label.textContent = p.title || "";
-    item.append(img, label);
-   item.addEventListener("click", () => {
-  console.log("🎯 Gallery select (open full modal):", p.id);
-  openPostModal(p, { openComments: false }); // open full post modal with likes/comments
-  modal.classList.remove("show"); // hide the gallery modal
-  lockBodyScroll(false); // re-enable scrolling
-});
 
+    item.append(img, label);
+
+    item.addEventListener("click", () => {
+      console.log("🎯 Gallery select (open full modal):", p.id);
+      openPostModal(p, { openComments: false });
+      modal.classList.remove("show");
+      lockBodyScroll(false);
+    });
 
     grid.appendChild(item);
   });
+
+  // make grid scrollable
+  grid.style.maxHeight = "70vh";
+  grid.style.overflowY = "auto";
 
   // clicking backdrop closes
   modal.querySelector(".gallery-backdrop").addEventListener("click", () => {
@@ -304,10 +310,16 @@ function createGalleryModal(posts, onSelect) {
     lockBodyScroll(false);
   });
 
+  // close button always visible
+  modal.querySelector(".gallery-close").addEventListener("click", () => {
+    modal.classList.remove("show");
+    lockBodyScroll(false);
+  });
+
   return modal;
 }
 
-/* ---------- Post modal (single post with comments & likes) ---------- */
+/* ---------- Post Modal (Scrollable Mobile-Friendly) ---------- */
 function openPostModal(post, { openComments = false } = {}) {
   console.log("🪟 openPostModal:", post.id, "openComments:", openComments);
   createMetaFallback(post);
@@ -395,10 +407,8 @@ function openPostModal(post, { openComments = false } = {}) {
     }
   }
 
-  // comment button shows comments area
   const commentBtn = body.querySelector(".modal-comment");
   commentBtn.addEventListener("click", () => {
-    // if already loaded/shown, scroll to it; otherwise load
     if (commentsArea.querySelector(".comment-list")) {
       commentsArea.scrollIntoView({ behavior: "smooth" });
     } else {
@@ -406,7 +416,6 @@ function openPostModal(post, { openComments = false } = {}) {
     }
   });
 
-  // share
   const shareBtn = body.querySelector(".modal-share");
   shareBtn.addEventListener("click", async () => {
     const postUrl = `${window.location.origin}/?post=${post.id}`;
@@ -426,7 +435,6 @@ function openPostModal(post, { openComments = false } = {}) {
     }
   });
 
-  // If caller asked to open comments immediately, load and scroll
   if (openComments) {
     loadComments().then(() => {
       commentsArea.scrollIntoView({ behavior: "smooth" });
@@ -436,6 +444,7 @@ function openPostModal(post, { openComments = false } = {}) {
   modal.classList.add("show");
   lockBodyScroll(true);
 }
+
 
 /* ---------- Utils ---------- */
 function escapeHtml(str = "") {
