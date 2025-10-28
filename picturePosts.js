@@ -1,200 +1,222 @@
 // picturePosts.js
+// src/picturePosts.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
-import { refreshPostLikes, handlePostLike } from "./likes.js";
-import { fetchPictureComments, postPictureComment } from "./commentsPublic.js";
-
-function setOpenGraphMeta({ title, description, image, url }) {
-  const head = document.head;
-
-  function createOrUpdate(property, content, isName = false) {
-    const selector = isName ? `meta[name="${property}"]` : `meta[property="${property}"]`;
-    let meta = head.querySelector(selector);
-    if (!meta) {
-      meta = document.createElement("meta");
-      if (isName) meta.setAttribute("name", property);
-      else meta.setAttribute("property", property);
-      head.appendChild(meta);
-    }
-    meta.setAttribute("content", content);
-  }
-
-  createOrUpdate("og:title", title);
-  createOrUpdate("og:description", description);
-  createOrUpdate("og:image", image);
-  createOrUpdate("og:url", url);
-  createOrUpdate("og:type", "article");
-  createOrUpdate("twitter:card", "summary_large_image", true);
-  createOrUpdate("twitter:title", title, true);
-  createOrUpdate("twitter:description", description, true);
-  createOrUpdate("twitter:image", image, true);
-}
+import { fetchPostComments, postPostComment } from "./commentsPublic.js";
 
 export async function initPicturePosts(container) {
   if (!container) return;
-  container.innerHTML = "<p>Loading posts…</p>";
+  container.innerHTML = "<p>Loading posts...</p>";
 
   try {
-    let posts = await api.get("/posts");
-    posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    container.innerHTML = "";
-    if (!posts.length) {
+    const posts = await api.get("/picture-posts");
+    if (!Array.isArray(posts) || posts.length === 0) {
       container.innerHTML = "<p>No posts yet.</p>";
       return;
     }
 
-    container.classList.add("picture-feed");
+    // Sort by latest
+    posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    // --- Create 1 latest post ---
-    const latestPost = posts[0];
-    const allPosts = posts.slice(1);
+    // show only latest post first
+    const latest = posts[0];
+    container.innerHTML = "";
 
-    const latestCard = createPictureCard(latestPost);
+    const latestCard = createPostCard(latest, true);
     container.appendChild(latestCard);
 
-    // --- Add "View All Posts" button ---
-    const viewAllBtn = el("button", "view-all-btn", "View All Posts");
+    // View all button
+    const viewAllBtn = el("button", "view-all-btn");
+    viewAllBtn.textContent = "📸 View All Posts";
     container.appendChild(viewAllBtn);
 
-    // --- When clicked, show all posts inline ---
-    viewAllBtn.addEventListener("click", () => {
-      allPosts.forEach(post => {
-        const card = createPictureCard(post);
-        container.appendChild(card);
-      });
-      viewAllBtn.remove(); // hide button after expansion
+    // Inline grid for all posts
+    const allPostsGrid = el("div", "all-posts-grid hidden");
+    const closeAllBtn = el("button", "close-all-btn");
+    closeAllBtn.textContent = "✖ Close All Posts";
+
+    const indicator = el("p", "grid-indicator");
+    indicator.textContent = "🖼️ Click a post to view details";
+
+    allPostsGrid.appendChild(closeAllBtn);
+    allPostsGrid.appendChild(indicator);
+
+    posts.forEach(post => {
+      const thumb = el("div", "post-thumb");
+      const img = el("img");
+      img.src = post.image_url;
+      img.alt = post.title;
+      thumb.appendChild(img);
+      thumb.onclick = () => openModal(post);
+      allPostsGrid.appendChild(thumb);
     });
+
+    container.appendChild(allPostsGrid);
+
+    viewAllBtn.onclick = () => {
+      allPostsGrid.classList.remove("hidden");
+      viewAllBtn.classList.add("hidden");
+    };
+    closeAllBtn.onclick = () => {
+      allPostsGrid.classList.add("hidden");
+      viewAllBtn.classList.remove("hidden");
+    };
+
   } catch (err) {
-    container.innerHTML = `<p style="color:red">Failed to load posts.</p>`;
-    console.error(err);
+    console.error("Failed to load posts:", err);
+    container.innerHTML = "<p style='color:red;'>Failed to load posts.</p>";
   }
 }
 
-function createPictureCard(post) {
+/* Create single post card for homepage */
+function createPostCard(post, showFull = false) {
   const card = el("div", "picture-card");
+  const img = el("img");
+  img.src = post.image_url;
+  img.alt = post.title;
 
-  if (post.title) {
-    const titleEl = el("h3", "picture-title");
-    titleEl.textContent = post.title;
-    card.appendChild(titleEl);
-  }
+  const title = el("h3", "picture-title");
+  title.textContent = post.title;
 
-  if (post.image_url) {
-    const img = el("img", "picture-img", {
-      src: post.image_url,
-      alt: post.title || "Image",
-    });
-    img.loading = "lazy";
-    card.appendChild(img);
-  }
+  const desc = el("p", "picture-desc");
+  const fullDesc = post.description || "";
+  const shortDesc = fullDesc.length > 120 ? fullDesc.slice(0, 120) + "..." : fullDesc;
 
-  if (post.description) {
-    const descEl = el("p", "picture-description");
-    const maxLength = 150;
-    const text = post.description.trim();
-    if (text.length > maxLength) {
-      const shortText = text.slice(0, maxLength) + "... ";
-      descEl.textContent = shortText;
+  desc.textContent = shortDesc;
 
-      const readMoreBtn = el("button", "read-more-btn", "Read more");
-      readMoreBtn.addEventListener("click", () => {
-        descEl.textContent = text;
-      });
-      descEl.appendChild(readMoreBtn);
+  const readMoreBtn = el("button", "read-more-btn");
+  readMoreBtn.textContent = fullDesc.length > 120 ? "Read more" : "";
+  readMoreBtn.onclick = () => {
+    if (desc.textContent === shortDesc) {
+      desc.textContent = fullDesc;
+      readMoreBtn.textContent = "Show less";
     } else {
-      descEl.textContent = text;
+      desc.textContent = shortDesc;
+      readMoreBtn.textContent = "Read more";
     }
-    card.appendChild(descEl);
-  }
+  };
 
-  // --- Actions ---
   const actions = el("div", "picture-actions");
-  const likeBtn = el("button", "like-btn", "❤️");
-  const likeCount = el("span", "like-count", "0 Likes");
-  const commentBtn = el("button", "comment-btn", "💬");
-  const commentCount = el("span", "comment-count", "0 Comments");
-  const shareBtn = el("button", "share-btn", "🔗 Share");
-  actions.append(likeBtn, likeCount, commentBtn, commentCount, shareBtn);
-  card.appendChild(actions);
+  const likeBtn = el("button", "like-btn");
+  likeBtn.textContent = "❤️ Like";
+  const likeCount = el("span", "like-count");
+  const commentBtn = el("button", "comment-btn");
+  commentBtn.textContent = "💬 Comment";
 
-  // --- Comments box ---
-  const commentsBox = el("div", "comments-box");
-  card.appendChild(commentsBox);
+  actions.appendChild(likeBtn);
+  actions.appendChild(likeCount);
+  actions.appendChild(commentBtn);
 
-  // --- Likes & Comments ---
-  refreshPostLikes(post.id, likeCount);
-  likeBtn.addEventListener("click", () => handlePostLike(post.id, likeCount));
+  likeBtn.onclick = async () => {
+    await api.post("/likes", { post_id: post.id });
+    refreshLikes();
+  };
 
-  async function loadComments() {
-    commentsBox.innerHTML = "<p>Loading comments…</p>";
+  async function refreshLikes() {
     try {
-      const comments = await fetchPictureComments(post.id);
-      commentsBox.innerHTML = "";
-
-      const closeBtn = el("button", "close-comments", "Close");
-      closeBtn.addEventListener("click", () => commentsBox.classList.remove("open"));
-      commentsBox.appendChild(closeBtn);
-
-      const list = el("div", "comment-list");
-      if (!comments.length) list.innerHTML = `<p class="no-comments">No comments yet.</p>`;
-      else {
-        comments.forEach(c => {
-          const commentEl = el("div", "comment");
-          commentEl.innerHTML = `<b>${c.name || "Guest"}:</b> ${c.content}`;
-          list.appendChild(commentEl);
-        });
-      }
-
-      const form = el("form", "comment-form");
-      form.innerHTML = `
-        <input type="text" class="comment-name" placeholder="Your name (optional)" />
-        <input type="text" class="comment-content" placeholder="Write a comment…" required />
-        <button type="submit">Post</button>
-      `;
-      form.onsubmit = async e => {
-        e.preventDefault();
-        const name = form.querySelector(".comment-name").value.trim() || "Guest";
-        const content = form.querySelector(".comment-content").value.trim();
-        if (!content) return;
-
-        await postPictureComment({ post_id: post.id, name, content });
-        form.querySelector(".comment-content").value = "";
-        loadComments();
-      };
-
-      commentsBox.append(list, form);
-      commentsBox.classList.add("open");
-      commentCount.textContent = `${comments.length || 0} Comments`;
+      const res = await api.get(`/likes/count?type=post&post_id=${post.id}`);
+      likeCount.textContent = `${res.count || 0} Likes`;
     } catch {
-      commentsBox.innerHTML = "<p style='color:red'>Failed to load comments.</p>";
+      likeCount.textContent = "0 Likes";
     }
   }
+  refreshLikes();
 
-  commentBtn.addEventListener("click", () => {
-    commentsBox.classList.toggle("open");
-    if (commentsBox.classList.contains("open")) loadComments();
-  });
+  commentBtn.onclick = () => openModal(post);
 
-  shareBtn.addEventListener("click", () => {
-    const postUrl = `${window.location.origin}/posts/preview/${post.id}`;
-    if (navigator.share) {
-      navigator.share({
-        title: post.title || "Check out this post",
-        text: post.description?.slice(0, 100) || "",
-        url: postUrl,
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(postUrl).then(() => {
-        alert("Post link copied to clipboard!");
-      });
-    }
-  });
-
+  card.append(img, title, desc, readMoreBtn, actions);
   return card;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("picture-feed");
-  initPicturePosts(container);
-});
+/* Popup modal for viewing post details */
+function openModal(post) {
+  let modal = document.querySelector(".post-modal");
+  if (!modal) {
+    modal = el("div", "post-modal");
+    modal.innerHTML = `
+      <div class="modal-content">
+        <button class="modal-close">✖</button>
+        <div class="modal-body"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector(".modal-close").onclick = () => modal.classList.remove("show");
+    modal.onclick = e => {
+      if (e.target === modal) modal.classList.remove("show");
+    };
+  }
+
+  const body = modal.querySelector(".modal-body");
+  body.innerHTML = `
+    <img src="${post.image_url}" alt="${post.title}" class="modal-image">
+    <h2>${post.title}</h2>
+    <p>${post.description}</p>
+    <div class="picture-actions">
+      <button class="like-btn">❤️ Like</button>
+      <span class="like-count">0 Likes</span>
+      <button class="comment-btn">💬 Comment</button>
+    </div>
+    <div class="comments-box"></div>
+  `;
+
+  // Likes
+  const likeBtn = body.querySelector(".like-btn");
+  const likeCountEl = body.querySelector(".like-count");
+  async function refreshLikes() {
+    try {
+      const res = await api.get(`/likes/count?type=post&post_id=${post.id}`);
+      likeCountEl.textContent = `${res.count || 0} Likes`;
+    } catch {
+      likeCountEl.textContent = "0 Likes";
+    }
+  }
+  likeBtn.onclick = async () => {
+    await api.post("/likes", { post_id: post.id });
+    refreshLikes();
+  };
+  refreshLikes();
+
+  // Comments
+  const commentsBox = body.querySelector(".comments-box");
+  loadComments(commentsBox, post);
+
+  modal.classList.add("show");
+}
+
+async function loadComments(container, post) {
+  container.innerHTML = "<p>Loading comments...</p>";
+  try {
+    let comments = await fetchPostComments(String(post.id));
+    if (!Array.isArray(comments)) comments = [];
+
+    container.innerHTML = `
+      <div class="comments-header"><strong>${comments.length} Comments</strong></div>
+      <div class="comment-list">
+        ${comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> ${c.content}</div>`).join("")}
+      </div>
+      <form class="comment-form">
+        <input type="text" placeholder="Your name (optional)">
+        <textarea placeholder="Write your comment..." required></textarea>
+        <button type="submit">Post</button>
+      </form>
+    `;
+
+    const form = container.querySelector(".comment-form");
+    form.onsubmit = async e => {
+      e.preventDefault();
+      const name = form.querySelector("input").value.trim() || "Guest";
+      const content = form.querySelector("textarea").value.trim();
+      if (!content) return;
+      const newC = await postPostComment({ post_id: post.id, name, content });
+      container.querySelector(".comment-list").insertAdjacentHTML(
+        "afterbegin",
+        `<div class="comment"><b>${newC.name}:</b> ${newC.content}</div>`
+      );
+      form.reset();
+    };
+  } catch (err) {
+    container.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
+  }
+}
+
 
