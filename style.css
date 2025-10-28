@@ -732,7 +732,7 @@ main {
 
 
 /* =========================================
-   POST MODAL (Scrollable Mobile-Friendly)
+   POST MODAL (Mobile & Desktop Friendly)
 ========================================= */
 .post-modal-overlay {
   position: fixed;
@@ -766,6 +766,7 @@ main {
   overflow: hidden;
 }
 
+/* Close button */
 .post-modal-close {
   position: absolute;
   top: 12px;
@@ -773,9 +774,9 @@ main {
   background: #d33;
   color: #fff;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
   z-index: 10;
@@ -787,7 +788,7 @@ main {
   transform: scale(1.05);
 }
 
-/* Modal body wrapper to allow scrolling */
+/* Scrollable modal body */
 .post-modal-body {
   overflow-y: auto;
   flex: 1 1 auto;
@@ -797,6 +798,7 @@ main {
   padding-right: 4px;
 }
 
+/* Post content */
 .modal-image {
   width: 100%;
   max-height: 220px;
@@ -815,8 +817,12 @@ main {
   font-size: 0.95rem;
   color: #444;
   line-height: 1.5;
+  max-height: 35vh;  /* Ensures description doesn't take entire modal */
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
+/* Actions row */
 .modal-actions {
   display: flex;
   flex-wrap: wrap;
@@ -850,18 +856,18 @@ main {
   color: #555;
 }
 
-/* Comments Area scrollable inside modal */
+/* Comments wrapper */
 .modal-comments-area {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 200px;
+  max-height: 35vh;
   overflow-y: auto;
   border-top: 1px solid #eee;
   padding-top: 8px;
 }
 
-/* Comment list & form */
+/* Comment list */
 .comment-list {
   display: flex;
   flex-direction: column;
@@ -879,6 +885,7 @@ main {
   color: #111;
 }
 
+/* Comment form */
 .comment-form {
   display: flex;
   flex-direction: column;
@@ -920,7 +927,7 @@ main {
 }
 
 /* =========================================
-   Responsive Tweaks
+   Responsive tweaks for mobile
 ========================================= */
 @media (max-width: 768px) {
   .post-modal-content {
@@ -955,7 +962,6 @@ main {
     gap: 8px;
   }
 }
-
 
 
 
