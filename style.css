@@ -666,7 +666,7 @@ main {
   background: #fff;
   border-radius: 12px;
   max-width: 90%;
-  max-height: 80vh; /* reduce height so scrolling works */
+  max-height: 80vh; /* reduced height for scrolling */
   overflow-y: auto;
   padding: 20px 20px 30px; /* extra bottom padding for scroll */
   position: relative;
@@ -685,7 +685,7 @@ main {
 
 /* Close button - always visible */
 .gallery-close {
-  position: sticky; /* stays visible at top */
+  position: sticky; /* stays visible at top while scrolling */
   top: 10px;
   align-self: flex-end;
   background: #d33;
@@ -766,6 +766,7 @@ main {
     font-size: 0.7rem;
   }
 }
+
 
 
 
