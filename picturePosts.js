@@ -274,11 +274,13 @@ function createGalleryModal(posts, onSelect) {
     const label = el("div", "gallery-label");
     label.textContent = p.title || "";
     item.append(img, label);
-    item.addEventListener("click", () => {
+   item.addEventListener("click", () => {
   console.log("🎯 Gallery select (open full modal):", p.id);
-  openPostModal(p, { openComments: false }); // open full post modal
-  closeGalleryModal(); // hide gallery after selecting
+  openPostModal(p, { openComments: false }); // open full post modal with likes/comments
+  modal.classList.remove("show"); // hide the gallery modal
+  lockBodyScroll(false); // re-enable scrolling
 });
+
 
     grid.appendChild(item);
   });
