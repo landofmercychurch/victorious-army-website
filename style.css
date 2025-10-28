@@ -502,73 +502,78 @@ main {
 
 
 /* =========================================
-   PICTURE POSTS STYLESHEET (Updated)
-   Clean, Mobile-First + Modal Integration
+   PICTURE POSTS STYLESHEET (Optimised + Synced)
+   Works with latest picturePosts.js
 ========================================= */
 
-/* --- Feed Wrapper --- */
+/* --- Feed Container --- */
 #picture-feed {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 12px;
-  max-width: 480px;
+  gap: 18px;
+  padding: 14px;
+  max-width: 600px;
   margin: 0 auto;
   box-sizing: border-box;
+  background: #f9f9fb;
 }
 
 /* --- Picture Card --- */
 .picture-card {
+  width: 100%;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 10px 12px 14px;
-  transition: all 0.3s ease;
+  padding: 12px 14px 16px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
   position: relative;
 }
 
 .picture-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 /* --- Image --- */
 .picture-img {
   width: 100%;
+  display: block;
   height: auto;
-  max-height: 250px;
+  max-height: 320px;
   object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 8px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background-color: #eee;
 }
 
 /* --- Title & Description --- */
 .picture-title {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: #111;
-  margin: 4px 0 6px;
+  margin: 6px 0 8px;
   text-align: left;
 }
 
 .picture-description {
   font-size: 0.9rem;
   color: #444;
-  line-height: 1.5;
+  line-height: 1.55;
   margin-bottom: 10px;
 }
 
 .picture-description .read-more-btn {
   background: none;
   border: none;
-  color: #007BFF;
-  font-weight: 500;
+  color: #007bff;
   cursor: pointer;
+  font-weight: 500;
   font-size: 0.88rem;
+  margin-left: 4px;
   transition: color 0.2s;
 }
 
@@ -576,27 +581,26 @@ main {
   color: #0056b3;
 }
 
-/* --- Actions (Like / Comment / Share) --- */
+/* --- Actions Row --- */
 .picture-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .like-btn,
 .comment-btn,
 .share-btn {
+  background: none;
+  border: none;
   display: flex;
   align-items: center;
   gap: 4px;
-  background: none;
-  border: none;
-  font-size: 0.9rem;
+  color: #007bff;
   font-weight: 500;
-  color: #007BFF;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: color 0.2s ease, transform 0.15s ease;
 }
@@ -610,22 +614,21 @@ main {
 
 .like-count,
 .comment-count {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #555;
-  min-width: 30px;
-  text-align: center;
+  min-width: 40px;
 }
 
-/* --- Comments Box --- */
+/* --- Comments Section --- */
 .comments-box {
-  width: 100%;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
   background: #fafafa;
   border-radius: 10px;
   padding: 10px;
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
+  margin-top: 10px;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .comments-box.open {
@@ -637,46 +640,59 @@ main {
   background: none;
   border: none;
   color: #444;
-  font-weight: 500;
   cursor: pointer;
-}
-
-/* --- Comments Content --- */
-.comment-list {
-  margin-top: 4px;
-}
-
-.comment {
-  padding: 6px 0;
-  border-bottom: 1px solid #eee;
+  font-weight: 500;
   font-size: 0.85rem;
 }
 
+.comment-list {
+  margin-top: 6px;
+}
+
+.comment {
+  border-bottom: 1px solid #eee;
+  padding: 6px 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.comment b {
+  color: #111;
+}
+
+.no-comments {
+  color: #777;
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 6px 0;
+}
+
+/* --- Comment Form --- */
 .comment-form {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
-.comment-form input,
-.comment-form textarea {
-  padding: 6px;
-  border: 1px solid #ccc;
+.comment-form input {
+  padding: 8px;
   border-radius: 6px;
+  border: 1px solid #ccc;
   font-size: 0.85rem;
 }
 
 .comment-form button {
   align-self: flex-start;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border: none;
-  background: #007BFF;
+  border-radius: 6px;
+  background: #007bff;
   color: #fff;
   font-size: 0.9rem;
-  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 
 .comment-form button:hover {
@@ -687,28 +703,29 @@ main {
 .view-all-btn {
   display: inline-block;
   margin-top: 4px;
-  padding: 10px 14px;
-  background: #007BFF;
+  padding: 10px 16px;
+  background: #007bff;
   color: #fff;
   border: none;
   border-radius: 30px;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s ease;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .view-all-btn:hover {
   background: #0056b3;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
-/* --- Grid View (All Posts) --- */
+/* --- All Posts Grid (optional in JS) --- */
 .all-posts-grid {
   display: none;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 15px;
+  justify-content: center;
 }
 
 .all-posts-grid.show {
@@ -716,46 +733,42 @@ main {
 }
 
 .post-thumb {
-  flex: 1 1 calc(20% - 10px);
-  min-width: 120px;
+  flex: 1 1 calc(33.3% - 10px);
+  max-width: 160px;
   cursor: pointer;
   position: relative;
 }
 
 .post-thumb img {
   width: 100%;
-  height: 100px;
+  height: 110px;
   object-fit: cover;
   border-radius: 8px;
   transition: transform 0.3s ease;
 }
 
 .post-thumb:hover img {
-  transform: scale(1.05);
-}
-
-.grid-indicator {
-  width: 100%;
-  text-align: center;
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
+  transform: scale(1.06);
 }
 
 /* --- Close Button for Grid --- */
 .close-all-btn {
-  margin: 10px auto;
   display: block;
   background: #d33;
   color: #fff;
   padding: 8px 15px;
-  border-radius: 6px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
+  margin: 12px auto 0;
+}
+
+.close-all-btn:hover {
+  background: #a00;
 }
 
 /* =========================================
-   MODAL (Popup for Full Post View)
+   MODAL (Full Post Popup)
 ========================================= */
 .post-modal {
   position: fixed;
@@ -784,17 +797,19 @@ main {
   overflow-y: auto;
   position: relative;
   padding: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
 .modal-close {
   position: absolute;
-  top: 8px;
-  right: 10px;
+  top: 10px;
+  right: 14px;
   background: none;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   cursor: pointer;
-  color: #444;
+  color: #333;
+  font-weight: 600;
 }
 
 .modal-image {
@@ -803,37 +818,43 @@ main {
   margin-bottom: 15px;
 }
 
-/* =========================================
-   Swipe Indicator (TikTok Style)
-========================================= */
+/* --- Swipe Indicator (optional) --- */
 #swipe-indicator {
   text-align: center;
   font-size: 0.85rem;
   font-weight: 500;
   color: #555;
-  margin-bottom: 8px;
-  opacity: 0.7;
+  opacity: 0.8;
   animation: bounce 1.8s infinite;
+  margin-bottom: 10px;
 }
 
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-5px); }
 }
 
-/* --- Mobile Responsive Tweaks --- */
+/* --- Animation --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   Responsive Tweaks
+========================================= */
 @media (max-width: 768px) {
   #picture-feed {
     padding: 10px;
   }
 
   .picture-card {
-    padding: 8px 10px;
     border-radius: 12px;
+    padding: 10px 12px;
   }
 
   .picture-img {
-    max-height: 220px;
+    max-height: 240px;
   }
 
   .picture-title {
@@ -844,12 +865,12 @@ main {
     font-size: 0.86rem;
   }
 
-  #swipe-indicator {
-    font-size: 0.78rem;
-    margin-bottom: 12px;
-    opacity: 0.85;
+  .post-thumb {
+    flex: 1 1 calc(45% - 10px);
   }
 }
+
+
 
 
 
