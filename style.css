@@ -502,12 +502,11 @@ main {
 
 
 /* =========================================
-   PICTURE POSTS STYLESHEET (Optimised + Synced)
-   Works with latest picturePosts.js
+   PICTURE POSTS STYLESHEET (Updated for gallery & modals)
 ========================================= */
 
 /* --- Feed Container --- */
-#picture-feed {
+.picture-feed {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -517,6 +516,10 @@ main {
   margin: 0 auto;
   box-sizing: border-box;
   background: #f9f9fb;
+}
+
+.featured-wrapper {
+  width: 100%;
 }
 
 /* --- Picture Card --- */
@@ -538,7 +541,6 @@ main {
   box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-/* --- Image --- */
 .picture-img {
   width: 100%;
   display: block;
@@ -550,7 +552,6 @@ main {
   background-color: #eee;
 }
 
-/* --- Title & Description --- */
 .picture-title {
   font-size: 1.05rem;
   font-weight: 600;
@@ -566,7 +567,7 @@ main {
   margin-bottom: 10px;
 }
 
-.picture-description .read-more-btn {
+.read-more-btn {
   background: none;
   border: none;
   color: #007bff;
@@ -574,10 +575,9 @@ main {
   font-weight: 500;
   font-size: 0.88rem;
   margin-left: 4px;
-  transition: color 0.2s;
 }
 
-.picture-description .read-more-btn:hover {
+.read-more-btn:hover {
   color: #0056b3;
 }
 
@@ -612,91 +612,10 @@ main {
   transform: scale(1.05);
 }
 
-.like-count,
-.comment-count {
-  font-size: 0.8rem;
+.like-count {
+  font-size: 0.85rem;
   color: #555;
   min-width: 40px;
-}
-
-/* --- Comments Section --- */
-.comments-box {
-  display: none;
-  flex-direction: column;
-  gap: 8px;
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 10px;
-  margin-top: 10px;
-  animation: fadeIn 0.3s ease forwards;
-}
-
-.comments-box.open {
-  display: flex;
-}
-
-.comments-box .close-comments {
-  align-self: flex-end;
-  background: none;
-  border: none;
-  color: #444;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-
-.comment-list {
-  margin-top: 6px;
-}
-
-.comment {
-  border-bottom: 1px solid #eee;
-  padding: 6px 0;
-  font-size: 0.85rem;
-  line-height: 1.4;
-}
-
-.comment b {
-  color: #111;
-}
-
-.no-comments {
-  color: #777;
-  font-size: 0.85rem;
-  text-align: center;
-  margin: 6px 0;
-}
-
-/* --- Comment Form --- */
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.comment-form input {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.85rem;
-}
-
-.comment-form button {
-  align-self: flex-start;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background: #007bff;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.comment-form button:hover {
-  background: #0056b3;
 }
 
 /* --- View All Button --- */
@@ -719,58 +638,10 @@ main {
   transform: translateY(-2px);
 }
 
-/* --- All Posts Grid (optional in JS) --- */
-.all-posts-grid {
-  display: none;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
-  justify-content: center;
-}
-
-.all-posts-grid.show {
-  display: flex;
-}
-
-.post-thumb {
-  flex: 1 1 calc(33.3% - 10px);
-  max-width: 160px;
-  cursor: pointer;
-  position: relative;
-}
-
-.post-thumb img {
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-}
-
-.post-thumb:hover img {
-  transform: scale(1.06);
-}
-
-/* --- Close Button for Grid --- */
-.close-all-btn {
-  display: block;
-  background: #d33;
-  color: #fff;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 12px auto 0;
-}
-
-.close-all-btn:hover {
-  background: #a00;
-}
-
 /* =========================================
-   MODAL (Full Post Popup)
+   GALLERY MODAL
 ========================================= */
-.post-modal {
+.gallery-modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.7);
@@ -780,15 +651,97 @@ main {
   z-index: 1000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
-.post-modal.show {
+.gallery-modal.show {
   opacity: 1;
   pointer-events: auto;
 }
 
-.modal-content {
+.gallery-inner {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
+}
+
+.gallery-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+.gallery-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.gallery-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.25s ease;
+}
+
+.gallery-thumb:hover {
+  transform: scale(1.05);
+}
+
+.gallery-label {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+/* =========================================
+   POST MODAL
+========================================= */
+.post-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.post-modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.post-modal-content {
   background: #fff;
   border-radius: 12px;
   max-width: 600px;
@@ -797,10 +750,9 @@ main {
   overflow-y: auto;
   position: relative;
   padding: 20px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
-.modal-close {
+.post-modal-close {
   position: absolute;
   top: 10px;
   right: 14px;
@@ -818,23 +770,62 @@ main {
   margin-bottom: 15px;
 }
 
-/* --- Swipe Indicator (optional) --- */
-#swipe-indicator {
-  text-align: center;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #555;
-  opacity: 0.8;
-  animation: bounce 1.8s infinite;
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #111;
   margin-bottom: 10px;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.modal-desc {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 12px;
 }
 
-/* --- Animation --- */
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal-like,
+.modal-comment,
+.modal-share {
+  background: none;
+  border: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #007bff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.modal-like:hover,
+.modal-comment:hover,
+.modal-share:hover {
+  color: #0056b3;
+  transform: scale(1.05);
+}
+
+.modal-like-count {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Comments Area */
+.modal-comments-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* --- Animations --- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -844,30 +835,12 @@ main {
    Responsive Tweaks
 ========================================= */
 @media (max-width: 768px) {
-  #picture-feed {
-    padding: 10px;
-  }
-
-  .picture-card {
-    border-radius: 12px;
-    padding: 10px 12px;
-  }
-
-  .picture-img {
-    max-height: 240px;
-  }
-
-  .picture-title {
-    font-size: 0.95rem;
-  }
-
-  .picture-description {
-    font-size: 0.86rem;
-  }
-
-  .post-thumb {
-    flex: 1 1 calc(45% - 10px);
-  }
+  .picture-card { padding: 10px 12px; border-radius: 12px; }
+  .picture-img { max-height: 240px; }
+  .picture-title { font-size: 0.95rem; }
+  .picture-description { font-size: 0.86rem; }
+  .gallery-inner { padding: 15px; }
+  .gallery-grid { gap: 10px; }
 }
 
 
