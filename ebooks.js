@@ -6,31 +6,16 @@ export async function initEbooks(container) {
   container.innerHTML = "<p>Loading ebooks…</p>";
 
   try {
-    const allBooks = await api.get("/ebooks");
+    // Fetch grouped books from backend
+    const groupedBooks = await api.get("/ebooks");
     container.innerHTML = "";
 
-    if (!allBooks || allBooks.length === 0) {
+    if (!groupedBooks || Object.keys(groupedBooks).length === 0) {
       container.innerHTML = "<p>No ebooks available.</p>";
       return;
     }
 
-    // Group by series
-    const seriesGroups = {};
-    const standalone = [];
-    allBooks.forEach(book => {
-      if (book.series) {
-        if (!seriesGroups[book.series]) seriesGroups[book.series] = [];
-        seriesGroups[book.series].push(book);
-      } else {
-        standalone.push(book);
-      }
-    });
-
-    // Sort each series and standalone by created_at descending
-    Object.values(seriesGroups).forEach(arr => arr.sort((a,b) => new Date(b.created_at) - new Date(a.created_at)));
-    standalone.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-
-    // Create modals container
+    // Create a single modals container
     const modalsContainer = el("div", "ebook-modals-container");
     document.body.appendChild(modalsContainer);
 
@@ -40,15 +25,18 @@ export async function initEbooks(container) {
     const createBookCard = (book) => {
       const card = el("div", "ebook-card");
 
+      // Cover
       const cover = el("div", "ebook-cover");
       cover.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"})`;
       card.appendChild(cover);
 
+      // Info
       const info = el("div", "ebook-info");
       info.appendChild(el("h4", "ebook-title", { text: book.title }));
       if (book.series_order) info.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
       card.appendChild(info);
 
+      // Click opens detail modal
       card.onclick = () => openDetailModal(book);
       return card;
     };
@@ -63,16 +51,17 @@ export async function initEbooks(container) {
           <span class="close-btn">&times;</span>
           <img class="ebook-detail-cover" src="${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"}" alt="${book.title}" />
           <h2>${book.title}</h2>
-          <p class="ebook-description">${book.description || ""}</p>
+          ${book.author ? `<p class="ebook-author"><strong>Author:</strong> ${book.author}</p>` : ""}
+          ${book.description ? `<p class="ebook-description">${book.description}</p>` : ""}
           <div class="ebook-detail-btns">
             ${book.pdf_url ? `<a href="${book.pdf_url.replace("/upload/", "/upload/fl_attachment:false/")}" target="_blank" class="read-btn">📖 Read Online</a>` : ""}
-            ${book.pdf_url ? `<a href="/api/ebooks/download/${book.id}" class="download-btn">⬇️ Download PDF</a>` : ""}
+            <!-- ${book.pdf_url ? `<a href="/api/ebooks/download/${book.id}" class="download-btn">⬇️ Download PDF</a>` : ""} -->
           </div>
         </div>
       `;
       document.body.appendChild(modal);
       modal.querySelector(".close-btn").onclick = () => modal.remove();
-      modal.onclick = e => { if (e.target === modal) modal.remove(); };
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
 
     // -------------------------------
@@ -103,13 +92,13 @@ export async function initEbooks(container) {
     };
 
     // -------------------------------
-    // RENDER SERIES / SECTION
+    // RENDER SECTION PREVIEW (HOMEPAGE)
     // -------------------------------
     const renderSectionPreview = (title, books) => {
       const section = el("div", "ebook-section-preview");
       section.appendChild(el("h3", "section-title", { text: title }));
 
-      // Horizontal scroll grid
+      // Horizontal scroll grid (mobile-friendly)
       const grid = el("div", "ebook-preview-grid");
       books.slice(0, 4).forEach(book => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
@@ -126,14 +115,11 @@ export async function initEbooks(container) {
     // -------------------------------
     // RENDER ALL SERIES
     // -------------------------------
-    for (const [seriesName, books] of Object.entries(seriesGroups)) {
+    for (const [seriesName, books] of Object.entries(groupedBooks)) {
       renderSectionPreview(seriesName, books);
     }
 
-    // RENDER STANDALONE BOOKS
-    if (standalone.length > 0) renderSectionPreview("Standalone Books", standalone);
-
-    console.log("[INIT] Ebooks loaded:", allBooks.length, "books");
+    console.log("[INIT] Ebooks loaded:", Object.keys(groupedBooks).length, "series/groups");
 
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
