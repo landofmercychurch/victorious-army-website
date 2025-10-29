@@ -1050,7 +1050,7 @@ main {
 
 /* Scrollable Sermon Feed */
 .sermon-feed {
-  height: 78vh; /* slightly reduced height to make space below */
+  height: 52vh; /* slightly reduced height to make space below */
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
