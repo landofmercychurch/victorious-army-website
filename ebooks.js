@@ -1,3 +1,4 @@
+// src/ebooks.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 
@@ -55,8 +56,7 @@ export async function initEbooks(container) {
       document.body.appendChild(modal);
       lockBodyScroll(true);
 
-      const closeBtn = modal.querySelector(".close-btn");
-      closeBtn.onclick = () => { modal.remove(); lockBodyScroll(false); };
+      modal.querySelector(".close-btn").onclick = () => { modal.remove(); lockBodyScroll(false); };
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); lockBodyScroll(false); };
     }
 
@@ -93,7 +93,6 @@ export async function initEbooks(container) {
       const section = el("div", "ebook-section-preview");
       section.appendChild(el("h3", "section-title", { text: title }));
 
-      // Show only first 4 books on homepage
       const grid = el("div", "ebook-preview-grid");
       books.slice(0, 4).forEach(book => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
