@@ -40,7 +40,7 @@ export async function initSermons(container) {
       return;
     }
 
-    // Show latest first
+    // 🕒 Latest-first order
     sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
 
@@ -222,7 +222,7 @@ export async function initSermons(container) {
       container.appendChild(card);
     }
 
-    /** 🎬 Autoplay videos when visible */
+    /** 🎬 Auto-play when visible */
     const autoPlayObserver = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
@@ -236,17 +236,29 @@ export async function initSermons(container) {
     );
     videos.forEach(vObj => autoPlayObserver.observe(vObj.video));
 
-    /** 🔀 TikTok-style random next autoplay */
-    function playNextRandom(currentVideo) {
+    /** 🔀 TRUE SHUFFLE autoplay */
+    let unplayed = [...videos];
+    function playNextShuffle(currentVideo) {
       if (videos.length <= 1) return;
-      const others = videos.filter(v => v.video !== currentVideo);
-      const next = others[Math.floor(Math.random() * others.length)];
+
+      // Remove current video from remaining
+      unplayed = unplayed.filter(v => v.video !== currentVideo);
+
+      // Reset when all have been played
+      if (unplayed.length === 0) {
+        unplayed = [...videos];
+      }
+
+      // Pick a random next one
+      const next = unplayed[Math.floor(Math.random() * unplayed.length)];
+
+      // Scroll and play
       next.video.scrollIntoView({ behavior: "smooth", block: "center" });
       next.video.play().catch(() => {});
     }
 
     videos.forEach(vObj => {
-      vObj.video.addEventListener("ended", () => playNextRandom(vObj.video));
+      vObj.video.addEventListener("ended", () => playNextShuffle(vObj.video));
     });
 
     /** Handle deep link */
