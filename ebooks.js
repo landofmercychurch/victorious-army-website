@@ -28,17 +28,14 @@ export async function initEbooks(container) {
     // -------------------------------
     function createBookCard(book) {
       const card = el("div", "ebook-card");
-
-      const cover = el("div", "ebook-cover");
-      cover.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"})`;
-      card.appendChild(cover);
-
-      const info = el("div", "ebook-info");
-      info.appendChild(el("h4", "ebook-title", { text: book.title }));
-      if (book.series_order) info.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
-      card.appendChild(info);
-
-      card.onclick = () => openDetailModal(book);
+      card.innerHTML = `
+        <div class="ebook-cover" style="background-image: url('${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"}')"></div>
+        <div class="ebook-info">
+          <h4 class="ebook-title">${book.title}</h4>
+          ${book.series_order ? `<p class="ebook-part">Part ${book.series_order}</p>` : ""}
+        </div>
+      `;
+      card.addEventListener("click", () => openDetailModal(book));
       return card;
     }
 
@@ -61,9 +58,10 @@ export async function initEbooks(container) {
         </div>
       `;
       document.body.appendChild(modal);
+      lockBodyScroll(true);
 
-      modal.querySelector(".close-btn").onclick = () => modal.remove();
-      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+      modal.querySelector(".close-btn").onclick = () => { modal.remove(); lockBodyScroll(false); };
+      modal.addEventListener("click", e => { if (e.target === modal) { modal.remove(); lockBodyScroll(false); } });
     }
 
     // -------------------------------
@@ -71,27 +69,28 @@ export async function initEbooks(container) {
     // -------------------------------
     function openGalleryModal(books, title = "Books") {
       const modal = el("div", "ebook-gallery-modal");
-      const content = el("div", "ebook-gallery-content");
-      content.appendChild(el("h2", "gallery-title", { text: title }));
-
-      const grid = el("div", "gallery-grid");
-      books.forEach(book => {
-        const thumb = el("div", "ebook-thumb");
-        thumb.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/120x160?text=No+Cover"})`;
-        const label = el("span", "thumb-title", { text: book.title });
-        thumb.appendChild(label);
-        thumb.onclick = () => openDetailModal(book);
-        grid.appendChild(thumb);
-      });
-      content.appendChild(grid);
-
-      const closeBtn = el("span", "gallery-close", { text: "×" });
-      closeBtn.onclick = () => { modal.remove(); lockBodyScroll(false); };
-      content.appendChild(closeBtn);
-
-      modal.appendChild(content);
+      modal.innerHTML = `
+        <div class="ebook-gallery-content">
+          <h2 class="gallery-title">${title}</h2>
+          <div class="gallery-grid">
+            ${books.map(book => `
+              <div class="ebook-thumb" style="background-image: url('${book.cover_url || "https://via.placeholder.com/120x160?text=No+Cover"}')">
+                <span class="thumb-title">${book.title}</span>
+              </div>
+            `).join("")}
+          </div>
+          <span class="gallery-close">&times;</span>
+        </div>
+      `;
       document.body.appendChild(modal);
       lockBodyScroll(true);
+
+      modal.querySelectorAll(".ebook-thumb").forEach((thumb, i) => {
+        thumb.addEventListener("click", () => openDetailModal(books[i]));
+      });
+
+      modal.querySelector(".gallery-close").onclick = () => { modal.remove(); lockBodyScroll(false); };
+      modal.addEventListener("click", e => { if (e.target === modal) { modal.remove(); lockBodyScroll(false); } });
     }
 
     // -------------------------------
@@ -101,9 +100,8 @@ export async function initEbooks(container) {
       const section = el("div", "ebook-section-preview");
       section.appendChild(el("h3", "section-title", { text: title }));
 
-      // Sort newest first
       const sortedBooks = books.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      const top4 = sortedBooks.slice(0, 4); // only 4 newest
+      const top4 = sortedBooks.slice(0, 4);
 
       const grid = el("div", "ebook-preview-grid");
       top4.forEach(book => grid.appendChild(createBookCard(book)));
@@ -111,7 +109,7 @@ export async function initEbooks(container) {
 
       if (sortedBooks.length > 4) {
         const btn = el("button", "view-all-btn", { text: "View All" });
-        btn.onclick = () => openGalleryModal(sortedBooks, title);
+        btn.addEventListener("click", () => openGalleryModal(sortedBooks, title));
         section.appendChild(btn);
       }
 
@@ -121,11 +119,7 @@ export async function initEbooks(container) {
     // -------------------------------
     // RENDER ALL SERIES
     // -------------------------------
-    for (const [seriesName, books] of Object.entries(groupedBooks)) {
-      renderSectionPreview(seriesName, books);
-    }
-
-    console.log("[INIT] Ebooks loaded:", Object.keys(groupedBooks).length, "series/groups");
+    Object.entries(groupedBooks).forEach(([seriesName, books]) => renderSectionPreview(seriesName, books));
 
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
