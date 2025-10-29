@@ -6,36 +6,46 @@ export async function initEbooks(container) {
   container.innerHTML = "<p>Loading ebooks…</p>";
 
   try {
-    const data = await api.get("/ebooks");
+    const allBooks = await api.get("/ebooks");
     container.innerHTML = "";
 
-    if (!data || Object.keys(data).length === 0) {
+    if (!allBooks || allBooks.length === 0) {
       container.innerHTML = "<p>No ebooks available.</p>";
       return;
     }
 
-    // Separate series and standalone books
-    const seriesBooks = {};
-    const standaloneBooks = [];
-
-    Object.values(data).flat().forEach(book => {
+    // Group by series
+    const seriesGroups = {};
+    const standalone = [];
+    allBooks.forEach(book => {
       if (book.series) {
-        if (!seriesBooks[book.series]) seriesBooks[book.series] = [];
-        seriesBooks[book.series].push(book);
+        if (!seriesGroups[book.series]) seriesGroups[book.series] = [];
+        seriesGroups[book.series].push(book);
       } else {
-        standaloneBooks.push(book);
+        standalone.push(book);
       }
     });
 
+    // Sort each series and standalone by created_at descending
+    Object.values(seriesGroups).forEach(arr => arr.sort((a,b) => new Date(b.created_at) - new Date(a.created_at)));
+    standalone.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+    // Create modals container
+    const modalsContainer = el("div", "ebook-modals-container");
+    document.body.appendChild(modalsContainer);
+
+    // -------------------------------
+    // BOOK CARD CREATION
+    // -------------------------------
     const createBookCard = (book) => {
       const card = el("div", "ebook-card");
+
       const cover = el("div", "ebook-cover");
       cover.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"})`;
       card.appendChild(cover);
 
       const info = el("div", "ebook-info");
       info.appendChild(el("h4", "ebook-title", { text: book.title }));
-      if (book.author) info.appendChild(el("p", "ebook-author", { text: book.author }));
       if (book.series_order) info.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
       card.appendChild(info);
 
@@ -43,6 +53,9 @@ export async function initEbooks(container) {
       return card;
     };
 
+    // -------------------------------
+    // DETAIL MODAL
+    // -------------------------------
     const openDetailModal = (book) => {
       const modal = el("div", "ebook-detail-modal");
       modal.innerHTML = `
@@ -62,11 +75,13 @@ export async function initEbooks(container) {
       modal.onclick = e => { if (e.target === modal) modal.remove(); };
     };
 
+    // -------------------------------
+    // GRID MODAL FOR VIEW MORE
+    // -------------------------------
     const openGridModal = (books, title = "Books") => {
       const modal = el("div", "ebook-grid-modal");
       const content = el("div", "ebook-grid-content");
-      const header = el("h2", "ebook-grid-title", { text: title });
-      content.appendChild(header);
+      content.appendChild(el("h2", "ebook-grid-title", { text: title }));
 
       const grid = el("div", "ebook-grid-modal-thumbnails");
       books.forEach(book => {
@@ -87,17 +102,19 @@ export async function initEbooks(container) {
       document.body.appendChild(modal);
     };
 
-    const renderSection = (title, books) => {
-      const section = el("div", "ebook-series-section");
-      section.appendChild(el("h3", "series-title", { text: title }));
+    // -------------------------------
+    // RENDER SERIES / SECTION
+    // -------------------------------
+    const renderSectionPreview = (title, books) => {
+      const section = el("div", "ebook-section-preview");
+      section.appendChild(el("h3", "section-title", { text: title }));
 
-      const grid = el("div", "ebook-grid");
+      // Horizontal scroll grid
+      const grid = el("div", "ebook-preview-grid");
+      books.slice(0, 4).forEach(book => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
 
-      const VISIBLE_COUNT = 6;
-      books.slice(0, VISIBLE_COUNT).forEach(b => grid.appendChild(createBookCard(b)));
-
-      if (books.length > VISIBLE_COUNT) {
+      if (books.length > 4) {
         const btn = el("button", "view-all-btn", { text: "View More" });
         btn.onclick = () => openGridModal(books, title);
         section.appendChild(btn);
@@ -106,13 +123,18 @@ export async function initEbooks(container) {
       container.appendChild(section);
     };
 
-    // Render series
-    Object.entries(seriesBooks).forEach(([seriesName, books]) => renderSection(seriesName, books));
+    // -------------------------------
+    // RENDER ALL SERIES
+    // -------------------------------
+    for (const [seriesName, books] of Object.entries(seriesGroups)) {
+      renderSectionPreview(seriesName, books);
+    }
 
-    // Render standalone
-    if (standaloneBooks.length) renderSection("Standalone Books", standaloneBooks);
+    // RENDER STANDALONE BOOKS
+    if (standalone.length > 0) renderSectionPreview("Standalone Books", standalone);
 
-    console.log("[INIT] Ebooks loaded successfully.");
+    console.log("[INIT] Ebooks loaded:", allBooks.length, "books");
+
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
     console.error("[INIT ERROR] Ebooks:", err);
