@@ -28,6 +28,7 @@ function setOpenGraphMeta({ title, description, image, url }) {
   setMeta("twitter:image", image, true);
 }
 
+/** 🎥 Sermons Feed Init */
 export async function initSermons(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading sermons…</p>";
@@ -39,9 +40,11 @@ export async function initSermons(container) {
       return;
     }
 
+    // Show latest first
     sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
 
+    /** Scroll hint */
     const scrollIndicator = el("div", "scroll-indicator");
     scrollIndicator.textContent = "⬆️⬇️ Swipe up/down to see more sermons ⬆️⬇️";
     container.appendChild(scrollIndicator);
@@ -52,7 +55,7 @@ export async function initSermons(container) {
       const card = el("div", "sermon-card");
       card.dataset.id = sermon.id;
 
-      /** Video wrapper */
+      /** 🎞 Video wrapper */
       const videoWrapper = el("div", "video-wrapper");
       const video = el("video");
       video.playsInline = true;
@@ -65,7 +68,7 @@ export async function initSermons(container) {
 
       videos.push({ video, sermon });
 
-      /** Lazy-load HLS first, fallback to MP4/WebM */
+      /** Lazy-load HLS or fallback */
       const setupVideo = () => {
         const urls = sermon.urls || {};
         if (urls.hls_url && window.Hls && Hls.isSupported()) {
@@ -93,7 +96,7 @@ export async function initSermons(container) {
       );
       lazyObserver.observe(video);
 
-      /** Overlay */
+      /** Overlay details */
       const overlay = el("div", "sermon-overlay");
       overlay.innerHTML = `
         <div class="sermon-title">${sermon.title || "Untitled Sermon"}</div>
@@ -101,7 +104,7 @@ export async function initSermons(container) {
       `;
       card.appendChild(overlay);
 
-      /** Actions */
+      /** Buttons (like, comment, share) */
       const actions = el("div", "sermon-actions");
       actions.innerHTML = `
         <button class="like-btn">❤️</button>
@@ -112,7 +115,7 @@ export async function initSermons(container) {
       `;
       card.appendChild(actions);
 
-      /** YouTube full video */
+      /** YouTube button */
       if (sermon.youtube_url) {
         const ytBtn = el("a", "youtube-btn");
         ytBtn.href = sermon.youtube_url;
@@ -122,7 +125,7 @@ export async function initSermons(container) {
         card.appendChild(ytBtn);
       }
 
-      /** Likes */
+      /** ❤️ Likes */
       const likeBtn = actions.querySelector(".like-btn");
       const likeCountEl = actions.querySelector(".like-count");
       async function refreshLikes() {
@@ -139,7 +142,7 @@ export async function initSermons(container) {
       });
       refreshLikes();
 
-      /** Comments */
+      /** 💬 Comments */
       const commentBtn = actions.querySelector(".comment-btn");
       const commentCountEl = actions.querySelector(".comment-count");
       const commentsBox = el("div", "comments-box");
@@ -167,10 +170,12 @@ export async function initSermons(container) {
               </form>
             `;
             commentList = commentsBox.querySelector(".comment-list");
+
             commentsBox.querySelector(".close-btn").onclick = () => {
               commentsBox.style.display = "none";
               video.play().catch(() => {});
             };
+
             commentsBox.querySelector(".comment-form").onsubmit = async e => {
               e.preventDefault();
               const name = commentsBox.querySelector(".comment-name").value.trim() || "Guest";
@@ -187,11 +192,12 @@ export async function initSermons(container) {
               commentCountEl.textContent = `${commentList.children.length} Comment${commentList.children.length !== 1 ? "s" : ""}`;
             };
           }
+
           commentList.innerHTML = comments.length
             ? comments
                 .map(
                   c =>
-                    `<div class="comment"><b>${c.name || "Guest"}:</b><span>${c.content}</span><div class="comment-time">${new Date(
+                    `<div class="comment"><b>${c.name || "Guest"}:</b> <span>${c.content}</span><div class="comment-time">${new Date(
                       c.created_at
                     ).toLocaleString()}</div></div>`
                 )
@@ -204,49 +210,25 @@ export async function initSermons(container) {
 
       commentBtn.addEventListener("click", () => {
         const hidden = commentsBox.style.display === "none";
+        commentsBox.style.display = hidden ? "block" : "none";
         if (hidden) {
           video.pause();
-          commentsBox.style.display = "block";
           refreshComments();
         } else {
-          commentsBox.style.display = "none";
           video.play().catch(() => {});
-        }
-      });
-
-      /** Share button with deep-link */
-      const shareBtn = actions.querySelector(".share-btn");
-      shareBtn.addEventListener("click", async () => {
-        const shareUrl = `${window.location.origin}/?sermon=${sermon.id}`;
-        setOpenGraphMeta({
-          title: sermon.title,
-          description: sermon.description || "Watch our latest sermon!",
-          image: sermon.thumbnail_url || "",
-          url: shareUrl,
-        });
-        const shareData = {
-          title: sermon.title,
-          text: sermon.description || "Watch our latest sermon!",
-          url: shareUrl,
-        };
-        if (navigator.share) {
-          try {
-            await navigator.share(shareData);
-          } catch {}
-        } else {
-          navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied!"));
         }
       });
 
       container.appendChild(card);
     }
 
-    /** Auto-play visible videos */
+    /** 🎬 Autoplay videos when visible */
     const autoPlayObserver = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           const vid = entry.target;
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.7) vid.play().catch(() => {});
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.7)
+            vid.play().catch(() => {});
           else vid.pause();
         });
       },
@@ -254,7 +236,20 @@ export async function initSermons(container) {
     );
     videos.forEach(vObj => autoPlayObserver.observe(vObj.video));
 
-    /** Handle deep-link from URL query */
+    /** 🔀 TikTok-style random next autoplay */
+    function playNextRandom(currentVideo) {
+      if (videos.length <= 1) return;
+      const others = videos.filter(v => v.video !== currentVideo);
+      const next = others[Math.floor(Math.random() * others.length)];
+      next.video.scrollIntoView({ behavior: "smooth", block: "center" });
+      next.video.play().catch(() => {});
+    }
+
+    videos.forEach(vObj => {
+      vObj.video.addEventListener("ended", () => playNextRandom(vObj.video));
+    });
+
+    /** Handle deep link */
     const sermonId = new URLSearchParams(window.location.search).get("sermon");
     if (sermonId) {
       const targetCard = container.querySelector(`.sermon-card[data-id="${sermonId}"]`);
@@ -264,6 +259,7 @@ export async function initSermons(container) {
         if (video) video.play().catch(() => {});
       }
     }
+
   } catch (err) {
     console.error("Failed to load sermons:", err);
     container.innerHTML = `<p style="color:red;">Failed to load sermons</p>`;
