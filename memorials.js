@@ -52,24 +52,29 @@ function startStorySlideshow(container, items) {
     const m = items[current];
     if (!m) return;
 
-    img.src = m.image_url;
-    img.alt = m.title || "Memorial";
 
-    // Apply random zoom/pan animation
-    const zoom = 1.1 + Math.random() * 0.3; // 1.1–1.4x
-    const moveX = (Math.random() - 0.5) * 20; // -10% to +10%
-    const moveY = (Math.random() - 0.5) * 20;
 
-    img.style.transition = "none";
+
+img.style.transition = "none";
+img.style.opacity = 0;
+img.src = m.image_url;
+img.alt = m.title || "Memorial";
+
+img.onload = () => {
+  const zoom = 1.1 + Math.random() * 0.3;
+  const moveX = (Math.random() - 0.5) * 20;
+  const moveY = (Math.random() - 0.5) * 20;
+
+  requestAnimationFrame(() => {
+    img.style.transition = "transform 10s ease-in-out, opacity 2s ease-in-out";
+    img.style.opacity = 1;
     img.style.transform = `scale(${zoom}) translate(${moveX}%, ${moveY}%)`;
-    img.style.opacity = 0;
+  });
+};
 
-    // Small delay for fade-in
-    requestAnimationFrame(() => {
-      img.style.transition = "transform 10s ease-in-out, opacity 2s ease-in-out";
-      img.style.opacity = 1;
-      img.style.transform = `scale(${zoom + 0.2}) translate(${moveX / 2}%, ${moveY / 2}%)`;
-    });
+
+
+    
 
     // Overlay info
     container.querySelector(".memorial-story-info")?.remove();
