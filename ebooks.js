@@ -23,14 +23,12 @@ export async function initEbooks(container) {
 
     container.classList.add("ebook-feed");
 
-    const featuredWrapper = el("div", "featured-wrapper");
-    container.appendChild(featuredWrapper);
-
     // -------------------------------
-    // BOOK CARD
+    // CREATE EBOOK CARD
     // -------------------------------
     function createBookCard(book) {
       const card = el("div", "ebook-card");
+
       const cover = el("div", "ebook-cover");
       cover.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"})`;
       card.appendChild(cover);
@@ -58,7 +56,6 @@ export async function initEbooks(container) {
           ${book.description ? `<p class="ebook-description">${book.description}</p>` : ""}
           <div class="ebook-detail-btns">
             ${book.pdf_url ? `<a href="${book.pdf_url.replace("/upload/", "/upload/fl_attachment:false/")}" target="_blank" class="read-btn">📖 Read Online</a>` : ""}
-            <!-- ${book.pdf_url ? `<a href="/api/ebooks/download/${book.id}" class="download-btn">⬇️ Download PDF</a>` : ""} -->
           </div>
         </div>
       `;
@@ -68,7 +65,7 @@ export async function initEbooks(container) {
     }
 
     // -------------------------------
-    // FULL GRID MODAL
+    // GRID MODAL FOR "VIEW MORE"
     // -------------------------------
     function openGridModal(books, title = "Books") {
       const modal = el("div", "ebook-grid-modal");
@@ -84,6 +81,7 @@ export async function initEbooks(container) {
         thumb.onclick = () => openDetailModal(book);
         grid.appendChild(thumb);
       });
+
       content.appendChild(grid);
 
       const closeBtn = el("span", "modal-close-btn", { text: "×" });
@@ -102,10 +100,12 @@ export async function initEbooks(container) {
       const section = el("div", "ebook-section-preview");
       section.appendChild(el("h3", "section-title", { text: title }));
 
+      // Only show first 4 ebooks
       const grid = el("div", "ebook-preview-grid");
       books.slice(0, 4).forEach(book => grid.appendChild(createBookCard(book)));
       section.appendChild(grid);
 
+      // Show "View More" button if more than 4
       if (books.length > 4) {
         const btn = el("button", "view-all-btn", { text: "View More" });
         btn.onclick = () => openGridModal(books, title);
