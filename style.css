@@ -1569,25 +1569,6 @@ footer {
 
 
 
-/* ==========================================
-   🕊️ GLOBAL STYLE FOR SECTIONS
-   (applies to .services and .about)
-========================================== */
-section {
-  max-width: 900px;
-  margin: 3rem auto;
-  padding: 2.5rem;
-  border-radius: 1.25rem;
-  background: #fff;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-  font-family: "Poppins", "Segoe UI", sans-serif;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-section:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-}
 
 /* ==========================================
    🕒 SERVICE TIMES SECTION
