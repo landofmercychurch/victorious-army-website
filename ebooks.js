@@ -1,4 +1,3 @@
-// src/ebooks.js
 import { api } from "./api.js";
 import { el } from "./utils.js";
 
@@ -15,6 +14,10 @@ export async function initEbooks(container) {
       return;
     }
 
+    // Create modals container
+    const modalsContainer = el("div", "ebook-modals-container");
+    document.body.appendChild(modalsContainer);
+
     const createBookCard = (book) => {
       const card = el("div", "ebook-card");
 
@@ -28,26 +31,60 @@ export async function initEbooks(container) {
       cover.loading = "lazy";
       card.appendChild(cover);
 
-      // Info container
+      // Info
       const info = el("div", "ebook-info");
       info.appendChild(el("h4", "ebook-title", { text: book.title }));
       if (book.author) info.appendChild(el("p", "ebook-author", { text: book.author }));
       if (book.series_order) info.appendChild(el("p", "ebook-part", { text: `Part ${book.series_order}` }));
       card.appendChild(info);
 
-      // Buttons
-      const btnContainer = el("div", "ebook-btns");
-      if (book.pdf_url) {
-        const inlineUrl = book.pdf_url.replace("/upload/", "/upload/fl_attachment:false/");
-        btnContainer.appendChild(el("a", "read-btn", { text: "📖 Read Online", href: inlineUrl, target: "_blank" }));
-        btnContainer.appendChild(el("a", "download-btn", { text: "⬇️ Download PDF", href: `/api/ebooks/download/${book.id}` }));
-      }
-      card.appendChild(btnContainer);
-
       return card;
     };
 
-    // Render a series or standalone section
+    const openDetailModal = (book) => {
+      const modal = el("div", "ebook-detail-modal");
+      modal.innerHTML = `
+        <div class="ebook-detail-content">
+          <span class="close-btn">&times;</span>
+          <img class="ebook-detail-cover" src="${book.cover_url || "https://via.placeholder.com/180x240?text=No+Cover"}" alt="${book.title}" />
+          <h2>${book.title}</h2>
+          <p class="ebook-description">${book.description || ""}</p>
+          <div class="ebook-detail-btns">
+            ${book.pdf_url ? `<a href="${book.pdf_url.replace("/upload/", "/upload/fl_attachment:false/")}" target="_blank" class="read-btn">📖 Read Online</a>` : ""}
+            ${book.pdf_url ? `<a href="/api/ebooks/download/${book.id}" class="download-btn">⬇️ Download PDF</a>` : ""}
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      modal.querySelector(".close-btn").onclick = () => modal.remove();
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+
+    const openGridModal = (books, title = "Books") => {
+      const modal = el("div", "ebook-grid-modal");
+      const content = el("div", "ebook-grid-content");
+      const header = el("h2", "ebook-grid-title", { text: title });
+      content.appendChild(header);
+
+      const grid = el("div", "ebook-grid-modal-thumbnails");
+      books.forEach(book => {
+        const thumb = el("div", "ebook-thumb");
+        thumb.style.backgroundImage = `url(${book.cover_url || "https://via.placeholder.com/120x160?text=No+Cover"})`;
+        const label = el("span", "ebook-thumb-title", { text: book.title });
+        thumb.appendChild(label);
+        thumb.onclick = () => openDetailModal(book);
+        grid.appendChild(thumb);
+      });
+      content.appendChild(grid);
+
+      const closeBtn = el("span", "modal-close-btn", { text: "×" });
+      closeBtn.onclick = () => modal.remove();
+      content.appendChild(closeBtn);
+
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+    };
+
     const renderSection = (sectionTitle, books) => {
       const section = el("div", "ebook-series-section");
       section.appendChild(el("h3", "series-title", { text: sectionTitle }));
@@ -55,12 +92,16 @@ export async function initEbooks(container) {
       const grid = el("div", "ebook-grid");
       section.appendChild(grid);
 
-      const VISIBLE_COUNT = 6; // initially show 6 books
+      const VISIBLE_COUNT = 6; // show 6 books initially
       let showingAll = false;
 
       const renderBooks = (count) => {
         grid.innerHTML = "";
-        books.slice(0, count).forEach(book => grid.appendChild(createBookCard(book)));
+        books.slice(0, count).forEach(book => {
+          const card = createBookCard(book);
+          card.onclick = () => openDetailModal(book);
+          grid.appendChild(card);
+        });
       };
 
       renderBooks(VISIBLE_COUNT);
@@ -68,15 +109,7 @@ export async function initEbooks(container) {
       if (books.length > VISIBLE_COUNT) {
         const toggleBtn = el("button", "view-all-btn", { text: "View More" });
         toggleBtn.addEventListener("click", () => {
-          if (!showingAll) {
-            renderBooks(books.length);
-            toggleBtn.textContent = "Collapse";
-            showingAll = true;
-          } else {
-            renderBooks(VISIBLE_COUNT);
-            toggleBtn.textContent = "View More";
-            showingAll = false;
-          }
+          openGridModal(books, sectionTitle);
         });
         section.appendChild(toggleBtn);
       }
@@ -84,7 +117,7 @@ export async function initEbooks(container) {
       container.appendChild(section);
     };
 
-    // Loop over series
+    // Render all series
     for (const [seriesName, books] of Object.entries(seriesData)) {
       renderSection(seriesName, books);
     }
@@ -95,4 +128,3 @@ export async function initEbooks(container) {
     console.error("[INIT ERROR] Ebooks:", err);
   }
 }
-
