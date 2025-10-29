@@ -52,29 +52,25 @@ function startStorySlideshow(container, items) {
     const m = items[current];
     if (!m) return;
 
+    const imageUrl =
+      Array.isArray(m.images) && m.images.length > 0 ? m.images[0].url : "";
 
+    img.style.transition = "none";
+    img.style.opacity = 0;
+    img.src = imageUrl;
+    img.alt = m.title || "Memorial";
 
+    img.onload = () => {
+      const zoom = 1.1 + Math.random() * 0.3;
+      const moveX = (Math.random() - 0.5) * 20;
+      const moveY = (Math.random() - 0.5) * 20;
 
-img.style.transition = "none";
-img.style.opacity = 0;
-img.src = m.image_url;
-img.alt = m.title || "Memorial";
-
-img.onload = () => {
-  const zoom = 1.1 + Math.random() * 0.3;
-  const moveX = (Math.random() - 0.5) * 20;
-  const moveY = (Math.random() - 0.5) * 20;
-
-  requestAnimationFrame(() => {
-    img.style.transition = "transform 10s ease-in-out, opacity 2s ease-in-out";
-    img.style.opacity = 1;
-    img.style.transform = `scale(${zoom}) translate(${moveX}%, ${moveY}%)`;
-  });
-};
-
-
-
-    
+      requestAnimationFrame(() => {
+        img.style.transition = "transform 10s ease-in-out, opacity 2s ease-in-out";
+        img.style.opacity = 1;
+        img.style.transform = `scale(${zoom}) translate(${moveX}%, ${moveY}%)`;
+      });
+    };
 
     // Overlay info
     container.querySelector(".memorial-story-info")?.remove();
@@ -99,7 +95,9 @@ img.onload = () => {
 function renderMemorial(m, fullWidth = false) {
   const card = el("div", fullWidth ? "memorial-card full" : "memorial-card");
   const img = document.createElement("img");
-  img.src = m.image_url || "";
+  const imageUrl =
+    Array.isArray(m.images) && m.images.length > 0 ? m.images[0].url : "";
+  img.src = imageUrl;
   img.alt = m.title || "Memorial Image";
   img.onclick = () => openPreview(m);
   card.appendChild(img);
@@ -118,14 +116,18 @@ function renderMemorial(m, fullWidth = false) {
 ===================================== */
 function openPreview(m) {
   const overlay = el("div", "memorial-overlay");
+  const imageUrl =
+    Array.isArray(m.images) && m.images.length > 0 ? m.images[0].url : "";
+
   overlay.innerHTML = `
     <div class="memorial-preview">
       <span class="close-btn">&times;</span>
-      <img src="${m.image_url || ""}" alt="${m.title || "Memorial"}" />
+      <img src="${imageUrl}" alt="${m.title || "Memorial"}" />
       <h4>${m.title || "Memorial"}</h4>
       <p>${new Date(m.created_at).toLocaleString()}</p>
     </div>
   `;
+
   document.body.appendChild(overlay);
   overlay.querySelector(".close-btn").onclick = () => overlay.remove();
   overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
