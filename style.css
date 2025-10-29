@@ -1050,7 +1050,7 @@ main {
 
 /* Scrollable Sermon Feed */
 .sermon-feed {
-  height: 60vh; /* slightly reduced height to make space below */
+  height: 60vh; /* slightly reduced height to make space below,was 78 */
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
@@ -1089,9 +1089,9 @@ main {
   scroll-snap-align: start;
   flex-shrink: 0;
   position: relative;
-  width: 90%;              /* reduced from 95% */
+  width: 88%;              /* reduced from 95% */
   max-width: 320px;        /* was 360px */
-  height: 52vh;            /* was 60vh */
+  height: 50vh;            /* was 52vh */
   max-height: 420px;       /* was 500px */
   min-height: 250px;       /* was 300px */
   border-radius: 12px;
