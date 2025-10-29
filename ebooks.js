@@ -96,25 +96,30 @@ export async function initEbooks(container) {
     // -------------------------------
     // RENDER SECTION (HOMEPAGE)
     // -------------------------------
-    function renderSectionPreview(title, books) {
-      const section = el("div", "ebook-section-preview");
-      section.appendChild(el("h3", "section-title", { text: title }));
+   function renderSectionPreview(title, books) {
+  const section = el("div", "ebook-section-preview");
+  section.appendChild(el("h3", "section-title", { text: title }));
 
-      const sortedBooks = books.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      const top4 = sortedBooks.slice(0, 4);
+  // Sort newest first
+  const sortedBooks = books.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-      const grid = el("div", "ebook-preview-grid");
-      top4.forEach(book => grid.appendChild(createBookCard(book)));
-      section.appendChild(grid);
+  // Only display the top 4 on homepage
+  const top4 = sortedBooks.slice(0, 4);
 
-      if (sortedBooks.length > 4) {
-        const btn = el("button", "view-all-btn", { text: "View All" });
-        btn.addEventListener("click", () => openGalleryModal(sortedBooks, title));
-        section.appendChild(btn);
-      }
+  const grid = el("div", "ebook-preview-grid");
+  top4.forEach(book => grid.appendChild(createBookCard(book)));
+  section.appendChild(grid);
 
-      container.appendChild(section);
-    }
+  // If more than 4, add "View All" button
+  if (sortedBooks.length > 4) {
+    const btn = el("button", "view-all-btn", { text: "View All" });
+    btn.addEventListener("click", () => openGalleryModal(sortedBooks, title)); // Pass all books to gallery
+    section.appendChild(btn);
+  }
+
+  container.appendChild(section);
+}
+
 
     // -------------------------------
     // RENDER ALL SERIES
