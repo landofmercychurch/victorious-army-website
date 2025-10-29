@@ -1530,14 +1530,335 @@ footer {
   
 
 
-.ebook-preview-grid {
+/* =========================================
+   EBOOK FEED STYLESHEET
+========================================= */
+
+/* --- Feed Container --- */
+.ebook-feed {
   display: flex;
-  gap: 14px;
-  overflow-x: auto; /* horizontal scroll on mobile */
-  padding-bottom: 10px;
+  flex-direction: column;
+  gap: 18px;
+  padding: 14px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background: #f9f9fb;
 }
 
+/* --- Section Wrapper --- */
+.ebook-section-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 6px;
+}
+
+/* --- Preview Grid --- */
+.ebook-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+/* --- Book Card --- */
 .ebook-card {
-  flex: 0 0 45%; /* two cards per row on mobile, adjust as needed */
-  max-width: 220px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ebook-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.ebook-cover {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px 8px 0 0;
+  background-color: #eee;
+}
+
+.ebook-info {
+  padding: 8px 10px;
+}
+
+.ebook-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.ebook-part {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* --- View All Button --- */
+.view-all-btn {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 10px 16px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.view-all-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   GALLERY MODAL
+========================================= */
+.gallery-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.gallery-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+.gallery-inner {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  border-radius: 12px;
+  max-width: 90%;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px 20px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery-close {
+  position: sticky;
+  top: 10px;
+  align-self: flex-end;
+  background: #d33;
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.gallery-close:hover {
+  background: #a00;
+  transform: scale(1.05);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.gallery-thumb {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.25s ease;
+}
+
+.gallery-thumb:hover {
+  transform: scale(1.05);
+}
+
+.gallery-label {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #333;
+  word-break: break-word;
+}
+
+/* =========================================
+   DETAIL MODAL
+========================================= */
+.post-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  padding: 10px;
+}
+
+.post-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 16px 20px;
+  overflow: hidden;
+}
+
+.post-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: #d33;
+  color: #fff;
+  border: none;
+  font-size: 1.6rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.post-modal-close:hover {
+  background: #a00;
+  transform: scale(1.05);
+}
+
+.post-modal-body {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.modal-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111;
+  margin: 8px 0;
+}
+
+.modal-desc {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.read-btn,
+.download-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  text-decoration: none;
+}
+
+.read-btn:hover,
+.download-btn:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 768px) {
+  .ebook-preview-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .gallery-inner {
+    max-height: 85vh;
+    padding: 15px 15px 25px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 8px;
+  }
+
+  .gallery-close {
+    font-size: 1.4rem;
+    padding: 5px 10px;
+  }
+
+  .modal-image {
+    max-height: 220px;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+  }
+
+  .modal-desc {
+    font-size: 0.88rem;
+  }
+
+  .read-btn,
+  .download-btn {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
 }
