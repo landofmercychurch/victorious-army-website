@@ -40,8 +40,6 @@ export async function initEbooks(container) {
 
     container.classList.add("ebook-feed");
 
-    const groupedBooks = groupBooksBySeries(allBooks);
-
     // -------------------------------
     // CREATE EBOOK CARD
     // -------------------------------
@@ -59,7 +57,7 @@ export async function initEbooks(container) {
     }
 
     // -------------------------------
-    // DETAIL MODAL
+    // BOOK DETAIL MODAL
     // -------------------------------
     function openDetailModal(book) {
       const modal = el("div", "ebook-detail-modal");
@@ -86,68 +84,59 @@ export async function initEbooks(container) {
     // -------------------------------
     // GALLERY MODAL FOR "VIEW ALL"
     // -------------------------------
-    function openGalleryModal(books, title = "Books") {
+    function openGalleryModal(books) {
+      const groupedBooks = groupBooksBySeries(books);
       const modal = el("div", "ebook-gallery-modal");
-      modal.innerHTML = `
-        <div class="ebook-gallery-content">
-          <h2 class="gallery-title">${title}</h2>
-          <div class="gallery-grid">
-            ${books.map(book => `
-              <div class="ebook-thumb" style="background-image: url('${book.cover_url || "https://via.placeholder.com/120x160?text=No+Cover"}')">
-                <span class="thumb-title">${book.title}</span>
-              </div>
-            `).join("")}
-          </div>
-          <span class="gallery-close">&times;</span>
-        </div>
-      `;
+      const content = el("div", "ebook-gallery-content");
+
+      content.appendChild(el("h2", "gallery-title", { text: "All Books" }));
+
+      Object.entries(groupedBooks).forEach(([seriesName, booksInSeries]) => {
+        const section = el("div", "gallery-series-section");
+        section.appendChild(el("h3", "series-title", { text: seriesName }));
+
+        const grid = el("div", "gallery-grid");
+        booksInSeries.forEach(book => {
+          const thumb = el("div", "ebook-thumb");
+          thumb.style.backgroundImage = `url('${book.cover_url || "https://via.placeholder.com/120x160?text=No+Cover"}')`;
+          thumb.appendChild(el("span", "thumb-title", { text: book.title }));
+          thumb.addEventListener("click", () => openDetailModal(book));
+          grid.appendChild(thumb);
+        });
+
+        section.appendChild(grid);
+        content.appendChild(section);
+      });
+
+      const closeBtn = el("span", "gallery-close", { text: "×" });
+      closeBtn.addEventListener("click", () => { modal.remove(); lockBodyScroll(false); });
+      content.appendChild(closeBtn);
+
+      modal.appendChild(content);
       document.body.appendChild(modal);
       lockBodyScroll(true);
 
-      modal.querySelectorAll(".ebook-thumb").forEach((thumb, i) => {
-        thumb.addEventListener("click", () => openDetailModal(books[i]));
-      });
-
-      modal.querySelector(".gallery-close").onclick = () => { modal.remove(); lockBodyScroll(false); };
       modal.addEventListener("click", e => { if (e.target === modal) { modal.remove(); lockBodyScroll(false); } });
     }
 
     // -------------------------------
-    // RENDER SECTION (HOMEPAGE)
+    // RENDER HOMEPAGE TOP 4 BOOKS
     // -------------------------------
-    function renderSectionPreview(title, books) {
-      if (!books || books.length === 0) return;
+    const top4Books = allBooks
+      .slice()
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 4);
 
-      const section = el("div", "ebook-section-preview");
-      section.appendChild(el("h3", "section-title", { text: title }));
+    const topGrid = el("div", "ebook-preview-grid");
+    top4Books.forEach(book => topGrid.appendChild(createBookCard(book)));
+    container.appendChild(topGrid);
 
-      // Sort newest first
-      const sortedBooks = books.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-      // Only display top 4 on homepage
-      const top4 = sortedBooks.slice(0, 4);
-
-      // Render top4
-      const grid = el("div", "ebook-preview-grid");
-      top4.forEach(book => grid.appendChild(createBookCard(book)));
-      section.appendChild(grid);
-
-      // If more than 4, add "View All" button
-      if (sortedBooks.length > 4) {
-        const btn = el("button", "view-all-btn", { text: "View All" });
-        btn.addEventListener("click", () => openGalleryModal(sortedBooks, title));
-        section.appendChild(btn);
-      }
-
-      container.appendChild(section);
+    // Add "View All" button
+    if (allBooks.length > 4) {
+      const btn = el("button", "view-all-btn", { text: "View All" });
+      btn.addEventListener("click", () => openGalleryModal(allBooks));
+      container.appendChild(btn);
     }
-
-    // -------------------------------
-    // RENDER ALL SERIES
-    // -------------------------------
-    Object.entries(groupedBooks).forEach(([seriesName, books]) => {
-      renderSectionPreview(seriesName, books);
-    });
 
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
