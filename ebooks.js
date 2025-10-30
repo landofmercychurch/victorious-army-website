@@ -7,15 +7,18 @@ function lockBodyScroll(lock = true) {
 }
 
 // -------------------------------
-// GROUP BOOKS BY SERIES (Standalone handled)
+// GROUP BOOKS BY SERIES
 // -------------------------------
 function groupBooksBySeries(books) {
   const grouped = {};
+  if (!Array.isArray(books)) return grouped;
+
   books.forEach(book => {
     const seriesName = book.series && book.series.trim() !== "" ? book.series : "Standalone";
     if (!grouped[seriesName]) grouped[seriesName] = [];
     grouped[seriesName].push(book);
   });
+
   return grouped;
 }
 
@@ -30,7 +33,7 @@ export async function initEbooks(container) {
     const allBooks = await api.get("/ebooks");
     container.innerHTML = "";
 
-    if (!allBooks || allBooks.length === 0) {
+    if (!allBooks || !Array.isArray(allBooks) || allBooks.length === 0) {
       container.innerHTML = "<p>No ebooks available.</p>";
       return;
     }
