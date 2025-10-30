@@ -1538,49 +1538,40 @@ footer {
 
 
 /* ===============================
-   EBOOK CARD (Homepage)
+   HOMEPAGE BOOK GRID
 ================================ */
-.ebook-card {
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+.ebook-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two books per row */
+  gap: 1rem;
+  justify-items: center;
+  margin: 1rem auto 1.5rem;
+  max-width: 600px; /* Keeps it nicely centred */
+}
+
+/* Centre the entire section including the button */
+.ebook-feed,
+.ebook-section-preview {
   display: flex;
   flex-direction: column;
-  height: 240px;
+  align-items: center;
 }
 
-.ebook-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+/* Keep "View All" neatly below the grid */
+.view-all-btn {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  align-self: center;
 }
 
-.ebook-cover {
-  width: 100%;
-  height: 70%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* On small screens (phones), show one book per row */
+@media (max-width: 480px) {
+  .ebook-preview-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
 }
 
-.ebook-info {
-  text-align: center;
-  padding: 0.5rem;
-}
-
-.ebook-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0.3rem 0 0;
-}
-
-.ebook-part {
-  font-size: 0.75rem;
-  color: #777;
-}
 
 
 
@@ -1652,30 +1643,29 @@ footer {
   text-align: center;
 }
 
-/* Close button always visible */
+/* Close button always visible on top */
 .gallery-close {
-  position: sticky;
-  top: 0.5rem;
-  right: 0.5rem;
-  float: right;
+  position: fixed; /* instead of sticky */
+  top: 1rem;
+  right: 1.2rem;
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
   color: #333;
-  z-index: 1000;
+  z-index: 2000; /* ensure it's above everything */
   background: #fff;
   border-radius: 50%;
-  padding: 0.2rem 0.6rem;
-  margin: 0.3rem;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-  transition: background 0.2s, transform 0.2s;
+  padding: 0.25rem 0.65rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.2s, transform 0.2s, color 0.2s;
 }
 
 .gallery-close:hover {
-  background: #0066ff;
+  background: #0077ff;
   color: #fff;
   transform: scale(1.05);
 }
+
 
 /* Grid of all books - smaller thumbnails */
 .gallery-grid {
