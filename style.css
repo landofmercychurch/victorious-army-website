@@ -1555,9 +1555,9 @@ footer {
   cursor: pointer;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-  height: 220px; /* shorter cards */
+  display: grid;
+  flex-direction: grid;
+  height: 200px; /* shorter cards */
 }
 
 .ebook-card:hover {
@@ -1617,7 +1617,15 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 15, 15, 0.7);
+  background: rgba(15, 15, 15, 0.7);display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  max-width: 550px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background: #f9f9fb;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1631,8 +1639,8 @@ footer {
   background: #fff;
   border-radius: 12px;
   width: 95%;
-  max-width: 1000px;
-  height: 90%;
+  max-width: 500px;
+  height: 70%;
   overflow-y: auto;
   position: relative;
   padding: 1rem 1rem 2rem;
@@ -1676,7 +1684,7 @@ footer {
 
 .ebook-thumb {
   width: 100%;
-  padding-top: 130%;
+  padding-top: 100%;
   background-size: cover;
   background-position: center;
   border-radius: 8px;
