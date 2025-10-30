@@ -1535,294 +1535,322 @@ footer {
 
 
 
-/* ===========================
-   EBOOK SECTION
-   =========================== */
-#ebooks {
-  padding: 40px 20px;
-  background: #f9f9f9;
-  text-align: center;
-}
-
-#ebooks h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 25px;
-  color: #222;
-}
-
-/* ===========================
-   EBOOK GRID
-   =========================== */
+/* ===============================
+   GENERAL LAYOUT
+================================ */
 .ebook-preview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
 }
 
+/* ===============================
+   EBOOK CARD (Homepage)
+================================ */
 .ebook-card {
-  width: 180px;
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 220px; /* shorter cards */
 }
 
 .ebook-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
 }
 
 .ebook-cover {
-  width: 100%;
-  height: 240px;
+  flex: 1;
   background-size: cover;
   background-position: center;
-  border-bottom: 1px solid #eee;
 }
 
 .ebook-info {
-  padding: 10px;
+  text-align: center;
+  padding: 0.5rem;
 }
 
 .ebook-title {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #333;
-  margin: 5px 0;
-  text-align: center;
+  margin: 0;
 }
 
 .ebook-part {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #777;
 }
 
-/* ===========================
+/* ===============================
    VIEW ALL BUTTON
-   =========================== */
+================================ */
 .view-all-btn {
-  margin-top: 30px;
-  padding: 10px 25px;
+  display: block;
+  margin: 0 auto 2rem;
+  padding: 0.6rem 1.4rem;
+  background: #0066ff;
+  color: white;
   border: none;
-  background: #0078d7;
-  color: #fff;
-  font-size: 1rem;
   border-radius: 8px;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: background 0.25s ease;
+  transition: background 0.2s;
 }
 
 .view-all-btn:hover {
-  background: #005fa3;
+  background: #004bcc;
 }
 
-/* ===========================
-   DETAIL MODAL
-   =========================== */
-.ebook-detail-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  animation: fadeIn 0.3s ease;
-}
-
-.ebook-detail-content {
-  background: #fff;
-  border-radius: 14px;
-  width: 90%;
-  max-width: 500px;
-  padding: 25px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-.ebook-detail-cover {
-  width: 180px;
-  height: 240px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.8rem;
-  color: #666;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.close-btn:hover {
-  color: #000;
-}
-
-.ebook-detail-btns {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.read-btn, .download-btn {
-  text-decoration: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: background 0.25s ease, transform 0.2s ease;
-}
-
-.read-btn {
-  background: #0078d7;
-  color: #fff;
-}
-
-.download-btn {
-  background: #4caf50;
-  color: #fff;
-}
-
-.read-btn:hover {
-  background: #005fa3;
-  transform: scale(1.05);
-}
-
-.download-btn:hover {
-  background: #3b8f41;
-  transform: scale(1.05);
-}
-
-/* ===========================
-   GALLERY MODAL
-   =========================== */
+/* ===============================
+   GALLERY MODAL (View All)
+================================ */
 .ebook-gallery-modal {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  overflow-y: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 15, 15, 0.7);
   display: flex;
   justify-content: center;
-  padding: 40px 0;
-  z-index: 2100;
-  animation: fadeIn 0.3s ease;
+  align-items: center;
+  z-index: 999;
+  padding: 1rem;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
 }
 
 .ebook-gallery-content {
   background: #fff;
-  border-radius: 16px;
-  padding: 30px;
-  width: 90%;
-  max-width: 1100px;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 1000px;
+  height: 90%;
+  overflow-y: auto;
   position: relative;
+  padding: 1rem 1rem 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .gallery-title {
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #222;
-}
-
-.gallery-series-section {
-  margin-bottom: 30px;
-}
-
-.series-title {
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* close button stays visible always */
+.gallery-close {
+  position: sticky;
+  top: 0;
+  right: 0;
+  float: right;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
   color: #333;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 5px;
+  z-index: 1000;
+  background: #fff;
+  border-radius: 50%;
+  padding: 0 0.4rem;
+  margin: 0.5rem;
+  transition: color 0.2s;
+}
+
+.gallery-close:hover {
+  color: #0077ff;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 15px;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.8rem;
 }
 
 .ebook-thumb {
-  width: 120px;
-  height: 160px;
+  width: 100%;
+  padding-top: 130%;
   background-size: cover;
   background-position: center;
   border-radius: 8px;
-  cursor: pointer;
   position: relative;
-  overflow: hidden;
-  transition: transform 0.25s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .ebook-thumb:hover {
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .thumb-title {
   position: absolute;
   bottom: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.6);
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.55);
   color: #fff;
-  font-size: 0.75rem;
-  padding: 5px;
+  font-size: 0.7rem;
   text-align: center;
-  line-height: 1.2;
+  padding: 0.2rem;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.gallery-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 2rem;
+/* ===============================
+   BOOK DETAIL MODAL
+================================ */
+.ebook-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 15, 15, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+
+.ebook-detail-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 500px;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  padding: 1.5rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.close-btn {
+  position: sticky;
+  top: 0;
+  right: 0;
+  float: right;
+  font-size: 1.8rem;
   color: #444;
   cursor: pointer;
-  transition: color 0.25s ease;
+  z-index: 10;
+  background: #fff;
+  border-radius: 50%;
+  padding: 0 0.4rem;
+  margin: 0.3rem;
+  transition: color 0.2s;
 }
 
-.gallery-close:hover {
-  color: #000;
+.close-btn:hover {
+  color: #0077ff;
 }
 
-/* ===========================
-   ANIMATIONS
-   =========================== */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.ebook-detail-cover {
+  width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto 1rem;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ===========================
+.ebook-detail-content h2 {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.ebook-author {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.8rem;
+}
+
+.ebook-description {
+  font-size: 0.85rem;
+  color: #333;
+  line-height: 1.5;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.ebook-detail-btns {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.read-btn,
+.download-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.read-btn {
+  background: #0077ff;
+}
+
+.read-btn:hover {
+  background: #005bcc;
+}
+
+.download-btn {
+  background: #28a745;
+}
+
+.download-btn:hover {
+  background: #1e7e34;
+}
+
+/* ===============================
    RESPONSIVE
-   =========================== */
-@media (max-width: 600px) {
-  .ebook-card {
-    width: 150px;
+================================ */
+@media (max-width: 768px) {
+  .ebook-detail-content {
+    max-width: 90%;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ebook-preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 
-  .ebook-cover {
-    height: 200px;
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   }
 
   .ebook-detail-content {
-    width: 95%;
-    padding: 20px;
+    padding: 0.8rem;
   }
 
-  .ebook-gallery-content {
-    padding: 20px;
+  .ebook-detail-cover {
+    width: 130px;
   }
 }
