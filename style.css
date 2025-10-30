@@ -1596,21 +1596,30 @@ footer {
    VIEW ALL BUTTON
 ================================ */
 .view-all-btn {
-  display: block;
-  margin: 0 auto 2rem;
-  padding: 0.6rem 1.4rem;
+  display: inline-block;
+  margin: 1rem auto 2rem auto;
+  padding: 0.5rem 1.2rem;
   background: #0066ff;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
+  text-align: center;
 }
 
 .view-all-btn:hover {
   background: #004bcc;
+  transform: translateY(-2px);
 }
+
+/* Ensure it centres below the grid */
+.ebook-feed {
+  text-align: center;
+}
+
 
 /* ===============================
    GALLERY MODAL (View All)
