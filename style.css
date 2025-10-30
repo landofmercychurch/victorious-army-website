@@ -1535,15 +1535,7 @@ footer {
 
 
 
-/* ===============================
-   GENERAL LAYOUT
-================================ */
-.ebook-preview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.2rem;
-  margin: 1.5rem 0 2rem;
-}
+
 
 /* ===============================
    EBOOK CARD (Homepage)
@@ -1626,78 +1618,77 @@ footer {
 ================================ */
 .ebook-gallery-modal {
   position: fixed;
-  top: 0;
+  top: 60px; /* lowered slightly to avoid navbar overlap */
   left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(15, 15, 15, 0.7);display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  padding: 14px;
-  max-width: 550px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  background: #f9f9fb;
+  height: calc(100% - 60px);
+  background: rgba(15, 15, 15, 0.7);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 999;
-  padding: 1rem;
-  overflow: hidden;
   backdrop-filter: blur(4px);
+  overflow: hidden;
+  padding: 1rem;
 }
 
 .ebook-gallery-content {
   background: #fff;
   border-radius: 12px;
   width: 95%;
-  max-width: 500px;
-  height: 70%;
+  max-width: 520px;
+  height: 85%;
   overflow-y: auto;
   position: relative;
   padding: 1rem 1rem 2rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  scroll-behavior: smooth;
 }
 
 .gallery-title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
 }
 
-/* close button stays visible always */
+/* Close button always visible */
 .gallery-close {
   position: sticky;
-  top: 0;
-  right: 0;
+  top: 0.5rem;
+  right: 0.5rem;
   float: right;
-  font-size: 2rem;
+  font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
   color: #333;
   z-index: 1000;
   background: #fff;
   border-radius: 50%;
-  padding: 0 0.4rem;
-  margin: 0.5rem;
-  transition: color 0.2s;
+  padding: 0.2rem 0.6rem;
+  margin: 0.3rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s, transform 0.2s;
 }
 
 .gallery-close:hover {
-  color: #0077ff;
+  background: #0066ff;
+  color: #fff;
+  transform: scale(1.05);
 }
 
+/* Grid of all books - smaller thumbnails */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.6rem;
 }
 
+/* Book thumbnail (smaller and cleaner) */
 .ebook-thumb {
   width: 100%;
-  padding-top: 100%;
+  padding-top: 140%; /* portrait ratio */
   background-size: cover;
   background-position: center;
   border-radius: 8px;
@@ -1708,7 +1699,7 @@ footer {
 
 .ebook-thumb:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .thumb-title {
@@ -1718,15 +1709,48 @@ footer {
   right: 0;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   text-align: center;
   padding: 0.2rem;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  overflow: hidden;
 }
+
+/* Add spacing between series sections */
+.gallery-series-section {
+  margin-bottom: 1.6rem;
+}
+
+.series-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.6rem;
+  color: #222;
+  text-align: left;
+  padding-left: 0.3rem;
+}
+
+/* Better spacing on small screens */
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .ebook-gallery-content {
+    padding: 0.8rem 0.8rem 1.5rem;
+  }
+
+  .series-title {
+    margin-top: 1rem;
+  }
+}
+
+
+
 
 /* ===============================
    BOOK DETAIL MODAL
@@ -1848,30 +1872,4 @@ footer {
   background: #1e7e34;
 }
 
-/* ===============================
-   RESPONSIVE
-================================ */
-@media (max-width: 768px) {
-  .ebook-detail-content {
-    max-width: 90%;
-    padding: 1rem;
-  }
-}
 
-@media (max-width: 480px) {
-  .ebook-preview-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
-  .gallery-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  }
-
-  .ebook-detail-content {
-    padding: 0.8rem;
-  }
-
-  .ebook-detail-cover {
-    width: 130px;
-  }
-}
