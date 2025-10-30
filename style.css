@@ -1773,38 +1773,50 @@ footer {
 
 .ebook-detail-content {
   background: #fff;
-  border-radius: 12px;
-  width: 95%;
-  max-width: 500px;
-  max-height: 90%;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 420px; /* smaller width */
+  max-height: 85%;
   overflow-y: auto;
   position: relative;
-  padding: 1.5rem;
+  padding: 1.2rem 1rem 2rem;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  scroll-behavior: smooth;
+  animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Close button */
 .close-btn {
   position: sticky;
-  top: 0;
-  right: 0;
+  top: 0.5rem;
+  right: 0.5rem;
   float: right;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: #444;
   cursor: pointer;
   z-index: 10;
   background: #fff;
   border-radius: 50%;
-  padding: 0 0.4rem;
+  padding: 0.2rem 0.6rem;
   margin: 0.3rem;
-  transition: color 0.2s;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
 }
 
 .close-btn:hover {
-  color: #0077ff;
+  background: #0077ff;
+  color: #fff;
+  transform: scale(1.05);
 }
 
+/* Book Cover */
 .ebook-detail-cover {
-  width: 160px;
+  width: 140px;
   height: auto;
   display: block;
   margin: 0 auto 1rem;
@@ -1812,29 +1824,54 @@ footer {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Title & Author */
 .ebook-detail-content h2 {
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 0.3rem;
+  color: #222;
 }
 
 .ebook-author {
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #555;
   margin-bottom: 0.8rem;
 }
 
+/* Description (scrollable + read more style) */
 .ebook-description {
   font-size: 0.85rem;
   color: #333;
-  line-height: 1.5;
-  max-height: 180px;
-  overflow-y: auto;
+  line-height: 1.55;
+  max-height: 150px;
+  overflow: hidden;
+  position: relative;
   padding-right: 0.5rem;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
   margin-bottom: 1rem;
+  transition: max-height 0.3s ease;
+}
+
+.ebook-description.expanded {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.read-more {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #0077ff;
+  cursor: pointer;
+  margin-top: -0.5rem;
+  margin-bottom: 0.8rem;
+  transition: color 0.2s;
+}
+
+.read-more:hover {
+  color: #004bcc;
 }
 
 /* Buttons */
@@ -1850,7 +1887,7 @@ footer {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #fff;
   cursor: pointer;
   transition: background 0.2s;
@@ -1872,4 +1909,18 @@ footer {
   background: #1e7e34;
 }
 
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .ebook-detail-content {
+    width: 92%;
+    padding: 1rem;
+  }
 
+  .ebook-detail-cover {
+    width: 120px;
+  }
+
+  .ebook-description {
+    font-size: 0.82rem;
+  }
+}
