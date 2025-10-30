@@ -2,26 +2,42 @@
 import { api } from "./api.js";
 import { el } from "./utils.js";
 
-const STORAGE_KEY = "featuredEbookId";
-
 function lockBodyScroll(lock = true) {
   document.body.style.overflow = lock ? "hidden" : "";
 }
 
+// -------------------------------
+// GROUP BOOKS BY SERIES (Standalone handled)
+// -------------------------------
+function groupBooksBySeries(books) {
+  const grouped = {};
+  books.forEach(book => {
+    const seriesName = book.series && book.series.trim() !== "" ? book.series : "Standalone";
+    if (!grouped[seriesName]) grouped[seriesName] = [];
+    grouped[seriesName].push(book);
+  });
+  return grouped;
+}
+
+// -------------------------------
+// INIT EBOOKS
+// -------------------------------
 export async function initEbooks(container) {
   if (!container) return;
   container.innerHTML = "<p>Loading ebooks…</p>";
 
   try {
-    const groupedBooks = await api.get("/ebooks");
+    const allBooks = await api.get("/ebooks");
     container.innerHTML = "";
 
-    if (!groupedBooks || Object.keys(groupedBooks).length === 0) {
+    if (!allBooks || allBooks.length === 0) {
       container.innerHTML = "<p>No ebooks available.</p>";
       return;
     }
 
     container.classList.add("ebook-feed");
+
+    const groupedBooks = groupBooksBySeries(allBooks);
 
     // -------------------------------
     // CREATE EBOOK CARD
@@ -96,35 +112,39 @@ export async function initEbooks(container) {
     // -------------------------------
     // RENDER SECTION (HOMEPAGE)
     // -------------------------------
-   function renderSectionPreview(title, books) {
-  const section = el("div", "ebook-section-preview");
-  section.appendChild(el("h3", "section-title", { text: title }));
+    function renderSectionPreview(title, books) {
+      if (!books || books.length === 0) return;
 
-  // Sort newest first
-  const sortedBooks = books.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      const section = el("div", "ebook-section-preview");
+      section.appendChild(el("h3", "section-title", { text: title }));
 
-  // Only display the top 4 on homepage
-  const top4 = sortedBooks.slice(0, 4);
+      // Sort newest first
+      const sortedBooks = books.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-  const grid = el("div", "ebook-preview-grid");
-  top4.forEach(book => grid.appendChild(createBookCard(book)));
-  section.appendChild(grid);
+      // Only display top 4 on homepage
+      const top4 = sortedBooks.slice(0, 4);
 
-  // If more than 4, add "View All" button
-  if (sortedBooks.length > 4) {
-    const btn = el("button", "view-all-btn", { text: "View All" });
-    btn.addEventListener("click", () => openGalleryModal(sortedBooks, title)); // Pass all books to gallery
-    section.appendChild(btn);
-  }
+      // Render top4
+      const grid = el("div", "ebook-preview-grid");
+      top4.forEach(book => grid.appendChild(createBookCard(book)));
+      section.appendChild(grid);
 
-  container.appendChild(section);
-}
+      // If more than 4, add "View All" button
+      if (sortedBooks.length > 4) {
+        const btn = el("button", "view-all-btn", { text: "View All" });
+        btn.addEventListener("click", () => openGalleryModal(sortedBooks, title));
+        section.appendChild(btn);
+      }
 
+      container.appendChild(section);
+    }
 
     // -------------------------------
     // RENDER ALL SERIES
     // -------------------------------
-    Object.entries(groupedBooks).forEach(([seriesName, books]) => renderSectionPreview(seriesName, books));
+    Object.entries(groupedBooks).forEach(([seriesName, books]) => {
+      renderSectionPreview(seriesName, books);
+    });
 
   } catch (err) {
     container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
