@@ -1530,12 +1530,12 @@ footer {
   
 /* =============================== HOMEPAGE BOOK GRID ================================ */
 .ebook-preview-grid {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(2, 1fr); /* Two books per row */
   gap: 1rem;
   justify-items: center;
   margin: 1rem auto 1.5rem;
-  max-width: 600px; /* Keeps it nicely centred */
+  max-width: 500px; /* Keeps it nicely centred */
 }
 
 /* Centre the entire section including the button */
@@ -1550,7 +1550,7 @@ footer {
 .view-all-btn {
   margin-top: 0.5rem;
   margin-bottom: 2rem;
-  align-self: center;
+  align-self: bottom ;
 }
 
 /* On small screens (phones), show one book per row */
@@ -1630,7 +1630,7 @@ footer {
 .gallery-close {
   position: fixed; /* instead of sticky */
   top: 1rem;
-  right: 1.2rem;
+  right: 1rem;
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
@@ -1766,7 +1766,7 @@ footer {
 
 /* Close button */
 .close-btn {
-  position: sticky;
+  position:fixed;
   top: 0.5rem;
   right: 0.5rem;
   float: right;
