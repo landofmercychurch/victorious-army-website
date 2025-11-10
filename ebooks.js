@@ -122,24 +122,30 @@ export async function initEbooks(container) {
     // -------------------------------
     // RENDER HOMEPAGE TOP 4 BOOKS
     // -------------------------------
+        // -------------------------------
+    // RENDER HOMEPAGE TOP 4 BOOKS (2x2 Grid + Centered Button)
+    // -------------------------------
+    const previewWrapper = el("div", "ebook-preview-wrapper");
+
+    // Sort and get latest 4 books
     const top4Books = allBooks
       .slice()
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       .slice(0, 4);
 
+    // Create grid (2x2 layout)
     const topGrid = el("div", "ebook-preview-grid");
     top4Books.forEach(book => topGrid.appendChild(createBookCard(book)));
-    container.appendChild(topGrid);
 
-    // Add "View All" button
+    // Add grid to wrapper
+    previewWrapper.appendChild(topGrid);
+
+    // Add "View All" button under grid
     if (allBooks.length > 4) {
       const btn = el("button", "view-all-btn", { text: "View All" });
       btn.addEventListener("click", () => openGalleryModal(allBooks));
-      container.appendChild(btn);
+      previewWrapper.appendChild(btn);
     }
 
-  } catch (err) {
-    container.innerHTML = `<p style="color:red">Failed to load ebooks</p>`;
-    console.error("[INIT ERROR] Ebooks:", err);
-  }
-}
+    // Append wrapper to container
+    container.appendChild(previewWrapper);
