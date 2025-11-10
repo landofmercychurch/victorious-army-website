@@ -1528,87 +1528,127 @@ footer {
 
  
   
-/* =============================== HOMEPAGE BOOK GRID ================================ */
-.ebook-preview-grid {
-  display: flex;
-  grid-template-columns: repeat(2, 1fr); /* Two books per row */
-  gap: 1rem;
-  justify-items: center;
-  margin: 1rem auto 1.5rem;
-  max-width: 500px; /* Keeps it nicely centred */
-}
-
-/* Centre the entire section including the button */
-.ebook-feed,
-.ebook-section-preview {
+/* =========================================================
+   📚 HOMEPAGE EBOOK PREVIEW SECTION
+   ========================================================= */
+.ebook-feed {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  padding: 1rem 0;
 }
 
-/* Keep "View All" neatly below the grid */
-.view-all-btn {
-  margin-top: 0.5rem;
-  margin-bottom: 2rem;
-  align-self: bottom ;
+/* Responsive grid for top 4 books */
+.ebook-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  justify-content: center;
+  margin: 1rem auto 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 0.5rem;
 }
 
-/* On small screens (phones), show one book per row */
+/* Each book card */
+.ebook-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ebook-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Book cover */
+.ebook-cover {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Book info */
+.ebook-info {
+  padding: 0.6rem;
+  text-align: center;
+}
+
+.ebook-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.ebook-part {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 0.2rem;
+}
+
+/* Responsive adjustments for small screens */
 @media (max-width: 480px) {
   .ebook-preview-grid {
     grid-template-columns: 1fr;
-    gap: 0.8rem;
+    gap: 1rem;
+  }
+
+  .ebook-card {
+    max-width: 85%;
+    margin: 0 auto;
   }
 }
 
-
-/* =============================== VIEW ALL BUTTON ================================ */
+/* =========================================================
+   📘 VIEW ALL BUTTON
+   ========================================================= */
 .view-all-btn {
   display: inline-block;
   margin: 1rem auto 2rem auto;
-  padding: 0.5rem 1.2rem;
-  background: #0066ff;
+  padding: 0.6rem 1.4rem;
+  background: #0077ff;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-  text-align: center;
+  transition: background 0.25s, transform 0.25s;
 }
 
 .view-all-btn:hover {
-  background: #004bcc;
+  background: #005bcc;
   transform: translateY(-2px);
 }
 
-/* Ensure it centres below the grid */
-.ebook-feed {
-  text-align: center;
-}
-
-
-/* =============================== GALLERY MODAL (View All) ================================ */
+/* =========================================================
+   🖼️ GALLERY MODAL (View All)
+   ========================================================= */
 .ebook-gallery-modal {
   position: fixed;
-  top: 60px; /* lowered slightly to avoid navbar overlap */
+  top: 60px;
   left: 0;
   width: 100%;
   height: calc(100% - 60px);
-  background: rgba(15, 15, 15, 0.7);
+  background: rgba(15, 15, 15, 0.75);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   z-index: 999;
-  backdrop-filter: blur(4px);
-  overflow: hidden;
+  backdrop-filter: blur(5px);
   padding: 1rem;
+  overflow: hidden;
 }
 
 .ebook-gallery-content {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   width: 95%;
   max-width: 520px;
   height: 85%;
@@ -1626,21 +1666,20 @@ footer {
   text-align: center;
 }
 
-/* Close button always visible on top */
+/* Close button */
 .gallery-close {
-  position: fixed; /* instead of sticky */
+  position: fixed;
   top: 1rem;
   right: 1rem;
   font-size: 1.8rem;
-  line-height: 1;
   cursor: pointer;
   color: #333;
-  z-index: 2000; /* ensure it's above everything */
   background: #fff;
   border-radius: 50%;
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.65rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  transition: background 0.2s, transform 0.2s, color 0.2s;
+  transition: all 0.25s;
+  z-index: 2000;
 }
 
 .gallery-close:hover {
@@ -1649,24 +1688,36 @@ footer {
   transform: scale(1.05);
 }
 
-/* Grid of all books - smaller thumbnails */
+/* Series section */
+.gallery-series-section {
+  margin-bottom: 1.6rem;
+}
+
+.series-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.6rem;
+  color: #222;
+  text-align: left;
+  padding-left: 0.3rem;
+}
+
+/* Book thumbnails grid */
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
   gap: 0.6rem;
-  margin-top: 0.6rem;
 }
 
-/* Book thumbnail (smaller and cleaner) */
 .ebook-thumb {
   width: 100%;
-  padding-top: 140%; /* portrait ratio */
+  padding-top: 140%;
   background-size: cover;
   background-position: center;
   border-radius: 8px;
   position: relative;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .ebook-thumb:hover {
@@ -1683,46 +1734,24 @@ footer {
   color: #fff;
   font-size: 0.65rem;
   text-align: center;
-  padding: 0.2rem;
+  padding: 0.25rem;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: ellipsis;
   overflow: hidden;
 }
 
-/* Add spacing between series sections */
-.gallery-series-section {
-  margin-bottom: 1.6rem;
-}
-
-.series-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 1rem 0 0.6rem;
-  color: #222;
-  text-align: left;
-  padding-left: 0.3rem;
-}
-
-/* Better spacing on small screens */
+/* Small screen adjustment */
 @media (max-width: 480px) {
   .gallery-grid {
     grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-    gap: 0.5rem;
-  }
-
-  .ebook-gallery-content {
-    padding: 0.8rem 0.8rem 1.5rem;
-  }
-
-  .series-title {
-    margin-top: 1rem;
   }
 }
 
-
-/* =============================== BOOK DETAIL MODAL ================================ */
+/* =========================================================
+   📖 BOOK DETAIL MODAL
+   ========================================================= */
 .ebook-detail-modal {
   position: fixed;
   top: 0;
@@ -1743,7 +1772,7 @@ footer {
   background: #fff;
   border-radius: 14px;
   width: 90%;
-  max-width: 420px; /* smaller width */
+  max-width: 420px;
   max-height: 85%;
   overflow-y: auto;
   position: relative;
@@ -1754,32 +1783,24 @@ footer {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Close button */
 .close-btn {
-  position:fixed;
+  position: fixed;
   top: 0.5rem;
   right: 0.5rem;
-  float: right;
   font-size: 1.6rem;
   color: #444;
   cursor: pointer;
   z-index: 10;
   background: #fff;
   border-radius: 50%;
-  padding: 0.2rem 0.6rem;
-  margin: 0.3rem;
+  padding: 0.25rem 0.6rem;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
+  transition: all 0.25s;
 }
 
 .close-btn:hover {
@@ -1788,17 +1809,16 @@ footer {
   transform: scale(1.05);
 }
 
-/* Book Cover */
+/* Book cover */
 .ebook-detail-cover {
   width: 140px;
-  height: auto;
   display: block;
   margin: 0 auto 1rem;
   border-radius: 8px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Title & Author */
+/* Title and author */
 .ebook-detail-content h2 {
   text-align: center;
   font-size: 1rem;
@@ -1813,14 +1833,13 @@ footer {
   margin-bottom: 0.8rem;
 }
 
-/* Description (scrollable + read more style) */
+/* Description */
 .ebook-description {
   font-size: 0.85rem;
   color: #333;
   line-height: 1.55;
   max-height: 150px;
   overflow: hidden;
-  position: relative;
   padding-right: 0.5rem;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
@@ -1831,21 +1850,6 @@ footer {
 .ebook-description.expanded {
   max-height: 400px;
   overflow-y: auto;
-}
-
-.read-more {
-  display: block;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #0077ff;
-  cursor: pointer;
-  margin-top: -0.5rem;
-  margin-bottom: 0.8rem;
-  transition: color 0.2s;
-}
-
-.read-more:hover {
-  color: #004bcc;
 }
 
 /* Buttons */
@@ -1864,7 +1868,7 @@ footer {
   font-size: 0.85rem;
   color: #fff;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.25s;
 }
 
 .read-btn {
@@ -1883,7 +1887,7 @@ footer {
   background: #1e7e34;
 }
 
-/* Mobile adjustments */
+/* Mobile fine-tune */
 @media (max-width: 480px) {
   .ebook-detail-content {
     width: 92%;
@@ -1898,13 +1902,3 @@ footer {
     font-size: 0.82rem;
   }
 }
-
-
-
-
-
-
-
-
-
-
