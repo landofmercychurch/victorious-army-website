@@ -222,26 +222,39 @@ export async function initSermons(container) {
       container.appendChild(card);
     }
 
-    /** 🎬 Auto-play when visible */
-   /** 🎬 Auto-play only when visible on screen */
+    /** 🎬 Auto-play only when visible on screen */
 const autoPlayObserver = new IntersectionObserver(
-  entries => {
-    entries.forEach(entry => {
+  (entries) => {
+    entries.forEach((entry) => {
       const vid = entry.target;
       if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
-        // Pause all others first
-        videos.forEach(v => {
+        // Pause all other videos
+        videos.forEach((v) => {
           if (v.video !== vid) v.video.pause();
         });
-        // Play the one now visible
+        // Play the one currently visible
         vid.play().catch(() => {});
       } else {
         vid.pause();
       }
     });
   },
-  { threshold: 0.7, root: null } // root:null means viewport, not container
+  { threshold: 0.7, root: null } // Use viewport, not container
 );
+
+// Observe all videos
+videos.forEach((vObj) => autoPlayObserver.observe(vObj.video));
+
+/** 🎬 Pause ALL videos when user leaves the sermon section */
+window.addEventListener("scroll", () => {
+  const rect = container.getBoundingClientRect();
+  const fullyOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+
+  if (fullyOutOfView) {
+    videos.forEach((v) => v.video.pause());
+  }
+});
+
 
 // Observe every video
 videos.forEach(vObj => autoPlayObserver.observe(vObj.video));
