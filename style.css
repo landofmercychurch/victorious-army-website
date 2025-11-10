@@ -1545,12 +1545,13 @@ footer {
   grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: 1rem;
   width: 100%;
-  max-width: 450px; /* keeps layout neat and centered */
+  max-width: 360px; /* reduced from 450px */
   margin: 1.5rem auto;
   justify-content: center; /* centers all cards inside grid */
   justify-items: center;   /* centers individual cards */
   box-sizing: border-box;
 }
+
 
 
 /* ===== Each Book Card ===== */
