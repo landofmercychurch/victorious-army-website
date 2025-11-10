@@ -120,34 +120,44 @@ export async function initEbooks(container) {
     }
 
     // -------------------------------
-    // RENDER HOMEPAGE TOP 4 BOOKS
-    // -------------------------------
-        // -------------------------------
-    // RENDER HOMEPAGE TOP 4 BOOKS (2x2 Grid + Centered Button)
+    // HOMEPAGE TOP 4 BOOKS (2x2 Grid + Button)
     // -------------------------------
     const previewWrapper = el("div", "ebook-preview-wrapper");
+    previewWrapper.style.display = "flex";
+    previewWrapper.style.flexDirection = "column";
+    previewWrapper.style.alignItems = "center";
+    previewWrapper.style.gap = "1rem";
 
-    // Sort and get latest 4 books
+    // Get latest 4 books
     const top4Books = allBooks
       .slice()
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       .slice(0, 4);
 
-    // Create grid (2x2 layout)
+    // Grid container
     const topGrid = el("div", "ebook-preview-grid");
+    topGrid.style.display = "grid";
+    topGrid.style.gridTemplateColumns = "repeat(2, 180px)";
+    topGrid.style.gridTemplateRows = "repeat(2, auto)";
+    topGrid.style.justifyContent = "center";
+    topGrid.style.gap = "1rem";
+
+    // Add books to grid
     top4Books.forEach(book => topGrid.appendChild(createBookCard(book)));
 
     // Add grid to wrapper
     previewWrapper.appendChild(topGrid);
 
-    // Add "View All" button under grid
+    // View All button
     if (allBooks.length > 4) {
-      const btn = el("button", "view-all-btn", { text: "View All" });
+      const btn = el("button", "view-all-btn");
+      btn.textContent = "View All Books";
+      btn.style.marginTop = "1rem";
       btn.addEventListener("click", () => openGalleryModal(allBooks));
       previewWrapper.appendChild(btn);
     }
 
-      // Append wrapper to container
+    // Append to container
     container.appendChild(previewWrapper);
 
   } catch (err) {
