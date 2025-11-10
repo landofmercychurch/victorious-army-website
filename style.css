@@ -1573,10 +1573,13 @@ footer {
 
 /* ===== Book Cover ===== */
 .ebook-cover {
-  width: 50%;
+  width: 100%;          /* make it take the full width of the card */
+  max-width: 180px;     /* optional: keeps the cover from getting too big */
   aspect-ratio: 3/4;
   background-size: cover;
   background-position: center;
+  margin: 0 auto;       /* centers the cover horizontally */
+  display: block;       /* ensures margin auto works */
 }
 
 /* ===== Book Info ===== */
