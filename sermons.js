@@ -222,7 +222,7 @@ export async function initSermons(container) {
       container.appendChild(card);
     }
 
-    /** 🎬 Auto-play only when visible on screen */
+  /** 🎬 Auto-play only when visible on screen */
 const autoPlayObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -239,13 +239,13 @@ const autoPlayObserver = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.7, root: null } // Use viewport, not container
+  { threshold: 0.7, root: null } // Use viewport
 );
 
 // Observe all videos
 videos.forEach((vObj) => autoPlayObserver.observe(vObj.video));
 
-/** 🎬 Pause ALL videos when user leaves the sermon section */
+/** 🎬 Pause ALL videos when user leaves the sermon feed */
 window.addEventListener("scroll", () => {
   const rect = container.getBoundingClientRect();
   const fullyOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
@@ -255,45 +255,25 @@ window.addEventListener("scroll", () => {
   }
 });
 
+/** 🔀 TRUE SHUFFLE autoplay */
+let unplayed = [...videos];
+function playNextShuffle(currentVideo) {
+  if (videos.length <= 1) return;
 
-// Observe every video
-videos.forEach(vObj => autoPlayObserver.observe(vObj.video));
+  unplayed = unplayed.filter((v) => v.video !== currentVideo);
 
-/** 🎬 Pause ALL videos when user leaves the sermon section */
-window.addEventListener("scroll", () => {
-  const rect = container.getBoundingClientRect();
-  const fullyOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+  if (unplayed.length === 0) unplayed = [...videos];
 
-  if (fullyOutOfView) {
-    videos.forEach(v => v.video.pause());
-  }
+  const next = unplayed[Math.floor(Math.random() * unplayed.length)];
 
+  next.video.scrollIntoView({ behavior: "smooth", block: "center" });
+  next.video.play().catch(() => {});
+}
 
+videos.forEach((vObj) => {
+  vObj.video.addEventListener("ended", () => playNextShuffle(vObj.video));
+});
 
-    /** 🔀 TRUE SHUFFLE autoplay */
-    let unplayed = [...videos];
-    function playNextShuffle(currentVideo) {
-      if (videos.length <= 1) return;
-
-      // Remove current video from remaining
-      unplayed = unplayed.filter(v => v.video !== currentVideo);
-
-      // Reset when all have been played
-      if (unplayed.length === 0) {
-        unplayed = [...videos];
-      }
-
-      // Pick a random next one
-      const next = unplayed[Math.floor(Math.random() * unplayed.length)];
-
-      // Scroll and play
-      next.video.scrollIntoView({ behavior: "smooth", block: "center" });
-      next.video.play().catch(() => {});
-    }
-
-    videos.forEach(vObj => {
-      vObj.video.addEventListener("ended", () => playNextShuffle(vObj.video));
-    });
 
     /** Handle deep link */
     const sermonId = new URLSearchParams(window.location.search).get("sermon");
