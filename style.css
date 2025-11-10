@@ -1533,7 +1533,7 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: 50%;
   padding: 1.5rem 1rem;
   text-align: center;
   box-sizing: border-box;
