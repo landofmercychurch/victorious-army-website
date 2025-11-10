@@ -147,5 +147,11 @@ export async function initEbooks(container) {
       previewWrapper.appendChild(btn);
     }
 
-    // Append wrapper to container
+      // Append wrapper to container
     container.appendChild(previewWrapper);
+
+  } catch (err) {
+    console.error("Failed to load ebooks:", err);
+    container.innerHTML = "<p>Failed to load ebooks.</p>";
+  }
+}
