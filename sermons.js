@@ -223,18 +223,39 @@ export async function initSermons(container) {
     }
 
     /** 🎬 Auto-play when visible */
-    const autoPlayObserver = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          const vid = entry.target;
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.7)
-            vid.play().catch(() => {});
-          else vid.pause();
+   /** 🎬 Auto-play only when visible on screen */
+const autoPlayObserver = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      const vid = entry.target;
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+        // Pause all others first
+        videos.forEach(v => {
+          if (v.video !== vid) v.video.pause();
         });
-      },
-      { threshold: 0.7, root: container }
-    );
-    videos.forEach(vObj => autoPlayObserver.observe(vObj.video));
+        // Play the one now visible
+        vid.play().catch(() => {});
+      } else {
+        vid.pause();
+      }
+    });
+  },
+  { threshold: 0.7, root: null } // root:null means viewport, not container
+);
+
+// Observe every video
+videos.forEach(vObj => autoPlayObserver.observe(vObj.video));
+
+/** 🎬 Pause ALL videos when user leaves the sermon section */
+window.addEventListener("scroll", () => {
+  const rect = container.getBoundingClientRect();
+  const fullyOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+
+  if (fullyOutOfView) {
+    videos.forEach(v => v.video.pause());
+  }
+
+
 
     /** 🔀 TRUE SHUFFLE autoplay */
     let unplayed = [...videos];
