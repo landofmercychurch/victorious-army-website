@@ -2040,3 +2040,88 @@ ckground: #005bcc; }
     max-width: 90px;
   }
 }
+
+
+
+
+/* Announcement Popup (Full Screen Overlay) */
+#announcementPopup {
+  display: none; 
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Fade-in animation class */
+#announcementPopup.show {
+  opacity: 1;
+}
+
+/* Popup Card */
+.popup-content {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  
+  padding: 25px 30px;
+  width: min(90%, 420px);
+  
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.32);
+  
+  box-shadow: 0 10px 32px rgba(0,0,0,0.25);
+  text-align: center;
+  animation: popIn 0.35s ease forwards;
+
+  color: #fff;
+}
+
+/* Small bounce animation */
+@keyframes popIn {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.popup-content h3 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Announcement Text */
+#announcementText {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #f8f8f8;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.28);
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #ffffff;
+  font-weight: 300;
+
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+  opacity: 0.7;
+}
+
+
