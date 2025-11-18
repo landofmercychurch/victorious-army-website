@@ -1,9 +1,17 @@
+import { initAnnouncementPopup } from "./announcement.js";
 import { initMemorials } from "./memorials.js";
 import { initSermons } from "./sermons.js";
 import { initPicturePosts } from "./picturePosts.js";
 import { initEvents } from "./events.js";
 import { initDailyVerse } from "./dailyVerse.js";
 import { initEbooks } from "./ebooks.js";
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  initAnnouncementPopup();
+});
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const memorialsContainer = document.getElementById("memorialsContainer");
