@@ -1104,66 +1104,36 @@ h2, h3, h4, p { margin: 0 0 8px 0; }
 
 
 
-/* ================================
-   DAILY VERSE – IMAGE STYLE
-================================ */
-#daily-verse {
-  position: relative;
-  padding: 2rem 1.5rem;
-  margin: 1rem auto;
-  max-width: 480px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #ffecd2, #fcb69f); /* soft gradient */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  color: #fff;
+.daily-verse-card {
+  background: #fdf6e3; /* subtle page background */
+  border-radius: 16px;
+  padding: 25px 30px;
+  max-width: 600px;
+  margin: 20px auto;
   text-align: center;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-#daily-verse:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+.verse-text {
+  font-size: 1.6rem;
+  font-weight: 900; /* extra bold */
+  line-height: 1.4;
+  /* Create a gradient background for the text */
+  background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* makes gradient show in text */
+  background-clip: text; /* for some browsers */
+  margin-bottom: 12px;
 }
 
-/* Decorative background pattern (optional) */
-#daily-verse::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('https://www.transparenttextures.com/patterns/diagmonds.png'); /* subtle texture */
-  opacity: 0.08;
-  border-radius: 20px;
-}
-
-/* Verse text */
-#daily-verse h3 {
+.verse-ref {
   font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-#daily-verse p {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #fff;
-  line-height: 1.5;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
-  margin-bottom: 0;
-}
-
-/* Optional: small author or reference */
-#daily-verse .verse-ref {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.9);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  color: #333;
+  opacity: 0.9;
 }
+
 
 
 
