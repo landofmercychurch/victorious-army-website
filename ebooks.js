@@ -2,8 +2,6 @@
 import { api } from "./api.js";
 import { el } from "./utils.js";
 
-const BACKEND_URL = "https://varm-backend.fly.dev";
-
 function lockBodyScroll(lock = true) {
   document.body.style.overflow = lock ? "hidden" : "";
 }
@@ -25,6 +23,9 @@ function groupBooksBySeries(books) {
 
   return grouped;
 }
+
+// Get backend origin dynamically (use current site origin)
+const BACKEND_URL = window.location.origin;
 
 // -------------------------------
 // INIT EBOOKS
