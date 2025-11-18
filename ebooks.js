@@ -43,93 +43,93 @@ export async function initEbooks(container) {
     container.classList.add("ebook-feed");
 
     // -------------------------------
-    // CREATE BOOK CARD
-    // -------------------------------
-    function createBookCard(book) {
-      const card = el("div", "ebook-card");
-      card.innerHTML = `
-        <div class="ebook-cover" 
-             style="background-image: url('${
-               book.cover_url ||
-               "https://via.placeholder.com/180x240?text=No+Cover"
-             }')"></div>
-        <div class="ebook-info">
-          <h4 class="ebook-title">${book.title}</h4>
-          ${
-            book.series_order
-              ? <p class="ebook-part">Part ${book.series_order}</p>
-              : ""
-          }
-        </div>
-      `;
-      card.addEventListener("click", () => openDetailModal(book));
-      return card;
+// CREATE BOOK CARD
+// -------------------------------
+function createBookCard(book) {
+  const card = el("div", "ebook-card");
+  card.innerHTML = `
+    <div class="ebook-cover" 
+         style="background-image: url('${
+           book.cover_url ||
+           "https://via.placeholder.com/180x240?text=No+Cover"
+         }')"></div>
+    <div class="ebook-info">
+      <h4 class="ebook-title">${book.title}</h4>
+      ${
+        book.series_order
+          ? `<p class="ebook-part">Part ${book.series_order}</p>`
+          : ""
+      }
+    </div>
+  `;
+  card.addEventListener("click", () => openDetailModal(book));
+  return card;
+}
+
+// -------------------------------
+// BOOK DETAIL MODAL
+// -------------------------------
+function openDetailModal(book) {
+  const modal = el("div", "ebook-detail-modal");
+
+  modal.innerHTML = `
+    <div class="ebook-detail-content">
+      <span class="close-btn">&times;</span>
+
+      <img class="ebook-detail-cover" 
+           src="${
+             book.cover_url ||
+             "https://via.placeholder.com/180x240?text=No+Cover"
+           }"
+           alt="${book.title}" />
+
+      <h2>${book.title}</h2>
+
+      ${
+        book.author
+          ? `<p class="ebook-author"><strong>Author:</strong> ${book.author}</p>`
+          : ""
+      }
+
+      ${
+        book.description
+          ? `<p class="ebook-description">${book.description}</p>`
+          : ""
+      }
+
+      <div class="ebook-detail-btns">
+
+        <!-- 📖 READ ONLINE -->
+        <a href="/api/ebooks/read/${book.id}"
+           target="_blank"
+           class="read-btn">
+           📖 Read Online
+        </a>
+
+        <!-- ⬇️ DOWNLOAD -->
+        <a href="/api/ebooks/download/${book.id}"
+           class="download-btn">
+           ⬇️ Download PDF
+        </a>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  lockBodyScroll(true);
+
+  modal.querySelector(".close-btn").onclick = () => {
+    modal.remove();
+    lockBodyScroll(false);
+  };
+
+  modal.addEventListener("click", e => {
+    if (e.target === modal) {
+      modal.remove();
+      lockBodyScroll(false);
     }
-
-    // -------------------------------
-    // BOOK DETAIL MODAL
-    // -------------------------------
-    function openDetailModal(book) {
-      const modal = el("div", "ebook-detail-modal");
-
-      modal.innerHTML = `
-        <div class="ebook-detail-content">
-          <span class="close-btn">&times;</span>
-
-          <img class="ebook-detail-cover" 
-               src="${
-                 book.cover_url ||
-                 "https://via.placeholder.com/180x240?text=No+Cover"
-               }"
-               alt="${book.title}" />
-
-          <h2>${book.title}</h2>
-
-          ${
-            book.author
-              ? <p class="ebook-author"><strong>Author:</strong> ${book.author}</p>
-              : ""
-          }
-
-          ${
-            book.description
-              ? <p class="ebook-description">${book.description}</p>
-              : ""
-          }
-
-          <div class="ebook-detail-btns">
-
-            <!-- 📖 READ ONLINE -->
-            <a href="/api/ebooks/read/${book.id}"
-               target="_blank"
-               class="read-btn">
-               📖 Read Online
-            </a>
-
-            <!-- ⬇️ DOWNLOAD -->
-            <a href="/api/ebooks/download/${book.id}"
-               class="download-btn">
-               ⬇️ Download PDF
-            </a>
-          </div>
-        </div>
-      `;
-
-      document.body.appendChild(modal);
-      lockBodyScroll(true);
-
-      modal.querySelector(".close-btn").onclick = () => {
-        modal.remove();
-        lockBodyScroll(false);
-      };
-
-      modal.addEventListener("click", e => {
-        if (e.target === modal) {
-          modal.remove();
-          lockBodyScroll(false);
-        }
-      });
-    }
+  });
+}
 
     // -------------------------------
     // GALLERY MODAL FOR "VIEW ALL"
