@@ -1,32 +1,55 @@
-// announcement.js
+// src/functions/announcement.js
 import { api } from "./api.js";
 
+/**
+ * Initialize the Announcement Popup
+ * Automatically shows the latest active announcement
+ */
 export async function initAnnouncementPopup() {
   const popup = document.getElementById("announcementPopup");
   const textEl = document.getElementById("announcementText");
+  const closeBtn = popup?.querySelector(".close-btn");
 
   if (!popup || !textEl) return;
 
   try {
-    // Fetch from backend
+    // Fetch all announcements
     const announcements = await api.get("/announcements");
 
-    // If no announcement exists → do nothing
-    if (!announcements || announcements.length === 0) return;
+    // Filter active announcements
+    const activeAnnouncement = announcements?.find(a => a.active);
 
-    // Only show the latest announcement marked as active
-    const active = announcements.find(a => a.active === true);
+    if (!activeAnnouncement) return;
 
-    if (!active) return;
+    // Inject announcement message
+    textEl.textContent = activeAnnouncement.message || activeAnnouncement.text || "";
 
-    // Inject message into popup
-    textEl.textContent = active.message;
-
-    // Show popup automatically
+    // Show popup
     popup.style.display = "flex";
-    popup.classList.add("show");
+    setTimeout(() => popup.classList.add("show"), 50); // slight delay for CSS transition
+
+    // Close button
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        popup.classList.remove("show");
+        setTimeout(() => popup.style.display = "none", 300); // wait for fade-out
+      });
+    }
+
+    // Optional: close when clicking outside content
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        popup.classList.remove("show");
+        setTimeout(() => popup.style.display = "none", 300);
+      }
+    });
 
   } catch (err) {
     console.error("❌ Failed to load announcement:", err);
   }
 }
+
+// Automatically run on page load
+document.addEventListener("DOMContentLoaded", () => {
+  initAnnouncementPopup();
+});
