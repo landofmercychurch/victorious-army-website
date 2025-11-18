@@ -2044,84 +2044,93 @@ ckground: #005bcc; }
 
 
 
-/* Announcement Popup (Full Screen Overlay) */
+
+  /* === ANNOUNCEMENT POPUP OVERLAY === */
 #announcementPopup {
-  display: none; 
+  display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.55); /* soft dimmed background */
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   justify-content: center;
   align-items: center;
   z-index: 9999;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
 }
 
-/* Fade-in animation class */
+/* fade-in animation */
 #announcementPopup.show {
   opacity: 1;
 }
 
-/* Popup Card */
-.popup-content {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  
-  padding: 25px 30px;
-  width: min(90%, 420px);
-  
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.32);
-  
-  box-shadow: 0 10px 32px rgba(0,0,0,0.25);
+/* === POPUP INNER CARD (3D GLASS STYLE) === */
+#announcementPopup .popup-content {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 28px 30px;
+  max-width: 420px;
+  width: 90%;
+
+  /* Glassmorphism + 3D depth */
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  /* Soft 3D glow */
+  box-shadow: 
+    0 12px 35px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(255, 255, 255, 0.4);
+
   text-align: center;
-  animation: popIn 0.35s ease forwards;
-
-  color: #fff;
+  animation: popupLift 0.35s ease-out;
 }
 
-/* Small bounce animation */
-@keyframes popIn {
-  0% { transform: scale(0.85); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+/* Popup entrance animation */
+@keyframes popupLift {
+  from {
+    transform: translateY(30px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
-.popup-content h3 {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-/* Announcement Text */
-#announcementText {
-  font-size: 1.05rem;
-  line-height: 1.5;
-  color: #f8f8f8;
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.28);
-}
-
-/* Close Button */
-.close-btn {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-
-  font-size: 1.8rem;
+/* === CLOSE BUTTON === */
+#announcementPopup .close-btn {
+  float: right;
+  font-size: 28px;
   cursor: pointer;
+  color: white;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+#announcementPopup .close-btn:hover {
+  opacity: 1;
+}
+
+/* === POPUP TITLE (3D + Image-like text) === */
+#announcementPopup h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+
+  letter-spacing: 0.5px;
+}
+
+/* === ANNOUNCEMENT BODY TEXT === */
+#announcementPopup p {
+  font-size: 1.12rem;
+  font-weight: 600;
   color: #ffffff;
-  font-weight: 300;
-
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  line-height: 1.55;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
 }
-
-.close-btn:hover {
-  transform: scale(1.2);
-  opacity: 0.7;
-}
-
-
+  
