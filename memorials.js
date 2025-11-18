@@ -41,36 +41,60 @@ export async function initMemorials(container) {
 }
 
 /* =====================================
-   🎞️ STORY SLIDESHOW (Ken Burns style)
+   🎞️ STORY SLIDESHOW (with multi-image + sound)
 ===================================== */
 function startStorySlideshow(container, items) {
   let current = 0;
   const img = el("img", "memorial-story-img");
   container.appendChild(img);
 
+  const audio = new Audio();
+  audio.volume = 0.7;
+
   function showNext() {
     const m = items[current];
     if (!m) return;
 
-    const imageUrl =
-      Array.isArray(m.images) && m.images.length > 0 ? m.images[0].url : "";
+    const images = Array.isArray(m.images) ? m.images : [];
+    const sounds = Array.isArray(m.sounds) ? m.sounds : [];
 
-    img.style.transition = "none";
-    img.style.opacity = 0;
-    img.src = imageUrl;
-    img.alt = m.title || "Memorial";
+    let imgIndex = 0;
 
-    img.onload = () => {
-      const zoom = 1.1 + Math.random() * 0.3;
-      const moveX = (Math.random() - 0.5) * 20;
-      const moveY = (Math.random() - 0.5) * 20;
+    function showImage() {
+      if (!images[imgIndex]) return;
 
-      requestAnimationFrame(() => {
-        img.style.transition = "transform 10s ease-in-out, opacity 2s ease-in-out";
-        img.style.opacity = 1;
-        img.style.transform = `scale(${zoom}) translate(${moveX}%, ${moveY}%)`;
-      });
-    };
+      img.src = images[imgIndex].url;
+      img.alt = m.title || "Memorial";
+      img.style.opacity = 0;
+
+      img.onload = () => {
+        const zoom = 1.1 + Math.random() * 0.3;
+        const moveX = (Math.random() - 0.5) * 20;
+        const moveY = (Math.random() - 0.5) * 20;
+
+        requestAnimationFrame(() => {
+          img.style.transition = "transform 10s ease-in-out, opacity 1s ease-in-out";
+          img.style.opacity = 1;
+          img.style.transform = `scale(${zoom}) translate(${moveX}%, ${moveY}%)`;
+        });
+      };
+
+      imgIndex++;
+      if (imgIndex < images.length) {
+        setTimeout(showImage, 8000); // 8s per image
+      } else {
+        current = (current + 1) % items.length;
+        setTimeout(showNext, 1000);
+      }
+    }
+
+    // Play associated sound if exists
+    if (sounds.length > 0) {
+      audio.src = sounds[0].url; // first sound for now
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+    }
 
     // Overlay info
     container.querySelector(".memorial-story-info")?.remove();
@@ -81,9 +105,7 @@ function startStorySlideshow(container, items) {
     `;
     container.appendChild(info);
 
-    // Schedule next transition
-    current = (current + 1) % items.length;
-    setTimeout(showNext, 10000); // 10s per image
+    showImage();
   }
 
   showNext();
@@ -94,13 +116,22 @@ function startStorySlideshow(container, items) {
 ===================================== */
 function renderMemorial(m, fullWidth = false) {
   const card = el("div", fullWidth ? "memorial-card full" : "memorial-card");
-  const img = document.createElement("img");
-  const imageUrl =
-    Array.isArray(m.images) && m.images.length > 0 ? m.images[0].url : "";
-  img.src = imageUrl;
-  img.alt = m.title || "Memorial Image";
-  img.onclick = () => openPreview(m);
-  card.appendChild(img);
+
+  // Slideshow for images in card
+  const images = Array.isArray(m.images) ? m.images : [];
+  const imgEl = el("img", "memorial-card-img");
+  imgEl.src = images.length ? images[0].url : "";
+  imgEl.alt = m.title || "Memorial Image";
+  card.appendChild(imgEl);
+
+  // Simple slideshow
+  if (images.length > 1) {
+    let idx = 0;
+    setInterval(() => {
+      idx = (idx + 1) % images.length;
+      imgEl.src = images[idx].url;
+    }, 5000); // 5s per image
+  }
 
   const info = el("div", "memorial-info");
   const title = el("h4", null, m.title || "Memorial");
@@ -109,28 +140,6 @@ function renderMemorial(m, fullWidth = false) {
   card.appendChild(info);
 
   return card;
-}
-
-/* =====================================
-   🕊️ FULLSCREEN PREVIEW
-===================================== */
-function openPreview(m) {
-  const overlay = el("div", "memorial-overlay");
-  const imageUrl =
-    Array.isArray(m.images) && m.images.length > 0 ? m.images[0].url : "";
-
-  overlay.innerHTML = `
-    <div class="memorial-preview">
-      <span class="close-btn">&times;</span>
-      <img src="${imageUrl}" alt="${m.title || "Memorial"}" />
-      <h4>${m.title || "Memorial"}</h4>
-      <p>${new Date(m.created_at).toLocaleString()}</p>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-  overlay.querySelector(".close-btn").onclick = () => overlay.remove();
-  overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
 }
 
 /* =====================================
