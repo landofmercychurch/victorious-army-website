@@ -1140,62 +1140,88 @@ h2, h3, h4, p { margin: 0 0 8px 0; }
 
 
 
-/* Container styling */
-#events-container {
-  display: flex;
-  flex-wrap: wrap;
+/* events.css - premium glass + gradient style (readable text) */
+
+/* Container */
+.events-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
-  justify-content: center;
-  background: url('/path/to/your/background.jpg') no-repeat center center / cover;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  background-attachment: fixed;
 }
 
 /* Event card */
 .event-card {
-  background: rgba(255, 255, 255, 0.1); /* semi-transparent for glass effect */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px); /* for Safari */
+  background: rgba(255, 255, 255, 0.2); /* semi-transparent glass effect */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-radius: 16px;
-  padding: 1.5rem 1.2rem;
-  width: 280px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* 3D hover effect */
 .event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* Event title */
 .event-card h3 {
   font-size: 1.4rem;
-  color: #ffffff; /* bright white for readability */
+  color: #ffffff; /* fully readable */
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* stronger shadow for clarity */
 }
 
 /* Event description */
 .event-card p.desc {
   font-size: 1rem;
-  color: #f9f9f9; /* almost white for readability */
+  color: #fdfdfd; /* bright for readability */
   margin-bottom: 0.75rem;
   line-height: 1.5;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); /* subtle shadow for legibility */
 }
 
 /* Event meta info */
 .event-card p.meta {
   font-size: 0.875rem;
-  color: #f1f1f1;
+  color: #f1f1f1; /* bright white */
   margin-top: auto;
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .events-container {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .event-card {
+    padding: 1.2rem;
+  }
+
+  .event-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .event-card p.desc {
+    font-size: 0.95rem;
+  }
+}
+
+
+
 
 
 
