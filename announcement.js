@@ -8,18 +8,21 @@ export async function initAnnouncementPopup() {
   if (!popup || !textEl) return;
 
   try {
+    // Fetch from backend
     const announcements = await api.get("/announcements");
 
+    // If no announcement exists → do nothing
     if (!announcements || announcements.length === 0) return;
 
-    // Show only the latest active announcement
+    // Only show the latest announcement marked as active
     const active = announcements.find(a => a.active === true);
 
     if (!active) return;
 
+    // Inject message into popup
     textEl.textContent = active.message;
 
-    // Show popup
+    // Show popup automatically
     popup.style.display = "flex";
     popup.classList.add("show");
 
