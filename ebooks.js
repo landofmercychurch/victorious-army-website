@@ -99,21 +99,15 @@ function openDetailModal(book) {
 
       <div class="ebook-detail-btns">
 
-        <!-- 📖 READ ONLINE -->
-        <a href="/api/ebooks/read/${book.id}"
-           target="_blank"
-           class="read-btn">
-           📖 Read Online
-        </a>
+        const BACKEND_URL = "https://varm-backend.fly.dev";
 
-        <!-- ⬇️ DOWNLOAD -->
-        <a href="/api/ebooks/download/${book.id}"
-           class="download-btn">
-           ⬇️ Download PDF
-        </a>
-      </div>
-    </div>
-  `;
+<a href="${BACKEND_URL}/api/ebooks/read/${book.id}" target="_blank" class="read-btn">
+  📖 Read Online
+</a>
+
+<a href="${BACKEND_URL}/api/ebooks/download/${book.id}" class="download-btn">
+  ⬇️ Download PDF
+</a>
 
   document.body.appendChild(modal);
   lockBodyScroll(true);
