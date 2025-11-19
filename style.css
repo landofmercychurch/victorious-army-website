@@ -2064,12 +2064,17 @@ ckground: #005bcc; }
 
 
 
-/* === ANNOUNCEMENT POPUP OVERLAY === */
+
+
+
+/* ===========================
+   ANNOUNCEMENT POPUP OVERLAY
+   =========================== */
 #announcementPopup {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55); /* soft dimmed background */
+  background: rgba(0, 0, 0, 0.55); /* dimmed background */
   backdrop-filter: blur(4px);
   justify-content: center;
   align-items: center;
@@ -2083,29 +2088,26 @@ ckground: #005bcc; }
   opacity: 1;
 }
 
-/* === POPUP INNER CARD (3D GLASS STYLE) === */
+/* ===========================
+   POPUP INNER CARD (GLASS + 3D)
+   =========================== */
 #announcementPopup .popup-content {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15); /* glass effect */
   border-radius: 20px;
   padding: 28px 30px;
   max-width: 420px;
   width: 90%;
-
-  /* Glassmorphism + 3D depth */
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.35);
-
-  /* Soft 3D glow */
   box-shadow: 
     0 12px 35px rgba(0, 0, 0, 0.25),
     0 0 20px rgba(255, 255, 255, 0.4);
-
   text-align: center;
   animation: popupLift 0.35s ease-out;
 }
 
-/* Popup entrance animation */
+/* 3D lift animation */
 @keyframes popupLift {
   from {
     transform: translateY(30px) scale(0.96);
@@ -2117,12 +2119,14 @@ ckground: #005bcc; }
   }
 }
 
-/* === CLOSE BUTTON === */
+/* ===========================
+   CLOSE BUTTON
+   =========================== */
 #announcementPopup .close-btn {
   float: right;
   font-size: 28px;
   cursor: pointer;
-  color: #ff4f00; /* vivid orange close button */
+  color: red;
   opacity: 0.85;
   transition: opacity 0.2s;
 }
@@ -2130,13 +2134,15 @@ ckground: #005bcc; }
   opacity: 1;
 }
 
-/* === POPUP TITLE (3D + Orange Gradient) === */
-#announcementPopup h3 {
+/* ===========================
+   POPUP TITLE
+   =========================== */
+#announcementTitle {
   font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 12px;
 
-  background: linear-gradient(135deg, #ff7a00, #ffae42, #ffb84d);
+  background: linear-gradient(135deg, #ff7a00, #ffae42, #ffb84d); /* vivid orange */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
@@ -2144,21 +2150,36 @@ ckground: #005bcc; }
   letter-spacing: 0.5px;
 }
 
-/* === ANNOUNCEMENT BODY TEXT === */
-#announcementPopup p {
-  font-size: 1.12rem;
+/* ===========================
+   POPUP MESSAGE
+   =========================== */
+#announcementText {
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #fff;
   line-height: 1.55;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+  margin-top: 8px;
 }
 
-/* Optional: subtle hover effect on popup */
-#announcementPopup .popup-content:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.28),
-    0 0 25px rgba(255, 255, 255, 0.45);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+/* ===========================
+   MOBILE RESPONSIVENESS
+   =========================== */
+@media (max-width: 480px) {
+  #announcementPopup .popup-content {
+    padding: 20px 18px;
+    max-width: 90%;
+  }
 
+  #announcementTitle {
+    font-size: 1.4rem;
+  }
+
+  #announcementText {
+    font-size: 1rem;
+  }
+
+  #announcementPopup .close-btn {
+    font-size: 24px;
+  }
+}
