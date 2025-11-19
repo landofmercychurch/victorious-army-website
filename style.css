@@ -2064,7 +2064,7 @@ ckground: #005bcc; }
 
 
 
-  /* === ANNOUNCEMENT POPUP OVERLAY === */
+/* === ANNOUNCEMENT POPUP OVERLAY === */
 #announcementPopup {
   display: none;
   position: fixed;
@@ -2122,7 +2122,7 @@ ckground: #005bcc; }
   float: right;
   font-size: 28px;
   cursor: pointer;
-  color: red;
+  color: #ff4f00; /* vivid orange close button */
   opacity: 0.85;
   transition: opacity 0.2s;
 }
@@ -2130,13 +2130,13 @@ ckground: #005bcc; }
   opacity: 1;
 }
 
-/* === POPUP TITLE (3D + Image-like text) === */
+/* === POPUP TITLE (3D + Orange Gradient) === */
 #announcementPopup h3 {
   font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 12px;
 
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+  background: linear-gradient(135deg, #ff7a00, #ffae42, #ffb84d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
@@ -2152,4 +2152,13 @@ ckground: #005bcc; }
   line-height: 1.55;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
 }
-  
+
+/* Optional: subtle hover effect on popup */
+#announcementPopup .popup-content:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.28),
+    0 0 25px rgba(255, 255, 255, 0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
