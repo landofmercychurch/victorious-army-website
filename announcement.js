@@ -1,55 +1,64 @@
 // src/functions/announcement.js
 import { api } from "./api.js";
 
-/**
- * Initialize the Announcement Popup
- * Automatically shows the latest active announcement
- */
 export async function initAnnouncementPopup() {
+  console.log("[ANNOUNCEMENT] Initializing popup...");
+
   const popup = document.getElementById("announcementPopup");
   const textEl = document.getElementById("announcementText");
-  const closeBtn = popup?.querySelector(".close-btn");
 
-  if (!popup || !textEl) return;
+  if (!popup || !textEl) {
+    console.warn("[ANNOUNCEMENT] Popup element not found in DOM.");
+    return;
+  }
 
   try {
-    // Fetch all announcements
     const announcements = await api.get("/announcements");
 
-    // Filter active announcements
+    console.log("[ANNOUNCEMENT] Fetched:", announcements);
+
     const activeAnnouncement = announcements?.find(a => a.active);
 
-    if (!activeAnnouncement) return;
+    if (!activeAnnouncement) {
+      console.log("[ANNOUNCEMENT] No active announcement.");
+      return;
+    }
 
-    // Inject announcement message
-    textEl.textContent = activeAnnouncement.message || activeAnnouncement.text || "";
+    // Set text
+    textEl.textContent =
+      activeAnnouncement.message ||
+      activeAnnouncement.text ||
+      "";
 
     // Show popup
     popup.style.display = "flex";
-    setTimeout(() => popup.classList.add("show"), 50); // slight delay for CSS transition
-
-    // Close button
-    if (closeBtn) {
-      closeBtn.addEventListener("click", () => {
-        popup.classList.remove("show");
-        setTimeout(() => popup.style.display = "none", 300); // wait for fade-out
-      });
-    }
-
-    // Optional: close when clicking outside content
-    popup.addEventListener("click", (e) => {
-      if (e.target === popup) {
-        popup.classList.remove("show");
-        setTimeout(() => popup.style.display = "none", 300);
-      }
-    });
+    setTimeout(() => popup.classList.add("show"), 30);
 
   } catch (err) {
     console.error("❌ Failed to load announcement:", err);
   }
 }
 
-// Automatically run on page load
-document.addEventListener("DOMContentLoaded", () => {
-  initAnnouncementPopup();
+/* ----------------------------------------
+   EVENT DELEGATION FOR CLOSE BUTTON
+   (Works 100% even if elements load later)
+   ---------------------------------------- */
+document.addEventListener("click", (e) => {
+  const popup = document.getElementById("announcementPopup");
+  if (!popup) return;
+
+  // CLOSE WHEN CLICKING THE "X"
+  if (e.target.classList.contains("close-btn")) {
+    popup.classList.remove("show");
+    return setTimeout(() => popup.style.display = "none", 300);
+  }
+
+  // CLOSE WHEN CLICKING OUTSIDE THE BOX
+  if (e.target === popup) {
+    popup.classList.remove("show");
+    return setTimeout(() => popup.style.display = "none", 300);
+  }
 });
+
+// Auto-run
+document.addEventListener("DOMContentLoaded", initAnnouncementPopup);
