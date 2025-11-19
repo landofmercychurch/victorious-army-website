@@ -1293,7 +1293,7 @@ footer {
   overflow: hidden;
   border-radius: 1rem;
   background: linear-gradient(135deg, #111, #222);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .memorial-story-img {
@@ -1303,17 +1303,18 @@ footer {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transform: scale(1) translate(0, 0);
+  transform: scale(1) translate(0,0);
   transition: transform 12s ease-in-out, opacity 1.5s ease-in-out;
 }
 
+/* Overlay with title, date, description */
 .memorial-story-info {
   position: absolute;
   bottom: 1.5rem;
   left: 1.5rem;
   right: 1.5rem;
   color: #fff;
-  background: rgba(0, 0, 0, 0.35); /* less blocking */
+  background: rgba(0,0,0,0.35); /* less blocking */
   padding: 1rem 1.5rem;
   border-radius: 1rem;
   backdrop-filter: blur(6px);
@@ -1327,14 +1328,20 @@ footer {
 
 .memorial-story-info h4 {
   margin: 0 0 0.3rem;
-  font-size: 1.6rem;
+  font-size: 1.4rem; /* smaller to fit */
   font-weight: 700;
 }
 
 .memorial-story-info p {
-  margin: 0;
-  font-size: 1rem;
+  margin: 0.2rem 0;
+  font-size: 0.95rem;
   opacity: 0.9;
+}
+
+.memorial-story-info .memorial-date {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-bottom: 0.3rem;
 }
 
 /* Fade-up animation */
@@ -1344,12 +1351,12 @@ footer {
 }
 
 /* =========================================================
-   🕊️ 2. OLDER MEMORIALS GRID (Landscape Cards)
+   🕊️ 2. OLDER MEMORIALS GRID (Cards)
 ========================================================= */
 .older-memorials {
   margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 
@@ -1373,7 +1380,7 @@ footer {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
-  height: 220px;
+  height: auto; /* auto height for description */
 }
 
 .memorial-card:hover {
@@ -1381,54 +1388,49 @@ footer {
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-.memorial-card img {
+.memorial-card-img {
   width: 100%;
-  height: 60%;
+  height: 180px;
   object-fit: cover;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
   transition: transform 0.8s ease;
 }
 
-.memorial-card:hover img {
+.memorial-card:hover .memorial-card-img {
   transform: scale(1.05);
 }
 
+/* Card text info */
 .memorial-info {
-  padding: 0.6rem 1rem 0.8rem;
-  text-align: center;
+  padding: 0.6rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   color: #111;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .memorial-info h4 {
-  margin: 0.1rem 0;
+  margin: 0.2rem 0;
   font-size: 1.1rem;
   font-weight: 600;
-  overflow-wrap: break-word;
-  word-break: break-word;
 }
 
-.memorial-info p,
-.memorial-date {
-  font-size: 0.85rem;
-  color: #555;
+.memorial-info .memorial-date {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.4rem;
+}
+
+.memorial-info p {
+  font-size: 0.9rem;
+  color: #333;
   margin: 0;
   overflow-wrap: break-word;
   word-break: break-word;
-}
-
-/* Truncate really long titles/descriptions in cards */
-.memorial-card .memorial-info h4,
-.memorial-card .memorial-info p {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  max-height: 3.6em; /* limit description height */
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* =========================================================
@@ -1471,9 +1473,16 @@ footer {
   margin-bottom: 0.3rem;
 }
 
+.memorial-preview .memorial-date {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
 .memorial-preview p {
   font-size: 1rem;
   opacity: 0.85;
+  word-wrap: break-word;
 }
 
 /* Close button */
@@ -1528,10 +1537,11 @@ footer {
     right: 1rem;
     font-size: 0.9rem;
   }
-  .memorial-card { height: 180px; }
+  .memorial-card-img { height: 140px; }
+  .memorial-info h4 { font-size: 1rem; }
+  .memorial-info p { font-size: 0.85rem; max-height: 2.5em; }
   .memorial-preview { max-width: 95%; max-height: 80vh; padding: 0.5rem; }
 }
-
 
 
 
