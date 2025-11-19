@@ -2103,7 +2103,7 @@ ckground: #005bcc; }
   float: right;
   font-size: 28px;
   cursor: pointer;
-  color: white;
+  color: red;
   opacity: 0.85;
   transition: opacity 0.2s;
 }
