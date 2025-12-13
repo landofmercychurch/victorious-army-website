@@ -179,14 +179,7 @@
     overflow-y: auto;
 }
 
-/* Show overlay when not hidden */
-.search-overlay:not([hidden]) {
-    display: flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Hide overlay when hidden attribute is present */
+/* Fix: Properly handle hidden attribute */
 .search-overlay[hidden] {
     display: none !important;
     opacity: 0 !important;
@@ -194,11 +187,12 @@
     pointer-events: none !important;
 }
 
-/* Active state for JavaScript control */
-.search-overlay.active {
-    opacity: 1;
-    visibility: visible;
-    display: flex;
+/* Fix: Properly show when not hidden */
+.search-overlay:not([hidden]) {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
 }
 
 .search-container {
@@ -211,6 +205,7 @@
     transform: translateY(-30px);
     transition: transform var(--transition-normal);
     margin: var(--space-xl);
+    position: relative;
 }
 
 .search-overlay:not([hidden]) .search-container {
@@ -224,6 +219,19 @@
 .search-input-wrapper {
     position: relative;
     margin-bottom: var(--space-lg);
+}
+
+/* Add search icon to input */
+.search-input-wrapper::before {
+    content: "🔍";
+    position: absolute;
+    left: var(--space-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .search-input {
@@ -358,21 +366,36 @@ body.search-overlay-open {
     transform: rotate(90deg);
 }
 
+/* Make overlay background clickable */
+.search-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .search-overlay {
         padding-top: 15vh;
         padding-left: var(--space-md);
         padding-right: var(--space-md);
+        align-items: flex-start;
     }
     
     .search-container {
         padding: var(--space-xl);
-        margin: var(--space-md);
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
     }
     
     .search-input {
-        padding: var(--space-md) var(--space-lg) var(--space-md) 2.5rem;
+        padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
         font-size: 1rem;
     }
 }
@@ -386,24 +409,22 @@ body.search-overlay-open {
     
     .search-container {
         padding: var(--space-lg);
-        width: 95%;
     }
     
     .search-input {
-        padding: var(--space-md) var(--space-lg) var(--space-md) 2.5rem;
+        padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
     }
     
     .search-actions {
         right: var(--space-xs);
         gap: 0;
     }
+    
+    .search-input-wrapper::before {
+        left: var(--space-md);
+        font-size: 0.875rem;
+    }
 }
-
-
-
-
-
-
 
 /* Hero Section */
 .hero-section {
@@ -759,7 +780,8 @@ body.search-overlay-open {
     color: white;
 }
 
-.badge {
+/* FIX: Changed from duplicate .badge to .badge:not(.featured) */
+.badge:not(.featured) {
     background: var(--gray-100);
     color: var(--gray-700);
 }
@@ -1748,10 +1770,6 @@ body.search-overlay-open {
     }
 }
 
-
-
-
-
 /* Enhanced Utility Classes for Search Overlay */
 [hidden] {
     display: none !important;
@@ -1804,7 +1822,3 @@ body.search-overlay-open {
 .search-overlay:not([hidden]) .search-container {
     animation: slideIn 0.4s ease 0.1s forwards;
 }
-
-
-
-
