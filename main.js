@@ -4,16 +4,14 @@ import { initSermons } from "./sermons.js";
 import { initPicturePosts } from "./picturePosts.js";
 import { initEvents } from "./events.js";
 import { initDailyVerse } from "./dailyVerse.js";
-import { initEbooks } from "./ebooks.js";
 
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  initAnnouncementPopup();
-});
-
+import EbooksLibrary from "./src/ebooks-library.js"; 
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // 1. Initialize the popup
+  initAnnouncementPopup();
+
+  // 2. Initialize all other components
   const memorialsContainer = document.getElementById("memorialsContainer");
   if (memorialsContainer) await initMemorials(memorialsContainer);
 
@@ -22,10 +20,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const sermonId = params.get("sermon");
 
-    // Load sermons
     await initSermons(sermonsContainer);
 
-    // Wait a tiny bit to ensure cards exist in the DOM
     setTimeout(() => {
       if (sermonId) {
         const targetCard = sermonsContainer.querySelector(`.sermon-card[data-id="${sermonId}"]`);
@@ -35,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (video) video.play().catch(() => {});
         }
       }
-    }, 100); // 100ms delay usually suffices
+    }, 100);
   }
 
   const picturePostsContainer = document.getElementById("picturePostsContainer");
@@ -48,5 +44,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (dailyVerseContainer) await initDailyVerse(dailyVerseContainer);
 
   const ebooksContainer = document.getElementById("ebooksContainer");
-  if (ebooksContainer) await initEbooks(ebooksContainer);
+  if (ebooksContainer) {
+    // 1. Create an instance of the library
+    window.ebookLibrary = new EbooksLibrary();
+    // 2. Initialize it with the container
+    await window.ebookLibrary.init(ebooksContainer);
+  }
 });
