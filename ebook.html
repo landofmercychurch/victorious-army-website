@@ -1,53 +1,101 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" itemscope itemtype="https://schema.org/WebPage">
 <head>
+    <!-- ============ META TAGS ============ -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
     
-    <!-- Primary Meta Tags -->
-    <title>Christian Ebook Library | Free Spiritual Resources & PDF Downloads</title>
-    <meta name="description" content="Browse our collection of 100+ free Christian ebooks. Download PDF books on prayer, theology, Bible study, spiritual growth, and Christian living.">
-    <meta name="keywords" content="Christian ebooks, free Christian books, PDF downloads, spiritual growth, Bible study, prayer books, theology">
+    <!-- ============ CORE SEO META TAGS ============ -->
+    <title>Free Christian Ebooks Library | Download 100+ PDF Books for Prayer, Bible Study & Spiritual Growth</title>
+    <meta name="description" content="Download free Christian ebooks for spiritual growth. Get 100+ PDF books on prayer, Bible study, theology, Christian living & spiritual resources. Perfect for individual or group study.">
+    
+    <!-- SEO Keywords (used sparingly but effectively) -->
+    <meta name="keywords" content="Christian ebooks, free Christian books, PDF downloads, spiritual growth, Bible study, prayer books, theology, Christian living, faith resources, church books">
+    <meta name="subject" content="Christian Ebooks and Spiritual Resources">
+    <meta name="topic" content="Christian Literature">
+    
+    <!-- Author and Copyright -->
     <meta name="author" content="Your Church Name">
+    <meta name="copyright" content="Copyright © 2024 Your Church Name. All rights reserved.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     
-    <!-- Open Graph / Facebook -->
+    <!-- ============ OPEN GRAPH / SOCIAL MEDIA ============ -->
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Church Books Ebook Library">
+    <meta property="og:locale" content="en_US">
     <meta property="og:url" content="https://yourchurch.com/ebooks">
-    <meta property="og:title" content="Christian Ebook Library | Free Spiritual Resources">
-    <meta property="og:description" content="Download free Christian ebooks on prayer, theology, Bible study and spiritual growth. 100+ PDF books available.">
+    <meta property="og:title" content="Free Christian Ebooks Library | Download Spiritual Growth Resources">
+    <meta property="og:description" content="Browse 100+ free Christian ebooks for prayer, Bible study, theology & spiritual growth. Download PDF books instantly.">
     <meta property="og:image" content="https://yourchurch.com/images/ebooks-library-og.jpg">
+    <meta property="og:image:secure_url" content="https://yourchurch.com/images/ebooks-library-og.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Christian Ebook Library - Free Spiritual Resources">
+    <meta property="og:image:type" content="image/jpeg">
     
-    <!-- Twitter -->
+    <!-- ============ TWITTER CARDS ============ -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YourChurch">
+    <meta name="twitter:creator" content="@YourChurch">
     <meta name="twitter:url" content="https://yourchurch.com/ebooks">
-    <meta name="twitter:title" content="Christian Ebook Library | Free Spiritual Resources">
-    <meta name="twitter:description" content="Download free Christian ebooks on prayer, theology, Bible study and spiritual growth. 100+ PDF books available.">
-    <meta name="twitter:image" content="https://yourchurch.com/images/ebooks-library-og.jpg">
+    <meta name="twitter:title" content="Free Christian Ebooks Library | Spiritual Growth Resources">
+    <meta name="twitter:description" content="Download 100+ free Christian ebooks for prayer, Bible study & spiritual growth. Get PDF books instantly.">
+    <meta name="twitter:image" content="https://yourchurch.com/images/ebooks-library-twitter.jpg">
+    <meta name="twitter:image:alt" content="Christian Ebook Library">
     
-    <!-- Canonical URL -->
+    <!-- ============ PWA / MOBILE ============ -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Church Books">
+    <meta name="application-name" content="Church Books">
+    <meta name="theme-color" content="#007AFF">
+    <meta name="msapplication-TileColor" content="#007AFF">
+    <meta name="msapplication-TileImage" content="/images/mstile-144x144.png">
+    
+    <!-- ============ CANONICAL & ALTERNATE URLs ============ -->
     <link rel="canonical" href="https://yourchurch.com/ebooks">
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://yourchurch.com/ebooks">
+    <link rel="alternate" media="only screen and (min-width: 641px)" href="https://yourchurch.com/ebooks">
     
-  <!-- Preload Critical Resources -->
-<link rel="preload" href="/styles/ebooks.css" as="style">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap" crossorigin>
-
-<!-- Fonts with better loading strategy -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
-
-<!-- Fallback for browsers without JavaScript -->
-<noscript>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap">
-</noscript>
-
+    <!-- ============ PRELOAD CRITICAL RESOURCES ============ -->
+    <link rel="preload" href="/styles/ebooks.css" as="style">
+    <link rel="preload" href="/src/js/ebooks-library.js" as="script">
+    <link rel="preload" href="/api/ebooks" as="fetch" crossorigin="anonymous">
     
-    <!-- Manifest -->
-    <link rel="manifest" href="/site.webmanifest">
+    <!-- ============ DNS-PREFETCH & PRE-CONNECT ============ -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://yourchurch.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://yourchurch.com">
     
-    <!-- Critical CSS (Above the fold) -->
+    <!-- ============ FONT LOADING ============ -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    
+    <!-- Fallback for browsers without JavaScript -->
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap">
+    </noscript>
+    
+    <!-- ============ PWA MANIFEST ============ -->
+    <link rel="manifest" href="/site.webmanifest" crossorigin="use-credentials">
+    
+    <!-- ============ FAVICONS & APP ICONS ============ -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#007AFF">
+    
+    <!-- ============ CRITICAL CSS (Above the fold) ============ -->
     <style>
+        /* ============ CSS VARIABLES ============ */
         :root {
             /* Apple-inspired Color Palette */
             --gray-50: #f5f5f7;
@@ -61,6 +109,8 @@
             --gray-800: #3a3a3c;
             --gray-900: #1d1d1f;
             
+            --blue-50: #f0f7ff;
+            --blue-100: #e1effe;
             --blue-500: #007AFF;
             --blue-600: #0056CC;
             --blue-700: #0044A3;
@@ -73,6 +123,7 @@
             /* Gradients */
             --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-blue: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+            --gradient-spiritual: linear-gradient(135deg, #4A90E2 0%, #9013FE 100%);
             
             /* Typography */
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -93,20 +144,27 @@
             --radius-lg: 12px;
             --radius-xl: 16px;
             --radius-2xl: 24px;
+            --radius-full: 9999px;
             
             /* Shadows */
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             
             /* Transitions */
-            --transition-fast: 150ms ease;
-            --transition-normal: 250ms ease;
-            --transition-slow: 350ms ease;
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Layout */
+            --container-padding: clamp(1rem, 5vw, 2rem);
+            --container-max-width: 1440px;
+            --header-height: 64px;
         }
         
-        /* Reset and Base Styles */
+        /* ============ CRITICAL RESET & BASE STYLES ============ */
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
@@ -118,18 +176,42 @@
             -webkit-text-size-adjust: 100%;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
         
         body {
             font-family: var(--font-sans);
             font-size: 16px;
-            line-height: 1.5;
+            line-height: 1.6;
             color: var(--gray-900);
             background-color: var(--gray-50);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        /* Accessibility */
+        /* ============ CRITICAL LOADING STATES ============ */
+        .js-loading * {
+            transition: none !important;
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--gray-100) 0%,
+                var(--gray-200) 50%,
+                var(--gray-100) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-md);
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* ============ CRITICAL ACCESSIBILITY ============ */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -142,7 +224,6 @@
             border: 0;
         }
         
-        /* Skip to main content */
         .skip-link {
             position: absolute;
             top: -40px;
@@ -151,7 +232,8 @@
             color: white;
             padding: var(--space-sm) var(--space-md);
             text-decoration: none;
-            z-index: 1001;
+            z-index: 9999;
+            border-radius: var(--radius-md);
             transition: top var(--transition-normal);
         }
         
@@ -159,131 +241,288 @@
             top: 0;
         }
         
-        /* Loading State */
-        .loading-skeleton {
-            background: linear-gradient(90deg, 
-                var(--gray-100) 25%, 
-                var(--gray-200) 50%, 
-                var(--gray-100) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        /* Focus Styles */
+        /* ============ CRITICAL FOCUS STYLES ============ */
         :focus-visible {
             outline: 2px solid var(--blue-500);
             outline-offset: 2px;
+            border-radius: var(--radius-sm);
         }
         
-        /* Print Styles */
+        /* ============ CRITICAL PRINT STYLES ============ */
         @media print {
             .no-print {
                 display: none !important;
             }
+            
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt !important;
+                line-height: 1.4 !important;
+            }
+            
+            a {
+                color: black !important;
+                text-decoration: underline !important;
+            }
+            
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
+        
+        /* ============ CRITICAL PERFORMANCE ============ */
+        img, video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* ============ CRITICAL LAYOUT UTILITIES ============ */
+        .container {
+            width: 100%;
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+        
+        /* ============ CRITICAL HERO STYLES ============ */
+        .hero-section {
+            background: var(--gradient-spiritual);
+            color: white;
+            padding: var(--space-3xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" opacity="0.1"><path d="M0,50 Q250,0 500,50 T1000,50 V100 H0 Z" fill="white"/></svg>') bottom center no-repeat;
+            background-size: cover;
+        }
+        
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            opacity: 0.95;
+            max-width: 600px;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        /* ============ CRITICAL NAVIGATION ============ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height);
+        }
+        
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .logo-highlight {
+            color: var(--blue-500);
+        }
+        
+        /* ============ CRITICAL BUTTON STYLES ============ */
+        .subscribe-btn {
+            background: white;
+            color: var(--blue-500);
+            border: none;
+            padding: var(--space-sm) var(--space-xl);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            white-space: nowrap;
+        }
+        
+        .subscribe-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* ============ CRITICAL RESPONSIVE UTILITIES ============ */
+        @media (max-width: 768px) {
+            .mobile-hidden {
+                display: none !important;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .desktop-hidden {
+                display: none !important;
+            }
+        }
+        
+        /* ============ CRITICAL LAZY LOADING ============ */
+        .lazy {
+            opacity: 0;
+            transition: opacity var(--transition-slow);
+        }
+        
+        .lazy.loaded {
+            opacity: 1;
+        }
+        
+        /* ============ CRITICAL WEB VITALS OPTIMIZATION ============ */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: var(--space-md);
+        }
+        
+        p {
+            margin-bottom: var(--space-md);
+        }
+        
+        /* ============ CRITICAL FONT DISPLAY ============ */
+        @font-face {
+            font-family: 'Inter Fallback';
+            src: local('Arial');
+            ascent-override: 90%;
+            descent-override: 22%;
+            line-gap-override: 0%;
+            size-adjust: 107%;
+        }
+        
+        /* ============ CRITICAL CLS PREVENTION ============ */
+        .aspect-ratio {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+        }
+        
+        .aspect-ratio > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
     
-    <!-- Deferred CSS -->
-   <link rel="stylesheet" href="styles/ebooks.css">
-    <noscript><link rel="stylesheet" href="/styles/ebooks.css"></noscript>
+    <!-- ============ DEFERRED CSS ============ -->
+    <link rel="stylesheet" href="/styles/ebooks.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="/styles/ebooks.css">
+    </noscript>
 </head>
-<body>
-    <!-- Skip to Main Content -->
+<body class="js-loading" itemscope itemtype="https://schema.org/WebPage">
+    <!-- ============ SKIP NAVIGATION ============ -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <!-- Navigation -->
-    <header class="site-header">
-        <nav class="main-nav" aria-label="Main Navigation">
-            <div class="nav-container">
-                <!-- Logo -->
-                <a href="/" class="nav-logo" aria-label="Go to homepage">
-                    <span class="logo-text">Church</span>
-                    <span class="logo-highlight">Books</span>
-                </a>
-                
-                <!-- Desktop Navigation -->
-                <div class="nav-menu">
-                    <ul class="nav-list">
-                        <li><a href="/" class="nav-link">Home</a></li>
-                        <li><a href="/ebooks" class="nav-link active" aria-current="page">Ebooks</a></li>
-                        <li><a href="/series" class="nav-link">Series</a></li>
-                        <li><a href="/authors" class="nav-link">Authors</a></li>
-                        <li><a href="/categories" class="nav-link">Categories</a></li>
-                        <li><a href="/about" class="nav-link">About</a></li>
-                    </ul>
+    <!-- ============ HEADER & NAVIGATION ============ -->
+    <header class="site-header" role="banner" itemscope itemtype="https://schema.org/WPHeader">
+        <div class="container">
+            <nav class="main-nav" aria-label="Main Navigation" itemscope itemtype="https://schema.org/SiteNavigationElement">
+                <div class="nav-container">
+                    <!-- Logo -->
+                    <a href="/" class="nav-logo" aria-label="Go to homepage" itemprop="url">
+                        <span class="logo-text" itemprop="name">Church</span>
+                        <span class="logo-highlight">Books</span>
+                    </a>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="nav-menu desktop-hidden" role="navigation" aria-label="Primary">
+                        <ul class="nav-list" role="list">
+                            <li role="listitem" itemprop="name"><a href="/" class="nav-link" itemprop="url">Home</a></li>
+                            <li role="listitem" itemprop="name"><a href="/ebooks" class="nav-link active" aria-current="page" itemprop="url">Ebooks</a></li>
+                            <li role="listitem" itemprop="name"><a href="/series" class="nav-link" itemprop="url">Series</a></li>
+                            <li role="listitem" itemprop="name"><a href="/authors" class="nav-link" itemprop="url">Authors</a></li>
+                            <li role="listitem" itemprop="name"><a href="/categories" class="nav-link" itemprop="url">Categories</a></li>
+                            <li role="listitem" itemprop="name"><a href="/about" class="nav-link" itemprop="url">About</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Navigation Actions -->
+                    <div class="nav-actions">
+                        <button class="nav-search-btn" aria-label="Search ebooks" aria-expanded="false" data-search-trigger>
+                            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="nav-menu-btn mobile-hidden" aria-label="Open menu" aria-expanded="false" data-menu-trigger>
+                            <span class="menu-icon" aria-hidden="true">☰</span>
+                        </button>
+                    </div>
                 </div>
-                
-                <!-- Navigation Actions -->
-                <div class="nav-actions">
-                    <button class="nav-search-btn" aria-label="Open search" aria-expanded="false">
-                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            </nav>
+        </div>
+    </header>
+
+    <!-- ============ SEARCH OVERLAY ============ -->
+    <div class="search-overlay" hidden data-search-overlay role="search" aria-label="Search ebooks">
+        <div class="container">
+            <form role="search" class="search-form" data-search-form>
+                <div class="search-input-wrapper">
+                    <input type="search" 
+                           id="global-search" 
+                           name="q"
+                           placeholder="Search ebooks, authors, or topics..."
+                           aria-label="Search ebooks"
+                           class="search-input"
+                           autocomplete="off"
+                           data-search-input>
+                    <button type="submit" class="search-submit-btn" aria-label="Search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                             <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
                                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
-                    <button class="nav-menu-btn" aria-label="Open menu" aria-expanded="false">
-                        <span class="menu-icon" aria-hidden="true">☰</span>
+                    <button type="button" class="search-close-btn" aria-label="Close search" data-search-close>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </button>
                 </div>
-                
-                <!-- Mobile Navigation (Hidden by default) -->
-                <div class="mobile-nav" hidden>
-                    <ul class="mobile-nav-list">
-                        <li><a href="/" class="mobile-nav-link">Home</a></li>
-                        <li><a href="/ebooks" class="mobile-nav-link active" aria-current="page">Ebooks</a></li>
-                        <li><a href="/series" class="mobile-nav-link">Series</a></li>
-                        <li><a href="/authors" class="mobile-nav-link">Authors</a></li>
-                        <li><a href="/categories" class="mobile-nav-link">Categories</a></li>
-                        <li><a href="/about" class="mobile-nav-link">About</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Search Overlay -->
-    <div class="search-overlay" hidden>
-        <div class="search-container">
-            <form role="search" aria-label="Search ebooks" class="search-form">
-                <input type="search" 
-                       id="global-search" 
-                       name="q"
-                       placeholder="Search ebooks, authors, or topics..."
-                       aria-label="Search input"
-                       class="search-input">
-                <button type="submit" class="search-submit-btn" aria-label="Submit search">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
-                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-                <button type="button" class="search-close-btn" aria-label="Close search">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
             </form>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main id="main-content" class="main-content">
-        <!-- Hero Section -->
-        <section class="hero-section" aria-labelledby="hero-title">
-            <div class="hero-container">
+    <!-- ============ MAIN CONTENT ============ -->
+    <main id="main-content" class="main-content" role="main" itemprop="mainContentOfPage">
+        <!-- ============ HERO SECTION ============ -->
+        <section class="hero-section" aria-labelledby="hero-title" itemscope itemtype="https://schema.org/WPHeader">
+            <div class="container">
                 <div class="hero-content">
-                    <h1 id="hero-title" class="hero-title">Christian Ebook Library</h1>
-                    <p class="hero-subtitle">Discover timeless spiritual wisdom. Download free ebooks to deepen your faith journey.</p>
+                    <h1 id="hero-title" class="hero-title" itemprop="headline">Free Christian Ebooks Library</h1>
+                    <p class="hero-subtitle" itemprop="description">Discover timeless spiritual wisdom. Download free ebooks to deepen your faith journey.</p>
                     
                     <!-- Lead Capture -->
-                    <div class="lead-capture">
-                        <p class="lead-text">Get weekly ebook recommendations delivered to your inbox</p>
-                        <form id="hero-newsletter" class="newsletter-form" aria-label="Newsletter signup">
+                    <div class="lead-capture" itemscope itemtype="https://schema.org/SubscribeAction">
+                        <p class="lead-text" itemprop="description">Get weekly ebook recommendations delivered to your inbox</p>
+                        <form id="hero-newsletter" class="newsletter-form" aria-label="Newsletter signup" data-newsletter-form>
                             <div class="form-group">
                                 <label for="hero-email" class="sr-only">Email address</label>
                                 <input type="email" 
@@ -292,14 +531,16 @@
                                        placeholder="Your email address" 
                                        required
                                        aria-required="true"
-                                       class="email-input">
-                                <button type="submit" class="subscribe-btn" aria-label="Subscribe to newsletter">
+                                       class="email-input"
+                                       autocomplete="email"
+                                       itemprop="object">
+                                <button type="submit" class="subscribe-btn" aria-label="Subscribe to newsletter" itemprop="agent">
                                     Subscribe
                                 </button>
                             </div>
                             <p class="form-note">No spam. Unsubscribe anytime.</p>
                             <p class="form-disclaimer">
-                                By subscribing, you agree to our <a href="/privacy">Privacy Policy</a> and consent to receive emails.
+                                By subscribing, you agree to our <a href="/privacy" itemprop="url">Privacy Policy</a> and consent to receive emails.
                             </p>
                         </form>
                     </div>
@@ -307,121 +548,120 @@
             </div>
         </section>
 
-        <!-- Stats Section -->
-        <section class="stats-section" aria-label="Library Statistics">
-            <div class="stats-container">
-                <div class="stats-grid">
-                    <div class="stat-card" role="region" aria-label="Total ebooks">
-                        <span class="stat-number" id="total-ebooks">0</span>
-                        <span class="stat-label">Free Ebooks</span>
+        <!-- ============ STATS SECTION ============ -->
+        <section class="stats-section" aria-label="Library Statistics" itemscope itemtype="https://schema.org/ItemList">
+            <div class="container">
+                <div class="stats-grid" role="list">
+                    <div class="stat-card" role="listitem" aria-label="Total ebooks" itemprop="itemListElement">
+                        <span class="stat-number" id="total-ebooks" itemprop="additionalProperty">0</span>
+                        <span class="stat-label" itemprop="name">Free Ebooks</span>
                     </div>
-                    <div class="stat-card" role="region" aria-label="Total authors">
-                        <span class="stat-number" id="total-authors">0</span>
-                        <span class="stat-label">Authors</span>
+                    <div class="stat-card" role="listitem" aria-label="Total authors" itemprop="itemListElement">
+                        <span class="stat-number" id="total-authors" itemprop="additionalProperty">0</span>
+                        <span class="stat-label" itemprop="name">Authors</span>
                     </div>
-                    <div class="stat-card" role="region" aria-label="Total downloads">
-                        <span class="stat-number" id="total-downloads">0</span>
-                        <span class="stat-label">Downloads</span>
+                    <div class="stat-card" role="listitem" aria-label="Total downloads" itemprop="itemListElement">
+                        <span class="stat-number" id="total-downloads" itemprop="additionalProperty">0</span>
+                        <span class="stat-label" itemprop="name">Downloads</span>
                     </div>
-                    <div class="stat-card" role="region" aria-label="Book series">
-                        <span class="stat-number" id="total-series">0</span>
-                        <span class="stat-label">Book Series</span>
+                    <div class="stat-card" role="listitem" aria-label="Book series" itemprop="itemListElement">
+                        <span class="stat-number" id="total-series" itemprop="additionalProperty">0</span>
+                        <span class="stat-label" itemprop="name">Book Series</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Controls Section -->
+        <!-- ============ CONTROLS SECTION ============ -->
         <section class="controls-section" aria-label="Search and Filter Controls">
-            <div class="controls-container">
-                <!-- Search -->
-                <div class="search-control">
-                    <label for="ebook-search" class="search-label sr-only">Search ebooks</label>
-                    <div class="search-wrapper">
-                        <input type="search"
-                               id="ebook-search"
-                               name="search"
-                               placeholder="Search ebooks, authors, or topics..."
-                               aria-label="Search ebooks"
-                               class="search-field">
-                        <button type="button" class="search-clear-btn" aria-label="Clear search" hidden>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="search-action-btn" aria-label="Search">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Filters -->
-                <div class="filters-control">
-                    <div class="filter-group">
-                        <label for="category-filter" class="filter-label">Category</label>
-                        <select id="category-filter" class="filter-select" aria-label="Filter by category">
-                            <option value="">All Categories</option>
-                            <!-- Populated by JavaScript -->
-                        </select>
+            <div class="container">
+                <div class="controls-container">
+                    <!-- Search -->
+                    <div class="search-control">
+                        <label for="ebook-search" class="search-label sr-only">Search ebooks</label>
+                        <div class="search-wrapper">
+                            <input type="search"
+                                   id="ebook-search"
+                                   name="search"
+                                   placeholder="Search ebooks, authors, or topics..."
+                                   aria-label="Search ebooks"
+                                   class="search-field"
+                                   data-ebook-search>
+                            <button type="button" class="search-clear-btn" aria-label="Clear search" hidden data-search-clear>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="search-action-btn" aria-label="Search" data-search-action>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
+                                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     
-                    <div class="filter-group">
-                        <label for="series-filter" class="filter-label">Series</label>
-                        <select id="series-filter" class="filter-select" aria-label="Filter by series">
-                            <option value="">All Series</option>
-                            <!-- Populated by JavaScript -->
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="author-filter" class="filter-label">Author</label>
-                        <select id="author-filter" class="filter-select" aria-label="Filter by author">
-                            <option value="">All Authors</option>
-                            <!-- Populated by JavaScript -->
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="sort-filter" class="filter-label">Sort by</label>
-                        <select id="sort-filter" class="filter-select" aria-label="Sort ebooks">
-                            <option value="newest">Newest First</option>
-                            <option value="popular">Most Popular</option>
-                            <option value="title">Title A-Z</option>
-                            <option value="author">Author A-Z</option>
-                        </select>
+                    <!-- Filters -->
+                    <div class="filters-control">
+                        <div class="filter-group">
+                            <label for="category-filter" class="filter-label">Category</label>
+                            <select id="category-filter" class="filter-select" aria-label="Filter by category" data-category-filter>
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="series-filter" class="filter-label">Series</label>
+                            <select id="series-filter" class="filter-select" aria-label="Filter by series" data-series-filter>
+                                <option value="">All Series</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="author-filter" class="filter-label">Author</label>
+                            <select id="author-filter" class="filter-select" aria-label="Filter by author" data-author-filter>
+                                <option value="">All Authors</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sort-filter" class="filter-label">Sort by</label>
+                            <select id="sort-filter" class="filter-select" aria-label="Sort ebooks" data-sort-filter>
+                                <option value="newest">Newest First</option>
+                                <option value="popular">Most Popular</option>
+                                <option value="title">Title A-Z</option>
+                                <option value="author">Author A-Z</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Featured Ebooks -->
-        <section class="featured-section" aria-labelledby="featured-title">
-            <div class="section-container">
+        <!-- ============ FEATURED EBOOKS ============ -->
+        <section class="featured-section" aria-labelledby="featured-title" itemscope itemtype="https://schema.org/ItemList">
+            <div class="container">
                 <header class="section-header">
-                    <h2 id="featured-title" class="section-title">Featured Ebooks</h2>
-                    <p class="section-subtitle">Handpicked selections for spiritual growth</p>
+                    <h2 id="featured-title" class="section-title" itemprop="name">Featured Ebooks</h2>
+                    <p class="section-subtitle" itemprop="description">Handpicked selections for spiritual growth</p>
                 </header>
-                <div class="featured-grid" id="featured-ebooks" role="list" aria-label="Featured ebooks list">
-                    <!-- Content loaded by JavaScript -->
+                <div class="featured-grid" id="featured-ebooks" role="list" aria-label="Featured ebooks list" itemprop="itemListElement">
+                    <!-- Loading skeletons -->
                     <div class="skeleton-card" aria-hidden="true">
                         <div class="skeleton-cover loading-skeleton"></div>
                         <div class="skeleton-text loading-skeleton"></div>
                         <div class="skeleton-text short loading-skeleton"></div>
                     </div>
-                    <!-- Repeat skeleton cards for loading state -->
                 </div>
             </div>
         </section>
 
-        <!-- Categories Section -->
-        <section class="categories-section" aria-labelledby="categories-title">
-            <div class="section-container">
+        <!-- ============ CATEGORIES SECTION ============ -->
+        <section class="categories-section" aria-labelledby="categories-title" itemscope itemtype="https://schema.org/ItemList">
+            <div class="container">
                 <header class="section-header">
-                    <h2 id="categories-title" class="section-title">Browse by Category</h2>
-                    <p class="section-subtitle">Explore ebooks by topic</p>
+                    <h2 id="categories-title" class="section-title" itemprop="name">Browse by Category</h2>
+                    <p class="section-subtitle" itemprop="description">Explore ebooks by topic</p>
                 </header>
                 <div class="categories-grid" id="categories-grid" role="list" aria-label="Categories list">
                     <!-- Content loaded by JavaScript -->
@@ -429,20 +669,20 @@
             </div>
         </section>
 
-        <!-- All Ebooks Section -->
-        <section class="all-ebooks-section" aria-labelledby="all-ebooks-title">
-            <div class="section-container">
+        <!-- ============ ALL EBOOKS SECTION ============ -->
+        <section class="all-ebooks-section" aria-labelledby="all-ebooks-title" itemscope itemtype="https://schema.org/CollectionPage">
+            <div class="container">
                 <header class="section-header">
                     <div class="header-content">
-                        <h2 id="all-ebooks-title" class="section-title">All Ebooks</h2>
+                        <h2 id="all-ebooks-title" class="section-title" itemprop="name">All Ebooks</h2>
                         <div class="results-count" aria-live="polite">
                             <span id="ebooks-count">0</span> ebooks found
                         </div>
                     </div>
                     
                     <div class="view-controls" role="radiogroup" aria-label="View mode">
-                        <button class="view-btn active" data-view="grid" aria-checked="true" role="radio">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <button class="view-btn active" data-view="grid" aria-checked="true" role="radio" data-view-toggle>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                 <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
                                 <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
                                 <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
@@ -450,8 +690,8 @@
                             </svg>
                             <span class="sr-only">Grid view</span>
                         </button>
-                        <button class="view-btn" data-view="list" aria-checked="false" role="radio">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <button class="view-btn" data-view="list" aria-checked="false" role="radio" data-view-toggle>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                 <rect x="3" y="4" width="18" height="3" rx="1" stroke="currentColor" stroke-width="2"/>
                                 <rect x="3" y="10" width="18" height="3" rx="1" stroke="currentColor" stroke-width="2"/>
                                 <rect x="3" y="16" width="18" height="3" rx="1" stroke="currentColor" stroke-width="2"/>
@@ -466,7 +706,7 @@
                     <aside class="filters-sidebar" aria-label="Filter options">
                         <div class="sidebar-header">
                             <h3 class="sidebar-title">Filters</h3>
-                            <button class="clear-filters-btn" id="clear-filters">Clear All</button>
+                            <button class="clear-filters-btn" id="clear-filters" data-clear-filters>Clear All</button>
                         </div>
                         
                         <div class="filter-group">
@@ -497,7 +737,9 @@
                              class="ebooks-grid" 
                              data-view="grid" 
                              role="list" 
-                             aria-label="Ebooks list">
+                             aria-label="Ebooks list"
+                             itemscope
+                             itemtype="https://schema.org/ItemList">
                             <!-- Content loaded by JavaScript -->
                         </div>
                         
@@ -506,7 +748,8 @@
                             <button id="load-more-btn" 
                                     class="load-more-btn" 
                                     aria-label="Load more ebooks"
-                                    hidden>
+                                    hidden
+                                    data-load-more>
                                 Load More Ebooks
                                 <span class="remaining-count" aria-hidden="true"></span>
                             </button>
@@ -517,28 +760,28 @@
                         
                         <!-- No Results -->
                         <div id="no-results" class="no-results" hidden>
-                            <svg class="no-results-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <svg class="no-results-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                 <path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             <h3 class="no-results-title">No ebooks found</h3>
                             <p class="no-results-text">Try adjusting your search or filters</p>
-                            <button class="clear-search-btn" id="clear-search-btn">Clear Search & Filters</button>
+                            <button class="clear-search-btn" id="clear-search-btn" data-clear-search>Clear Search & Filters</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Newsletter Section -->
-        <section class="newsletter-section" aria-labelledby="newsletter-title">
-            <div class="section-container">
+        <!-- ============ NEWSLETTER SECTION ============ -->
+        <section class="newsletter-section" aria-labelledby="newsletter-title" itemscope itemtype="https://schema.org/SubscribeAction">
+            <div class="container">
                 <div class="newsletter-card">
                     <div class="newsletter-content">
-                        <h2 id="newsletter-title" class="newsletter-title">Get Free Ebooks Weekly</h2>
-                        <p class="newsletter-text">Join thousands of readers receiving our curated ebook recommendations and spiritual insights.</p>
+                        <h2 id="newsletter-title" class="newsletter-title" itemprop="name">Get Free Ebooks Weekly</h2>
+                        <p class="newsletter-text" itemprop="description">Join thousands of readers receiving our curated ebook recommendations and spiritual insights.</p>
                         
-                        <form id="main-newsletter" class="newsletter-form-lg" aria-label="Main newsletter signup">
+                        <form id="main-newsletter" class="newsletter-form-lg" aria-label="Main newsletter signup" data-newsletter-form>
                             <div class="form-group-lg">
                                 <label for="main-email" class="sr-only">Email address</label>
                                 <input type="email" 
@@ -547,13 +790,15 @@
                                        placeholder="Enter your email address" 
                                        required
                                        aria-required="true"
-                                       class="email-input-lg">
-                                <button type="submit" class="subscribe-btn-lg" aria-label="Subscribe to newsletter">
+                                       class="email-input-lg"
+                                       autocomplete="email"
+                                       itemprop="object">
+                                <button type="submit" class="subscribe-btn-lg" aria-label="Subscribe to newsletter" itemprop="agent">
                                     Subscribe Free
                                 </button>
                             </div>
                             <p class="form-note-lg">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                     <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" 
                                           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -580,53 +825,42 @@
                              alt="" 
                              loading="lazy" 
                              width="400" 
-                             height="300">
+                             height="300"
+                             class="lazy"
+                             data-src="/images/ebook-gift.svg">
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- Breadcrumbs (for book detail pages) -->
-        <nav class="breadcrumbs" aria-label="Breadcrumb" hidden>
-            <ol class="breadcrumb-list">
-                <li class="breadcrumb-item">
-                    <a href="/" class="breadcrumb-link">Home</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="/ebooks" class="breadcrumb-link">Ebooks</a>
-                </li>
-                <!-- Dynamic items will be added -->
-            </ol>
-        </nav>
     </main>
 
-    <!-- Footer -->
-    <footer class="site-footer" role="contentinfo">
-        <div class="footer-container">
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer" role="contentinfo" itemscope itemtype="https://schema.org/WPFooter">
+        <div class="container">
             <div class="footer-content">
                 <!-- Brand -->
-                <div class="footer-brand">
-                    <a href="/" class="footer-logo" aria-label="Go to homepage">
-                        <span class="logo-text">Church</span>
+                <div class="footer-brand" itemscope itemtype="https://schema.org/Organization">
+                    <a href="/" class="footer-logo" aria-label="Go to homepage" itemprop="url">
+                        <span class="logo-text" itemprop="name">Church</span>
                         <span class="logo-highlight">Books</span>
                     </a>
-                    <p class="footer-tagline">Free Christian resources for spiritual growth</p>
+                    <p class="footer-tagline" itemprop="description">Free Christian resources for spiritual growth</p>
                     
                     <div class="social-links">
-                        <a href="https://facebook.com" class="social-link" aria-label="Facebook">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <a href="https://facebook.com/yourchurch" class="social-link" aria-label="Facebook" itemprop="sameAs">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                 <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" 
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
-                        <a href="https://twitter.com" class="social-link" aria-label="Twitter">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <a href="https://twitter.com/yourchurch" class="social-link" aria-label="Twitter" itemprop="sameAs">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                 <path d="M23 3C22.0424 3.67548 20.9821 4.19211 19.86 4.53C19.2577 3.83751 18.4573 3.34669 17.567 3.12393C16.6767 2.90116 15.7395 2.9572 14.8821 3.28445C14.0247 3.61171 13.2884 4.1944 12.773 4.95372C12.2575 5.71303 11.9877 6.61234 12 7.53V8.53C10.2426 8.57557 8.50127 8.18581 6.93101 7.39545C5.36074 6.60508 4.01032 5.43864 3 4C3 4 -1 13 8 17C5.94053 18.398 3.48716 19.0989 1 19C10 24 21 19 21 7.5C20.9991 7.22145 20.9723 6.94359 20.92 6.67C21.9406 5.66349 22.6608 4.39271 23 3Z" 
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
-                        <a href="https://instagram.com" class="social-link" aria-label="Instagram">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <a href="https://instagram.com/yourchurch" class="social-link" aria-label="Instagram" itemprop="sameAs">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
                                 <path d="M16 11.37C16.1234 12.2022 15.9813 13.0522 15.5938 13.799C15.2063 14.5458 14.5931 15.1514 13.8416 15.5297C13.0901 15.9079 12.2384 16.0396 11.4078 15.9059C10.5771 15.7723 9.80976 15.3801 9.21484 14.7852C8.61991 14.1902 8.22773 13.4229 8.09406 12.5922C7.9604 11.7615 8.09206 10.9099 8.47032 10.1584C8.84858 9.40685 9.45418 8.79374 10.201 8.40624C10.9478 8.01874 11.7978 7.87658 12.63 8C13.4789 8.12588 14.2648 8.52146 14.8717 9.1283C15.4785 9.73515 15.8741 10.5211 16 11.37Z" 
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -639,34 +873,34 @@
                 <div class="footer-links-grid">
                     <div class="footer-column">
                         <h3 class="footer-column-title">Library</h3>
-                        <ul class="footer-list">
-                            <li><a href="/ebooks/new" class="footer-link">New Releases</a></li>
-                            <li><a href="/ebooks/popular" class="footer-link">Most Popular</a></li>
-                            <li><a href="/ebooks/series" class="footer-link">Book Series</a></li>
-                            <li><a href="/ebooks/authors" class="footer-link">All Authors</a></li>
-                            <li><a href="/ebooks/categories" class="footer-link">Categories</a></li>
+                        <ul class="footer-list" role="list">
+                            <li role="listitem"><a href="/ebooks/new" class="footer-link">New Releases</a></li>
+                            <li role="listitem"><a href="/ebooks/popular" class="footer-link">Most Popular</a></li>
+                            <li role="listitem"><a href="/ebooks/series" class="footer-link">Book Series</a></li>
+                            <li role="listitem"><a href="/ebooks/authors" class="footer-link">All Authors</a></li>
+                            <li role="listitem"><a href="/ebooks/categories" class="footer-link">Categories</a></li>
                         </ul>
                     </div>
                     
                     <div class="footer-column">
                         <h3 class="footer-column-title">Resources</h3>
-                        <ul class="footer-list">
-                            <li><a href="/how-to-download" class="footer-link">How to Download</a></li>
-                            <li><a href="/reading-guide" class="footer-link">Reading Guide</a></li>
-                            <li><a href="/mobile-app" class="footer-link">Mobile App</a></li>
-                            <li><a href="/privacy" class="footer-link">Privacy Policy</a></li>
-                            <li><a href="/terms" class="footer-link">Terms of Service</a></li>
+                        <ul class="footer-list" role="list">
+                            <li role="listitem"><a href="/how-to-download" class="footer-link">How to Download</a></li>
+                            <li role="listitem"><a href="/reading-guide" class="footer-link">Reading Guide</a></li>
+                            <li role="listitem"><a href="/mobile-app" class="footer-link">Mobile App</a></li>
+                            <li role="listitem"><a href="/privacy" class="footer-link">Privacy Policy</a></li>
+                            <li role="listitem"><a href="/terms" class="footer-link">Terms of Service</a></li>
                         </ul>
                     </div>
                     
                     <div class="footer-column">
                         <h3 class="footer-column-title">Connect</h3>
-                        <ul class="footer-list">
-                            <li><a href="/about" class="footer-link">About Us</a></li>
-                            <li><a href="/contact" class="footer-link">Contact Us</a></li>
-                            <li><a href="/donate" class="footer-link">Donate</a></li>
-                            <li><a href="/volunteer" class="footer-link">Volunteer</a></li>
-                            <li><a href="/blog" class="footer-link">Blog</a></li>
+                        <ul class="footer-list" role="list">
+                            <li role="listitem"><a href="/about" class="footer-link">About Us</a></li>
+                            <li role="listitem"><a href="/contact" class="footer-link">Contact Us</a></li>
+                            <li role="listitem"><a href="/donate" class="footer-link">Donate</a></li>
+                            <li role="listitem"><a href="/volunteer" class="footer-link">Volunteer</a></li>
+                            <li role="listitem"><a href="/blog" class="footer-link">Blog</a></li>
                         </ul>
                     </div>
                 </div>
@@ -680,141 +914,289 @@
         </div>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- ============ PROGRESSIVE ENHANCEMENT SCRIPTS ============ -->
     <script>
-        // Set current year in footer
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-        
-        // Enable JavaScript features
+        // Remove no-js class for progressive enhancement
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
         
-        // Basic mobile menu toggle
-        const menuBtn = document.querySelector('.nav-menu-btn');
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Initialize loading state
+        window.addEventListener('load', function() {
+            document.body.classList.remove('js-loading');
+        });
+        
+        // Basic mobile menu toggle (progressive enhancement)
+        const menuBtn = document.querySelector('[data-menu-trigger]');
         const mobileNav = document.querySelector('.mobile-nav');
         
         if (menuBtn && mobileNav) {
-            menuBtn.addEventListener('click', () => {
-                const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-                menuBtn.setAttribute('aria-expanded', !isExpanded);
+            menuBtn.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
                 mobileNav.hidden = isExpanded;
             });
         }
         
-        // Basic search toggle
-        const searchBtn = document.querySelector('.nav-search-btn');
-        const searchOverlay = document.querySelector('.search-overlay');
-        const searchCloseBtn = document.querySelector('.search-close-btn');
+        // Basic search overlay toggle
+        const searchTriggers = document.querySelectorAll('[data-search-trigger]');
+        const searchOverlay = document.querySelector('[data-search-overlay]');
+        const searchClose = document.querySelector('[data-search-close]');
         
-        if (searchBtn && searchOverlay) {
-            searchBtn.addEventListener('click', () => {
-                searchOverlay.hidden = false;
-                document.querySelector('#global-search')?.focus();
+        if (searchTriggers.length && searchOverlay) {
+            searchTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    searchOverlay.hidden = false;
+                    document.querySelector('[data-search-input]')?.focus();
+                });
             });
             
-            searchCloseBtn?.addEventListener('click', () => {
-                searchOverlay.hidden = true;
-            });
+            if (searchClose) {
+                searchClose.addEventListener('click', function() {
+                    searchOverlay.hidden = true;
+                });
+            }
             
             // Close on escape
-            document.addEventListener('keydown', (e) => {
+            document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && !searchOverlay.hidden) {
                     searchOverlay.hidden = true;
                 }
             });
         }
+        
+        // Lazy loading images
+        document.addEventListener('DOMContentLoaded', function() {
+            const lazyImages = document.querySelectorAll('.lazy');
+            
+            const imageObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.add('loaded');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+            
+            lazyImages.forEach(function(img) {
+                imageObserver.observe(img);
+            });
+        });
     </script>
     
-    <!-- Main App Script -->
- <!-- Ebooks Library Initialization -->
-<script type="module">
-    import EbooksLibrary from '/src/js/ebooks-library.js';
-    
-    document.addEventListener('DOMContentLoaded', async () => {
-        console.log('📚 DOM loaded, initializing EbooksLibrary...');
+    <!-- ============ MAIN APP SCRIPT ============ -->
+    <script type="module" defer>
+        import EbooksLibrary from '/src/js/ebooks-library.js';
         
-        try {
-            // Get the main content container
-            const container = document.querySelector('.main-content');
+        // Wait for DOM and critical resources
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+        
+        async function initApp() {
+            console.log('📚 Initializing Ebooks Library...');
             
-            if (!container) {
-                console.error('❌ Main content container not found!');
-                return;
-            }
-            
-            // Initialize the library
-            const library = new EbooksLibrary();
-            await library.init(container);
-            
-            console.log('✅ EbooksLibrary initialized successfully');
-            
-            // For debugging in console
-            window.ebookLibrary = library;
-            console.log('🌐 Library available as window.ebookLibrary');
-            
-        } catch (error) {
-            console.error('❌ Failed to initialize EbooksLibrary:', error);
-            
-            // Show user-friendly error
-            const errorElement = document.createElement('div');
-            errorElement.style.cssText = `
-                background: #fee;
-                border: 2px solid #f99;
-                color: #c00;
-                padding: 20px;
-                margin: 20px;
-                border-radius: 8px;
-                text-align: center;
-            `;
-            errorElement.innerHTML = `
-                <h3>⚠️ Unable to load ebook library</h3>
-                <p>Please refresh the page or try again later.</p>
-                <button onclick="location.reload()" style="
-                    background: #007AFF;
-                    color: white;
-                    border: none;
-                    padding: 8px 16px;
-                    border-radius: 4px;
-                    margin-top: 10px;
-                    cursor: pointer;
-                ">Refresh Page</button>
-            `;
-            
-            const main = document.querySelector('main');
-            if (main) {
-                main.prepend(errorElement);
+            try {
+                const container = document.querySelector('.main-content');
+                if (!container) {
+                    throw new Error('Main content container not found');
+                }
+                
+                const library = new EbooksLibrary();
+                await library.init(container);
+                
+                // Make available globally for debugging
+                window.ebookLibrary = library;
+                
+                // Report to analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'ebook_library_loaded', {
+                        'event_category': 'engagement',
+                        'event_label': 'library_initialized'
+                    });
+                }
+                
+                console.log('✅ Ebooks Library initialized successfully');
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize Ebooks Library:', error);
+                
+                // Show user-friendly error
+                const errorElement = document.createElement('div');
+                errorElement.className = 'error-message';
+                errorElement.innerHTML = `
+                    <div class="error-content">
+                        <h3>Unable to load ebook library</h3>
+                        <p>Please refresh the page or try again later.</p>
+                        <button onclick="location.reload()" class="retry-btn">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+                
+                const main = document.querySelector('main');
+                if (main) {
+                    main.appendChild(errorElement);
+                }
             }
         }
-    });
+    </script>
     
-    // Also initialize when window loads (for good measure)
-    window.addEventListener('load', () => {
-        console.log('🚀 Window fully loaded');
-    });
-</script>
-
-
-    
-    <!-- Structured Data -->
+    <!-- ============ COMPREHENSIVE STRUCTURED DATA ============ -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Church Books Ebook Library",
-        "url": "https://yourchurch.com/ebooks",
-        "description": "Free Christian ebooks for spiritual growth and Bible study",
-        "publisher": {
-            "@type": "Organization",
-            "name": "Your Church Name",
-            "url": "https://yourchurch.com",
-            "logo": "https://yourchurch.com/logo.png"
-        },
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://yourchurch.com/ebooks?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://yourchurch.com/ebooks#website",
+                "name": "Church Books Ebook Library",
+                "url": "https://yourchurch.com/ebooks",
+                "description": "Free Christian ebooks for spiritual growth and Bible study",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://yourchurch.com/ebooks?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                },
+                "inLanguage": "en-US",
+                "publisher": {
+                    "@type": "Organization",
+                    "@id": "https://yourchurch.com/#organization",
+                    "name": "Your Church Name",
+                    "url": "https://yourchurch.com",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://yourchurch.com/logo.png",
+                        "width": "600",
+                        "height": "60"
+                    },
+                    "sameAs": [
+                        "https://facebook.com/yourchurch",
+                        "https://twitter.com/yourchurch",
+                        "https://instagram.com/yourchurch",
+                        "https://youtube.com/yourchurch"
+                    ]
+                }
+            },
+            {
+                "@type": "CollectionPage",
+                "@id": "https://yourchurch.com/ebooks#webpage",
+                "url": "https://yourchurch.com/ebooks",
+                "name": "Christian Ebook Library Collection",
+                "description": "Browse and download free Christian ebooks for spiritual growth, Bible study, prayer, and theology",
+                "isPartOf": {"@id": "https://yourchurch.com/ebooks#website"},
+                "datePublished": "2024-01-01",
+                "dateModified": "2024-12-01",
+                "breadcrumb": {"@id": "https://yourchurch.com/ebooks#breadcrumb"},
+                "inLanguage": "en-US",
+                "isFamilyFriendly": true,
+                "audience": {
+                    "@type": "Audience",
+                    "audienceType": "Christians, Bible study groups, spiritual seekers"
+                },
+                "keywords": "Christian ebooks, free Christian books, PDF downloads, spiritual growth, Bible study, prayer books, theology",
+                "thumbnailUrl": "https://yourchurch.com/images/ebooks-library-og.jpg",
+                "mainEntity": {
+                    "@type": "ItemList",
+                    "itemListOrder": "ItemListOrderDescending",
+                    "numberOfItems": 100
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "https://yourchurch.com/ebooks#breadcrumb",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://yourchurch.com"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Ebooks",
+                        "item": "https://yourchurch.com/ebooks"
+                    }
+                ]
+            },
+            {
+                "@type": "Organization",
+                "@id": "https://yourchurch.com/#organization",
+                "name": "Your Church Name",
+                "alternateName": "Church Books",
+                "url": "https://yourchurch.com",
+                "logo": "https://yourchurch.com/logo.png",
+                "foundingDate": "2000",
+                "founders": [
+                    {
+                        "@type": "Person",
+                        "name": "Pastor Name"
+                    }
+                ],
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "123 Church Street",
+                    "addressLocality": "City",
+                    "addressRegion": "State",
+                    "postalCode": "12345",
+                    "addressCountry": "US"
+                },
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer support",
+                    "email": "support@yourchurch.com",
+                    "url": "https://yourchurch.com/contact"
+                },
+                "sameAs": [
+                    "https://facebook.com/yourchurch",
+                    "https://twitter.com/yourchurch",
+                    "https://instagram.com/yourchurch"
+                ],
+                "description": "A Christian church providing free spiritual resources and ebooks for spiritual growth"
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://yourchurch.com/ebooks#legalnotice",
+                "name": "Legal Notice",
+                "url": "https://yourchurch.com/terms",
+                "description": "Terms of Service and Privacy Policy for Church Books Ebook Library"
+            }
+        ]
     }
+    </script>
+    
+    <!-- ============ ANALYTICS (Optional) ============ -->
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXXX-X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-XXXXXXXXX-X', {
+            'page_title': document.title,
+            'page_location': window.location.href,
+            'send_page_view': true
+        });
+    </script>
+    
+    <!-- ============ FALLBACK FOR OLD BROWSERS ============ -->
+    <script>
+        // ES6+ feature detection
+        if (!window.Promise || !window.fetch || !window.IntersectionObserver) {
+            document.body.classList.add('old-browser');
+            
+            // Load polyfills
+            const script = document.createElement('script');
+            script.src = 'https://polyfill.io/v3/polyfill.min.js?features=Promise,fetch,IntersectionObserver,URLSearchParams';
+            document.head.appendChild(script);
+        }
     </script>
 </body>
 </html>
