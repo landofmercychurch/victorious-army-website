@@ -1,104 +1,529 @@
-/* ============ ENHANCED APPLE/AMAZON STYLE GRID ============ */
-/* Performance-optimized with modern CSS features */
+/* ============ COMPLETE EBOOKS LIBRARY CSS ============ */
+/* Optimized for 500+ books with Apple-style mobile grid */
 
-/* CSS Custom Properties for theming */
+:root {
+    /* Apple-inspired Color Palette */
+    --gray-50: #f5f5f7;
+    --gray-100: #e5e5e7;
+    --gray-200: #d2d2d7;
+    --gray-300: #c7c7cc;
+    --gray-400: #aeaeb2;
+    --gray-500: #8e8e93;
+    --gray-600: #636366;
+    --gray-700: #48484a;
+    --gray-800: #3a3a3c;
+    --gray-900: #1d1d1f;
+    
+    --blue-50: #f0f7ff;
+    --blue-100: #e1effe;
+    --blue-500: #007AFF;
+    --blue-600: #0056CC;
+    --blue-700: #0044A3;
+    
+    --green-500: #34C759;
+    --green-600: #2DA84A;
+    --red-500: #FF3B30;
+    --orange-500: #FF9500;
+    
+    /* Typography */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-display: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* Spacing */
+    --space-xxs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Layout */
+    --container-max-width: 1200px;
+    --header-height: 64px;
+}
+
+/* ============ BASE STYLES ============ */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--gray-900);
+    background-color: var(--gray-50);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+/* ============ NAVIGATION ============ */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: var(--space-sm) 0;
+    backdrop-filter: blur(10px);
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.logo-highlight {
+    color: var(--blue-500);
+}
+
+.nav-actions {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.nav-menu-btn,
+.nav-search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-600);
+    transition: all var(--transition-normal);
+}
+
+.nav-menu-btn:hover,
+.nav-search-btn:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
+}
+
+.mobile-nav {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: var(--space-md);
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all var(--transition-normal);
+}
+
+.mobile-nav:not([hidden]) {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.mobile-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.mobile-nav-link {
+    display: block;
+    padding: var(--space-sm);
+    text-decoration: none;
+    color: var(--gray-600);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+    background: var(--blue-50);
+    color: var(--blue-600);
+}
+
+/* ============ SEARCH OVERLAY ============ */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 1001;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20vh;
+}
+
+.search-overlay:not([hidden]) {
+    display: flex;
+}
+
+.search-form {
+    width: 90%;
+    max-width: 600px;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+#global-search {
+    width: 100%;
+    padding: var(--space-lg) var(--space-xl);
+    font-size: 1.25rem;
+    border-radius: var(--radius-xl);
+    border: none;
+    background: white;
+    box-shadow: var(--shadow-2xl);
+}
+
+.search-submit-btn,
+.search-close-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-500);
+    padding: var(--space-sm);
+}
+
+.search-submit-btn {
+    right: var(--space-lg);
+}
+
+.search-close-btn {
+    right: calc(var(--space-lg) + 40px);
+}
+
+/* ============ HERO SECTION ============ */
+.hero-section {
+    padding: var(--space-2xl) 0;
+    text-align: center;
+    background: linear-gradient(135deg, var(--blue-50), white);
+}
+
+.hero-title {
+    font-size: clamp(1.75rem, 5vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    color: var(--gray-900);
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ============ STATS SECTION ============ */
+.stats-section {
+    padding: var(--space-xl) 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-md);
+}
+
+.stat-card {
+    background: white;
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--blue-500);
+    margin-bottom: var(--space-xs);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============ CONTROLS SECTION ============ */
+.controls-section {
+    padding: var(--space-xl) 0;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.controls-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.search-control {
+    width: 100%;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#ebook-search {
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    padding-right: 120px;
+    font-size: 1rem;
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-xl);
+    background: white;
+    transition: all var(--transition-normal);
+}
+
+#ebook-search:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.search-clear-btn,
+.search-action-btn {
+    position: absolute;
+    right: var(--space-md);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-500);
+    padding: var(--space-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-clear-btn {
+    right: calc(var(--space-md) + 40px);
+}
+
+.filters-control {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.filter-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: var(--space-xxs);
+}
+
+.filter-select {
+    padding: var(--space-sm);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    font-size: 0.9375rem;
+    background: white;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+/* ============ EBOOKS GRID - APPLE BOOKS STYLE ============ */
+/* Optimized for 500+ books - 4 columns on mobile, 6 on desktop */
+
 .ebooks-grid {
-    --grid-gap: clamp(1rem, 2vw, 1.5rem);
-    --grid-min-item-width: min(240px, 100%);
-    --grid-max-item-width: 320px;
-    --card-padding: clamp(0.75rem, 1.5vw, 1rem);
+    --grid-gap: 1rem;
+    --grid-min-item-width: 120px; /* Smaller for more columns */
     
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-item-width), 1fr));
     gap: var(--grid-gap);
-    align-items: stretch;
+    align-items: start;
 }
 
-/* Apple/Amazon style grid items - Enhanced for performance */
+/* Apple Books Style Grid Items - COMPACT */
 .ebook-card.apple-style-grid-item {
     background: white;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-md);
-    transition: 
-        transform var(--transition-normal),
-        box-shadow var(--transition-normal),
-        border-color var(--transition-normal);
-    height: 100%;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
     display: flex;
     flex-direction: column;
     border: 1px solid var(--gray-200);
-    container-type: inline-size;
-    container-name: ebook-card;
+    height: 100%;
 }
 
-.ebook-card.apple-style-grid-item:hover,
-.ebook-card.apple-style-grid-item:focus-within {
+.ebook-card.apple-style-grid-item:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-xl);
-    border-color: var(--gray-300);
+    border-color: var(--blue-500);
 }
 
-/* Performance-optimized cover with contain-intrinsic-size */
+/* Compact Cover */
+.ebook-cover-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
 .ebook-cover-container .apple-cover {
     aspect-ratio: 2/3;
-    overflow: hidden;
-    position: relative;
-    background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+    background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
     background-size: cover;
     background-position: center;
     transition: transform var(--transition-slow);
     cursor: pointer;
-    contain: paint;
-    will-change: transform;
 }
 
-/* Use CSS containment for performance */
-@container ebook-card (inline-size > 240px) {
-    .ebook-card.apple-style-grid-item:hover .apple-cover {
-        transform: scale(1.02);
-    }
+.ebook-card.apple-style-grid-item:hover .apple-cover {
+    transform: scale(1.05);
 }
 
-/* Featured badge - optimized for performance */
-.apple-cover .featured-badge {
+/* Featured Badge */
+.featured-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
     background: linear-gradient(135deg, var(--red-500), #ff6b6b);
     color: white;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.6875rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.625rem;
     font-weight: 700;
     letter-spacing: 0.3px;
     text-transform: uppercase;
     box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
     z-index: 2;
-    backdrop-filter: blur(4px);
 }
 
-/* Apple content area with CSS subgrid for better alignment */
+/* Cover Overlay */
+.cover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.ebook-cover-container:hover .cover-overlay {
+    opacity: 1;
+}
+
+.cover-hint {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Compact Content */
 .ebook-content.apple-content {
-    padding: var(--card-padding);
+    padding: var(--space-sm);
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 4px;
 }
 
-/* Fluid typography for titles */
+/* Compact Title */
 .ebook-title.apple-title {
-    font-size: clamp(0.875rem, 2vw, 1rem);
-    font-weight: 700;
-    line-height: 1.4;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
     margin: 0;
     color: var(--gray-900);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 2.75rem;
+    min-height: 2.2rem;
     cursor: pointer;
     transition: color var(--transition-fast);
 }
@@ -107,9 +532,9 @@
     color: var(--blue-500);
 }
 
-/* Optimized author text */
+/* Compact Author */
 .ebook-author.apple-author {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     color: var(--gray-600);
     margin: 0;
     display: -webkit-box;
@@ -119,19 +544,19 @@
     font-weight: 500;
 }
 
-/* Modern meta tags with CSS grid */
+/* Compact Meta */
 .ebook-meta.apple-meta {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+    gap: 4px;
+    margin-top: 4px;
     flex-wrap: wrap;
 }
 
 .ebook-category.apple-category,
 .ebook-duration.apple-duration {
-    padding: 0.25rem 0.625rem;
-    border-radius: var(--radius-md);
-    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.625rem;
     font-weight: 600;
     letter-spacing: 0.2px;
 }
@@ -148,250 +573,104 @@
     border: 1px solid rgba(0, 122, 255, 0.2);
 }
 
-/* Stats with grid layout */
+/* Compact Stats */
 .ebook-stats.apple-stats {
     margin-top: auto;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--gray-100);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.25rem;
+    padding-top: 8px;
+    border-top: 1px solid var(--gray-200);
 }
 
 .ebook-stats.apple-stats .download-count {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--gray-500);
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 4px;
     font-weight: 500;
 }
 
-/* Single read button - optimized for touch */
+/* Compact Read Button */
 .btn-read.apple-read-btn {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-lg);
-    font-size: 0.9375rem;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    transition: 
-        transform var(--transition-normal),
-        box-shadow var(--transition-normal),
-        background var(--transition-normal);
+    gap: 6px;
+    transition: all var(--transition-normal);
     cursor: pointer;
     border: none;
-    text-decoration: none;
-    min-height: 44px; /* Apple touch target minimum */
-    background: linear-gradient(135deg, var(--green-500), #2DA84A);
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
     color: white;
-    box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2);
-    margin-top: 0.75rem;
+    margin-top: 8px;
+    min-height: 36px;
 }
 
 .btn-read.apple-read-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3);
-    background: linear-gradient(135deg, #2DA84A, #1F8A3A);
-}
-
-.btn-read.apple-read-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+    background: linear-gradient(135deg, var(--green-600), #1F8A3A);
 }
 
 .btn-read.apple-read-btn svg {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: 14px;
+    height: 14px;
 }
 
-/* ============ ENHANCED VIEW SWITCHER ============ */
-/* Modern view switcher with CSS grid */
-
-.view-controls {
-    display: inline-flex;
-    gap: 0.25rem;
-    background: var(--gray-100);
-    padding: 0.375rem;
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--gray-200);
-    backdrop-filter: blur(10px);
-    isolation: isolate;
-}
-
-.view-btn {
-    position: relative;
-    padding: 0.625rem 1.25rem;
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-lg);
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    min-width: 7.5rem;
-    overflow: hidden;
-}
-
-.view-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: white;
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-}
-
-.view-btn:hover {
-    color: var(--gray-900);
-}
-
-.view-btn:hover::before {
-    opacity: 0.8;
-}
-
-.view-btn.active {
-    color: var(--blue-500);
-}
-
-.view-btn.active::before {
-    opacity: 1;
-    box-shadow: var(--shadow-md);
-}
-
-.view-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: -0.125rem;
-    left: 1.25rem;
-    right: 1.25rem;
-    height: 0.1875rem;
-    background: linear-gradient(90deg, var(--blue-500), var(--green-500));
-    border-radius: 0.125rem;
-    opacity: 0.8;
-    z-index: 1;
-}
-
-/* View transitions with prefers-reduced-motion support */
-@media (prefers-reduced-motion: no-preference) {
-    .ebooks-grid.grid-view .ebook-card.apple-style-grid-item {
-        animation: cardAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .ebooks-grid.list-view .ebook-card.apple-list-item {
-        animation: cardSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-}
-
-@keyframes cardAppear {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes cardSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* ============ ENHANCED LIST VIEW ============ */
-/* Modern list view with CSS subgrid */
-
+/* ============ LIST VIEW ============ */
 .ebook-card.apple-list-item {
     background: white;
     border-radius: var(--radius-lg);
     border: 1px solid var(--gray-200);
     box-shadow: var(--shadow-sm);
-    transition: 
-        transform var(--transition-normal),
-        box-shadow var(--transition-normal),
-        border-color var(--transition-normal);
+    transition: all var(--transition-normal);
     display: none;
-    padding: 1rem;
-    gap: 1.25rem;
-    align-items: stretch;
-    container-type: inline-size;
-    container-name: ebook-list;
+    padding: var(--space-md);
+    gap: var(--space-md);
+    align-items: center;
 }
 
-@container ebook-list (inline-size > 480px) {
-    .ebook-card.apple-list-item {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: start;
-    }
-}
-
-@container ebook-list (inline-size <= 480px) {
-    .ebook-card.apple-list-item {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
+.ebooks-grid.list-view .ebook-card.apple-list-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
 }
 
 .ebook-card.apple-list-item:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--gray-300);
+    border-color: var(--blue-500);
 }
 
-/* List view cover with intrinsic sizing */
+/* List View Cover */
 .ebook-card.apple-list-item .list-cover {
-    width: 80px;
-    height: 120px;
+    width: 60px;
+    height: 90px;
     border-radius: var(--radius-md);
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
     cursor: pointer;
     transition: transform var(--transition-normal);
-    aspect-ratio: 2/3;
-    object-fit: cover;
-}
-
-@container ebook-list (inline-size > 480px) {
-    .ebook-card.apple-list-item .list-cover {
-        width: 100px;
-        height: 150px;
-    }
 }
 
 .ebook-card.apple-list-item:hover .list-cover {
     transform: scale(1.05);
 }
 
-/* List content with CSS subgrid */
+/* List Content */
 .ebook-card.apple-list-item .list-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 4px;
 }
 
 .ebook-card.apple-list-item .list-title {
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    font-weight: 700;
+    font-size: 0.9375rem;
+    font-weight: 600;
     color: var(--gray-900);
     margin: 0;
     cursor: pointer;
@@ -403,290 +682,447 @@
 }
 
 .ebook-card.apple-list-item .list-author {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--gray-600);
     margin: 0;
     font-weight: 500;
 }
 
-.ebook-card.apple-list-item .list-meta {
-    display: flex;
-    gap: 0.625rem;
-    flex-wrap: wrap;
-}
-
-.ebook-card.apple-list-item .list-category,
-.ebook-card.apple-list-item .list-duration,
-.ebook-card.apple-list-item .list-series {
-    background: rgba(0, 122, 255, 0.1);
-    color: var(--blue-500);
-    padding: 0.25rem 0.625rem;
-    border-radius: var(--radius-md);
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
 .ebook-card.apple-list-item .list-description {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--gray-600);
-    line-height: 1.5;
-    margin: 0.5rem 0;
+    line-height: 1.4;
+    margin: 4px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-/* List actions with flex layout */
+/* List Actions */
 .ebook-card.apple-list-item .list-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: 8px;
     align-items: center;
-    margin-top: auto;
+    margin-top: 8px;
 }
 
-@container ebook-list (inline-size <= 480px) {
-    .ebook-card.apple-list-item .list-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-}
-
-.ebook-card.apple-list-item .btn-read-list {
-    padding: 0.625rem 1.25rem;
-    background: linear-gradient(135deg, var(--green-500), #2DA84A);
+.btn-read-list {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
     color: white;
     border: none;
     border-radius: var(--radius-md);
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-normal);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    white-space: nowrap;
+    gap: 4px;
 }
 
-@container ebook-list (inline-size <= 480px) {
-    .ebook-card.apple-list-item .btn-read-list {
-        width: 100%;
-        justify-content: center;
-    }
+.btn-read-list:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
 }
 
-.ebook-card.apple-list-item .btn-read-list:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3);
-    background: linear-gradient(135deg, #2DA84A, #1F8A3A);
-}
-
-.ebook-card.apple-list-item .btn-share-list {
-    padding: 0.625rem 1rem;
+.btn-share-list {
+    padding: 6px 12px;
     background: rgba(0, 122, 255, 0.1);
     color: var(--blue-500);
     border: 1px solid rgba(0, 122, 255, 0.2);
     border-radius: var(--radius-md);
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-normal);
     display: flex;
     align-items: center;
-    gap: 0.375rem;
-    font-size: 0.875rem;
-    white-space: nowrap;
+    gap: 4px;
 }
 
-@container ebook-list (inline-size <= 480px) {
-    .ebook-card.apple-list-item .btn-share-list {
-        width: 100%;
+.btn-share-list:hover {
+    background: rgba(0, 122, 255, 0.2);
+}
+
+/* ============ VIEW CONTROLS ============ */
+.view-controls {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--gray-100);
+    padding: 4px;
+    border-radius: var(--radius-lg);
+}
+
+.view-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--gray-600);
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition-normal);
+}
+
+.view-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.view-btn.active {
+    background: white;
+    color: var(--blue-500);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============ FEATURED & CATEGORIES ============ */
+.featured-section,
+.categories-section,
+.all-ebooks-section {
+    padding: var(--space-xl) 0;
+}
+
+.section-header {
+    margin-bottom: var(--space-lg);
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: var(--space-xs);
+}
+
+.section-subtitle {
+    color: var(--gray-600);
+    font-size: 1rem;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+}
+
+.category-card {
+    background: white;
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--blue-500);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ============ LOAD MORE ============ */
+.load-more-container {
+    text-align: center;
+    margin-top: var(--space-xl);
+    padding: var(--space-lg) 0;
+}
+
+#load-more-btn {
+    padding: var(--space-md) var(--space-xl);
+    background: var(--blue-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+#load-more-btn:hover {
+    background: var(--blue-600);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.remaining-count {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    margin-top: var(--space-xs);
+}
+
+/* ============ NO RESULTS ============ */
+#no-results {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-md);
+    color: var(--gray-500);
+}
+
+.no-results-icon {
+    margin-bottom: var(--space-md);
+    color: var(--gray-400);
+    opacity: 0.5;
+}
+
+.no-results-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    color: var(--gray-700);
+}
+
+.no-results-text {
+    margin-bottom: var(--space-lg);
+    font-size: 1rem;
+}
+
+#clear-search-btn {
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--blue-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+#clear-search-btn:hover {
+    background: var(--blue-600);
+    transform: translateY(-1px);
+}
+
+/* ============ RESULTS COUNT ============ */
+.results-count {
+    font-size: 1rem;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+#ebooks-count {
+    font-weight: 700;
+    color: var(--blue-500);
+}
+
+/* ============ RESPONSIVE DESIGN - APPLE BOOKS STYLE ============ */
+/* Ultra Compact Mobile Grid - 4 columns on small phones */
+@media (max-width: 360px) {
+    .ebooks-grid {
+        --grid-gap: 0.75rem;
+        --grid-min-item-width: 80px; /* Even smaller for 4 columns */
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .ebook-card.apple-style-grid-item {
+        border-radius: var(--radius-md);
+    }
+    
+    .ebook-content.apple-content {
+        padding: 8px;
+    }
+    
+    .ebook-title.apple-title {
+        font-size: 0.75rem;
+        min-height: 1.8rem;
+    }
+    
+    .ebook-author.apple-author {
+        font-size: 0.6875rem;
+    }
+    
+    .btn-read.apple-read-btn {
+        padding: 6px 8px;
+        font-size: 0.6875rem;
+        min-height: 32px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Standard Mobile - 3 columns */
+@media (min-width: 361px) and (max-width: 480px) {
+    .ebooks-grid {
+        --grid-gap: 0.875rem;
+        --grid-min-item-width: 100px;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .ebook-card.apple-style-grid-item {
+        border-radius: var(--radius-lg);
+    }
+    
+    .ebook-content.apple-content {
+        padding: 10px;
+    }
+    
+    .ebook-title.apple-title {
+        font-size: 0.8125rem;
+    }
+    
+    .ebooks-grid.list-view .ebook-card.apple-list-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .ebook-card.apple-list-item .list-cover {
+        width: 80px;
+        height: 120px;
+        margin: 0 auto;
+    }
+    
+    .ebook-card.apple-list-item .list-actions {
         justify-content: center;
     }
 }
 
-.ebook-card.apple-list-item .btn-share-list:hover {
-    background: rgba(0, 122, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
-}
-
-/* List stats */
-.ebook-card.apple-list-item .list-stats {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.75rem;
-    color: var(--gray-500);
-    margin-top: 0.5rem;
-}
-
-/* ============ ENHANCED RESPONSIVE DESIGN ============ */
-
-/* Mobile-first responsive grid */
-@media (max-width: 767px) {
+/* Large Mobile - 4 columns */
+@media (min-width: 481px) and (max-width: 767px) {
     .ebooks-grid {
-        --grid-min-item-width: min(280px, 100%);
-        grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-item-width), 1fr));
+        --grid-gap: 1rem;
+        --grid-min-item-width: 110px;
+        grid-template-columns: repeat(4, 1fr);
     }
     
-    .ebook-card.apple-style-grid-item {
-        min-height: auto;
-    }
-    
-    .ebook-title.apple-title {
-        font-size: 0.875rem;
-        min-height: 2.5rem;
-    }
-    
-    .ebook-author.apple-author {
-        font-size: 0.8125rem;
-    }
-    
-    .ebook-content.apple-content {
-        padding: 0.75rem;
-    }
-    
-    .btn-read.apple-read-btn {
-        padding: 0.625rem 0.75rem;
-        font-size: 0.875rem;
+    .filters-control {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-/* Tablet */
+/* Tablet - 5 columns */
 @media (min-width: 768px) and (max-width: 1023px) {
     .ebooks-grid {
-        --grid-min-item-width: min(200px, 100%);
+        --grid-gap: 1rem;
+        --grid-min-item-width: 140px;
+        grid-template-columns: repeat(5, 1fr);
     }
     
-    .ebook-card.apple-style-grid-item {
-        min-height: 340px;
-    }
-    
-    .ebook-title.apple-title {
-        font-size: 0.9375rem;
-    }
-    
-    .btn-read.apple-read-btn {
-        padding: 0.6875rem 0.875rem;
-        font-size: 0.875rem;
+    .filters-control {
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
-/* Desktop */
+/* Desktop - 6 columns */
 @media (min-width: 1024px) {
     .ebooks-grid {
-        --grid-min-item-width: min(220px, 100%);
-        gap: 1.25rem;
-    }
-    
-    .ebook-card.apple-style-grid-item {
-        min-height: 360px;
-    }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-    .ebooks-grid {
-        --grid-min-item-width: 100%;
-        grid-template-columns: 1fr;
-    }
-    
-    .ebook-card.apple-style-grid-item {
-        min-height: 300px;
-    }
-    
-    .ebook-content.apple-content {
-        padding: 0.625rem;
+        --grid-gap: 1.25rem;
+        --grid-min-item-width: 150px;
+        grid-template-columns: repeat(6, 1fr);
     }
     
     .ebook-title.apple-title {
-        font-size: 0.8125rem;
-        min-height: 2.25rem;
-    }
-    
-    .ebook-meta.apple-meta {
-        gap: 0.375rem;
-    }
-    
-    .ebook-category.apple-category,
-    .ebook-duration.apple-duration {
-        font-size: 0.6875rem;
-        padding: 0.1875rem 0.5rem;
-    }
-}
-
-/* ============ ENHANCED DARK MODE ============ */
-/* System-aware dark mode with CSS custom properties */
-
-@media (prefers-color-scheme: dark) {
-    .ebook-card.apple-style-grid-item {
-        background: var(--gray-900);
-        border-color: var(--gray-800);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    }
-    
-    .ebook-card.apple-style-grid-item:hover {
-        border-color: var(--gray-700);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    }
-    
-    .ebook-cover-container .apple-cover {
-        background: linear-gradient(135deg, var(--gray-800), var(--gray-700));
-    }
-    
-    .ebook-title.apple-title {
-        color: var(--gray-50);
-    }
-    
-    .ebook-title.apple-title:hover {
-        color: #64d2ff;
+        font-size: 0.875rem;
     }
     
     .ebook-author.apple-author {
+        font-size: 0.8125rem;
+    }
+}
+
+/* Large Desktop - 7 columns */
+@media (min-width: 1440px) {
+    .ebooks-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+/* ============ DARK MODE ============ */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: var(--gray-900);
+        color: var(--gray-100);
+    }
+    
+    .site-header {
+        background: var(--gray-900);
+        border-color: var(--gray-800);
+    }
+    
+    .nav-logo {
+        color: var(--gray-100);
+    }
+    
+    .nav-menu-btn,
+    .nav-search-btn {
         color: var(--gray-400);
     }
     
-    .ebook-category.apple-category {
-        background: rgba(52, 199, 89, 0.2);
-        color: #5ae676;
-        border-color: rgba(52, 199, 89, 0.3);
+    .nav-menu-btn:hover,
+    .nav-search-btn:hover {
+        background: var(--gray-800);
+        color: var(--gray-100);
     }
     
-    .ebook-duration.apple-duration {
-        background: rgba(0, 122, 255, 0.2);
+    .mobile-nav {
+        background: var(--gray-900);
+        border-color: var(--gray-800);
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+    }
+    
+    .stat-card,
+    .category-card,
+    .ebook-card.apple-style-grid-item,
+    .ebook-card.apple-list-item {
+        background: var(--gray-800);
+        border-color: var(--gray-700);
+        color: var(--gray-100);
+    }
+    
+    .stat-number {
         color: #64d2ff;
-        border-color: rgba(0, 122, 255, 0.3);
     }
     
-    .ebook-stats.apple-stats {
-        border-top-color: var(--gray-800);
+    .ebook-title.apple-title,
+    .list-title {
+        color: var(--gray-100);
     }
     
-    .ebook-stats.apple-stats .download-count {
-        color: var(--gray-500);
+    .ebook-title.apple-title:hover,
+    .list-title:hover {
+        color: #64d2ff;
     }
     
-    .btn-read.apple-read-btn {
-        background: linear-gradient(135deg, #30d158, #248a3d);
-        box-shadow: 0 4px 12px rgba(48, 209, 88, 0.3);
+    .ebook-author.apple-author,
+    .list-author,
+    .ebook-description,
+    .list-description {
+        color: var(--gray-400);
     }
     
-    .btn-read.apple-read-btn:hover {
-        background: linear-gradient(135deg, #248a3d, #1a6b2f);
-        box-shadow: 0 8px 20px rgba(48, 209, 88, 0.4);
+    .ebook-cover-container .apple-cover {
+        background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+    }
+    
+    #ebook-search,
+    .filter-select,
+    #global-search {
+        background: var(--gray-800);
+        border-color: var(--gray-700);
+        color: var(--gray-100);
+    }
+    
+    #ebook-search:focus,
+    .filter-select:focus {
+        border-color: #64d2ff;
     }
     
     .view-controls {
         background: var(--gray-800);
-        border-color: var(--gray-700);
-    }
-    
-    .view-btn {
-        color: var(--gray-400);
-    }
-    
-    .view-btn:hover {
-        background: rgba(58, 58, 60, 0.8);
-        color: var(--gray-50);
     }
     
     .view-btn.active {
@@ -694,222 +1130,83 @@
         color: #64d2ff;
     }
     
-    /* List view dark mode */
-    .ebook-card.apple-list-item {
-        background: var(--gray-900);
-        border-color: var(--gray-800);
-    }
-    
-    .ebook-card.apple-list-item .list-title {
-        color: var(--gray-50);
-    }
-    
-    .ebook-card.apple-list-item .list-title:hover {
-        color: #64d2ff;
-    }
-    
-    .ebook-card.apple-list-item .list-author {
-        color: var(--gray-400);
-    }
-    
-    .ebook-card.apple-list-item .list-description {
-        color: var(--gray-400);
-    }
-    
-    .ebook-card.apple-list-item .btn-read-list {
-        background: linear-gradient(135deg, #30d158, #248a3d);
-    }
-    
-    .ebook-card.apple-list-item .btn-read-list:hover {
-        background: linear-gradient(135deg, #248a3d, #1a6b2f);
-    }
-    
-    .ebook-card.apple-list-item .btn-share-list {
-        background: rgba(0, 122, 255, 0.2);
-        color: #64d2ff;
-        border-color: rgba(0, 122, 255, 0.3);
-    }
-    
-    .ebook-card.apple-list-item .btn-share-list:hover {
-        background: rgba(0, 122, 255, 0.3);
-    }
-}
-
-/* ============ ENHANCED ACCESSIBILITY ============ */
-
-/* Focus states for all interactive elements */
-.btn-read.apple-read-btn:focus-visible,
-.btn-read-list:focus-visible,
-.btn-share-list:focus-visible,
-.view-btn:focus-visible {
-    outline: 3px solid rgba(0, 122, 255, 0.5);
-    outline-offset: 2px;
-    border-radius: var(--radius-md);
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-    .ebook-card.apple-style-grid-item,
-    .apple-cover,
-    .btn-read.apple-read-btn,
-    .btn-read-list,
-    .btn-share-list,
-    .view-btn,
-    .ebook-card.apple-list-item,
-    .list-cover {
-        transition: none;
-        animation: none;
-    }
-    
-    .ebook-card.apple-style-grid-item:hover,
-    .ebook-card.apple-list-item:hover {
-        transform: none;
-    }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    .ebook-card.apple-style-grid-item,
-    .ebook-card.apple-list-item {
-        border: 2px solid currentColor;
-    }
-    
-    .btn-read.apple-read-btn,
-    .btn-read-list,
-    .btn-share-list {
-        border: 2px solid currentColor;
-    }
-    
-    .view-controls {
-        border: 2px solid currentColor;
-    }
-}
-
-/* ============ ENHANCED PRINT STYLES ============ */
-
-@media print {
-    .ebook-card.apple-style-grid-item,
-    .ebook-card.apple-list-item {
-        break-inside: avoid;
-        box-shadow: none !important;
-        border: 1px solid #ccc !important;
-        page-break-inside: avoid;
-        min-height: auto !important;
-        margin-bottom: 1rem;
-    }
-    
-    .ebook-actions.apple-actions,
-    .list-actions,
-    .view-controls,
-    .nav-actions,
-    .search-controls {
-        display: none !important;
-    }
-    
     .ebook-stats.apple-stats {
-        border-top: 1px solid #ccc;
+        border-color: var(--gray-700);
     }
     
-    .ebook-cover-container .apple-cover {
-        max-height: 200px;
-    }
-    
-    /* Ensure text is readable */
-    .ebook-title.apple-title,
-    .list-title {
-        color: black !important;
-        font-size: 12pt !important;
-    }
-    
-    .ebook-author.apple-author,
-    .list-author {
-        color: #333 !important;
-        font-size: 10pt !important;
-    }
-    
-    /* Hide decorative elements */
-    .featured-badge,
-    .logo-highlight,
-    .gradient-text {
-        display: none !important;
+    .download-count {
+        color: var(--gray-500);
     }
 }
 
-/* ============ PERFORMANCE OPTIMIZATIONS ============ */
-
-/* Optimize images */
-.apple-cover,
-.list-cover {
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-}
-
-/* Hardware acceleration for smooth animations */
-.ebook-card.apple-style-grid-item,
-.ebook-card.apple-list-item {
-    will-change: transform, box-shadow;
-    backface-visibility: hidden;
-}
-
-/* Optimize gradients for performance */
-@media (prefers-reduced-data: reduce) {
-    .apple-cover,
-    .btn-read.apple-read-btn,
-    .btn-read-list,
-    .featured-badge {
-        background: var(--gray-100) !important;
-        background-image: none !important;
-    }
-    
-    .btn-read.apple-read-btn,
-    .btn-read-list {
-        background: var(--green-500) !important;
+/* ============ ACCESSIBILITY ============ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
 
-/* ============ CONTAINER QUERIES FOR COMPONENTS ============ */
-
-@container ebook-card (inline-size > 300px) {
-    .ebook-meta.apple-meta {
-        display: flex;
-    }
+:focus-visible {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
 }
 
-@container ebook-card (inline-size <= 300px) {
-    .ebook-meta.apple-meta {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
-@container ebook-list (inline-size > 600px) {
-    .ebook-card.apple-list-item {
-        grid-template-columns: 120px 1fr;
-        align-items: center;
-    }
-    
-    .list-content {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 0.5rem 1rem;
-        align-items: center;
-    }
-    
-    .list-title {
-        grid-column: 1 / -1;
-    }
-    
-    .list-meta {
-        grid-column: 1;
-    }
-    
-    .list-description {
-        grid-column: 1;
-    }
-    
-    .list-actions {
-        grid-column: 2;
-        grid-row: 2 / span 2;
-        align-self: center;
-    }
-} 
+/* ============ UTILITY CLASSES ============ */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: var(--space-xs); }
+.mt-2 { margin-top: var(--space-sm); }
+.mt-3 { margin-top: var(--space-md); }
+.mt-4 { margin-top: var(--space-lg); }
+.mt-5 { margin-top: var(--space-xl); }
+
+.mb-1 { margin-bottom: var(--space-xs); }
+.mb-2 { margin-bottom: var(--space-sm); }
+.mb-3 { margin-bottom: var(--space-md); }
+.mb-4 { margin-bottom: var(--space-lg); }
+.mb-5 { margin-bottom: var(--space-xl); }
+
+.hidden {
+    display: none !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-1 { gap: var(--space-xs); }
+.gap-2 { gap: var(--space-sm); }
+.gap-3 { gap: var(--space-md); }
+.gap-4 { gap: var(--space-lg); }
+.gap-5 { gap: var(--space-xl); }
