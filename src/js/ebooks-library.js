@@ -29,18 +29,6 @@ class EbooksLibrary {
             activeModals: new Set()
         };
         
-        // UI Guide content
-        this.uiGuide = {
-            showGuide: true,
-            messages: {
-                clickBook: "Click any book cover to view details",
-                readBook: "Read books online instantly",
-                shareBook: "Share books with friends and family",
-                filterBooks: "Use filters to find specific books",
-                searchBooks: "Search by title, author, or topic"
-            }
-        };
-        
         console.log("✅ Library initialized with:", {
             currentFilters: this.currentFilters,
             itemsPerPage: this.itemsPerPage
@@ -59,9 +47,9 @@ class EbooksLibrary {
         console.log("Step 1: Setting up navigation");
         this.setupNavigation();
         
-        // 2. Create UI guide
-        console.log("Step 2: Creating UI guide");
-        this.createUIGuide();
+        // 2. Create subtle guidance
+        console.log("Step 2: Creating subtle guidance");
+        this.createSubtleGuidance();
         
         // 3. Create modals
         console.log("Step 3: Creating modals");
@@ -76,12 +64,16 @@ class EbooksLibrary {
         console.log("Step 5: Setting up event listeners");
         this.setupEventListeners();
         
-        // 6. Render everything
-        console.log("Step 6: Rendering UI");
+        // 6. Attach guide interactions
+        console.log("Step 6: Attaching guide interactions");
+        this.attachGuideInteractions();
+        
+        // 7. Render everything
+        console.log("Step 7: Rendering UI");
         this.render();
         
-        // 7. Setup performance monitoring
-        console.log("Step 7: Setting up performance monitoring");
+        // 8. Setup performance monitoring
+        console.log("Step 8: Setting up performance monitoring");
         this.setupPerformanceMonitoring();
         
         console.log("✅ EbooksLibrary initialization complete");
@@ -94,260 +86,265 @@ class EbooksLibrary {
         return this;
     }
     
-    // ================ UI GUIDE METHODS ================
+    // ================ SUBTLE UI GUIDANCE ================
     
-    createUIGuide() {
-        console.log("📋 Creating UI guide");
+    createSubtleGuidance() {
+        console.log("🎯 Creating subtle guidance indicators");
+        
+        // Check if user has seen hints before
+        const hasSeenHints = localStorage.getItem('ebooks-hints-seen');
+        if (hasSeenHints) return;
         
         const guideHTML = `
-            <div class="ui-guide-container" id="ui-guide">
-                <div class="ui-guide-content">
-                    <div class="ui-guide-header">
-                        <h3 class="ui-guide-title">Welcome to Christian Ebook Library</h3>
-                        <button class="ui-guide-close" onclick="ebookLibrary.closeUIGuide()" aria-label="Close guide">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <div class="subtle-guide-container" id="subtle-guide">
+                <!-- Search guidance -->
+                <div class="guide-hint search-hint" data-hint="search">
+                    <div class="hint-content">
+                        <span class="hint-text">Try searching for books</span>
+                        <div class="hint-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="ui-guide-steps">
-                        <div class="guide-step">
-                            <div class="step-icon">📚</div>
-                            <div class="step-content">
-                                <h4>Browse Books</h4>
-                                <p>Click any book cover to view details and read online.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="guide-step">
-                            <div class="step-icon">🔍</div>
-                            <div class="step-content">
-                                <h4>Search & Filter</h4>
-                                <p>Use search and filters to find books by topic, author, or series.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="guide-step">
-                            <div class="step-icon">👁️</div>
-                            <div class="step-content">
-                                <h4>Read Online</h4>
-                                <p>Read books instantly in your browser - no downloads required.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="guide-step">
-                            <div class="step-icon">📱</div>
-                            <div class="step-content">
-                                <h4>Share with Others</h4>
-                                <p>Share inspiring books with friends and family.</p>
-                            </div>
                         </div>
                     </div>
-                    
-                    <div class="ui-guide-actions">
-                        <button class="btn-primary" onclick="ebookLibrary.closeUIGuide()">
-                            Got It, Start Browsing
-                        </button>
+                    <button class="hint-close" aria-label="Close hint">×</button>
+                </div>
+                
+                <!-- Book interaction guidance -->
+                <div class="guide-hint book-hint" data-hint="book">
+                    <div class="hint-content">
+                        <span class="hint-text">Click books to view details</span>
+                        <div class="hint-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                     </div>
+                    <button class="hint-close" aria-label="Close hint">×</button>
                 </div>
             </div>
         `;
         
-        // Add guide to the body
+        // Add to body
         document.body.insertAdjacentHTML('beforeend', guideHTML);
         
-        // Add CSS styles
-        this.addUIGuideStyles();
+        // Add styles
+        this.addSubtleGuideStyles();
         
-        // Show guide after page loads
-        setTimeout(() => {
-            if (this.uiGuide.showGuide) {
-                this.showUIGuide();
-            }
-        }, 1000);
+        // Show hints with delay
+        this.showGuidanceHints();
     }
     
-    addUIGuideStyles() {
+    addSubtleGuideStyles() {
         const styles = document.createElement('style');
         styles.textContent = `
-            /* UI Guide Styles */
-            .ui-guide-container {
+            /* Subtle Guide Container */
+            .subtle-guide-container {
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
+                pointer-events: none;
                 z-index: 9998;
+            }
+            
+            /* Individual Guide Hint */
+            .guide-hint {
+                position: absolute;
+                background: rgba(0, 122, 255, 0.95);
+                color: white;
+                padding: 10px 16px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                opacity: 0;
+                transform: translateY(10px);
+                pointer-events: none;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                max-width: 200px;
+                z-index: 9999;
+            }
+            
+            .hint-content {
                 display: flex;
-                justify-content: center;
                 align-items: center;
-                background: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(5px);
-                animation: fadeIn 0.3s ease;
+                gap: 8px;
             }
             
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+            .hint-text {
+                line-height: 1.4;
             }
             
-            .ui-guide-content {
+            .hint-arrow {
+                flex-shrink: 0;
+                animation: bounceArrow 1.5s ease-in-out infinite;
+            }
+            
+            @keyframes bounceArrow {
+                0%, 100% { transform: translateX(0); }
+                50% { transform: translateX(5px); }
+            }
+            
+            /* Specific hint positions */
+            .search-hint {
+                top: 140px;
+                right: 20px;
+            }
+            
+            .book-hint {
+                bottom: 120px;
+                left: 20px;
+            }
+            
+            /* Show hints */
+            .guide-hint.show {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+            
+            .guide-hint.show:hover {
+                background: rgba(0, 122, 255, 1);
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(0, 122, 255, 0.4);
+            }
+            
+            /* Close button */
+            .guide-hint .hint-close {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                width: 20px;
+                height: 20px;
                 background: white;
-                border-radius: 20px;
-                padding: 30px;
-                max-width: 500px;
-                width: 90%;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                animation: slideUp 0.4s ease;
+                border-radius: 50%;
+                border: none;
+                color: #007AFF;
+                font-size: 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: auto;
             }
             
-            @keyframes slideUp {
+            .guide-hint.show:hover .hint-close {
+                opacity: 1;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .guide-hint {
+                    padding: 8px 12px;
+                    font-size: 13px;
+                    max-width: 160px;
+                }
+                
+                .search-hint {
+                    top: 120px;
+                    right: 10px;
+                }
+                
+                .book-hint {
+                    bottom: 100px;
+                    left: 10px;
+                }
+            }
+            
+            /* Animation for appearing */
+            @keyframes hintAppear {
                 from {
-                    transform: translateY(30px);
                     opacity: 0;
+                    transform: translateY(20px) scale(0.9);
                 }
                 to {
-                    transform: translateY(0);
                     opacity: 1;
+                    transform: translateY(0) scale(1);
                 }
             }
             
-            .ui-guide-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 25px;
-            }
-            
-            .ui-guide-title {
-                font-size: 22px;
-                font-weight: 700;
-                color: #1D1D1F;
-                margin: 0;
-            }
-            
-            .ui-guide-close {
-                background: none;
-                border: none;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                color: #666;
-                transition: all 0.2s ease;
-            }
-            
-            .ui-guide-close:hover {
-                background: #f8f8f8;
-                color: #1D1D1F;
-            }
-            
-            .ui-guide-steps {
-                margin-bottom: 25px;
-            }
-            
-            .guide-step {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                margin-bottom: 20px;
-                padding: 15px;
-                border-radius: 12px;
-                background: #f8f8f8;
-                transition: all 0.2s ease;
-            }
-            
-            .guide-step:hover {
-                background: #e8e8e8;
-                transform: translateX(5px);
-            }
-            
-            .step-icon {
-                font-size: 24px;
-                width: 50px;
-                height: 50px;
-                background: white;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-            }
-            
-            .step-content h4 {
-                font-size: 16px;
-                font-weight: 600;
-                color: #1D1D1F;
-                margin: 0 0 5px 0;
-            }
-            
-            .step-content p {
-                font-size: 14px;
-                color: #666;
-                margin: 0;
-                line-height: 1.5;
-            }
-            
-            .ui-guide-actions {
-                text-align: center;
-            }
-            
-            .btn-primary {
-                padding: 14px 28px;
-                background: #007AFF;
-                color: white;
-                border: none;
-                border-radius: 12px;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                width: 100%;
-            }
-            
-            .btn-primary:hover {
-                background: #0056CC;
-                transform: translateY(-2px);
-            }
-            
-            /* Mobile optimizations */
-            @media (max-width: 767px) {
-                .ui-guide-content {
-                    padding: 20px;
-                    width: 95%;
-                }
-                
-                .ui-guide-title {
-                    font-size: 20px;
-                }
-                
-                .guide-step {
-                    flex-direction: column;
-                    text-align: center;
-                }
+            .guide-hint.show {
+                animation: hintAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             }
         `;
         
         document.head.appendChild(styles);
     }
     
-    showUIGuide() {
-        const guide = document.getElementById('ui-guide');
-        if (guide) {
-            guide.style.display = 'flex';
-        }
+    showGuidanceHints() {
+        setTimeout(() => {
+            const hints = document.querySelectorAll('.guide-hint');
+            
+            hints.forEach((hint, index) => {
+                setTimeout(() => {
+                    hint.classList.add('show');
+                    
+                    // Auto-hide after 8 seconds
+                    setTimeout(() => {
+                        this.closeHint(hint);
+                    }, 8000);
+                    
+                }, index * 1000);
+            });
+            
+        }, 1500);
     }
     
-    closeUIGuide() {
-        const guide = document.getElementById('ui-guide');
-        if (guide) {
-            guide.style.display = 'none';
-        }
-        this.uiGuide.showGuide = false;
+    closeHint(hint) {
+        hint.style.opacity = '0';
+        hint.style.transform = 'translateY(10px)';
+        
+        setTimeout(() => {
+            if (hint.parentNode) {
+                hint.remove();
+            }
+            
+            // Mark as seen when all hints are closed
+            const remainingHints = document.querySelectorAll('.guide-hint').length;
+            if (remainingHints === 0) {
+                localStorage.setItem('ebooks-hints-seen', 'true');
+            }
+        }, 300);
+    }
+    
+    attachGuideInteractions() {
+        // When search hint is clicked, focus search
+        document.querySelector('.search-hint')?.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('hint-close')) {
+                const searchInput = document.getElementById('ebook-search');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+        });
+        
+        // When book hint is clicked, scroll to books
+        document.querySelector('.book-hint')?.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('hint-close')) {
+                const booksSection = document.getElementById('ebooks-grid');
+                if (booksSection) {
+                    booksSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+        
+        // Close buttons
+        document.querySelectorAll('.hint-close').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const hint = e.target.closest('.guide-hint');
+                if (hint) {
+                    this.closeHint(hint);
+                }
+            });
+        });
     }
     
     // ================ NAVIGATION METHODS ================
@@ -892,48 +889,51 @@ class EbooksLibrary {
     }
     
     createBookGridItem(book) {
-        const card = el('div', 'ebook-card grid-item');
+        const card = el('div', 'ebook-card apple-style-grid-item');
         const optimizedImage = this.optimizeImageForSEO(book.cover_url);
         
         card.innerHTML = `
-            <div class="ebook-card-inner">
-                <div class="ebook-cover-container" onclick="ebookLibrary.openBookDetailModal('${book.id}')">
-                    <div class="ebook-cover" 
-                         style="background-image: url('${optimizedImage}')"
-                         aria-label="Click to view ${book.title} details">
-                        ${book.featured ? '<span class="featured-badge">Featured</span>' : ''}
-                        <div class="cover-overlay">
-                            <span class="cover-hint">Click to view details</span>
-                        </div>
+            <div class="ebook-cover-container" onclick="ebookLibrary.openBookDetailModal('${book.id}')">
+                <div class="ebook-cover apple-cover" 
+                     style="background-image: url('${optimizedImage}')"
+                     aria-label="Click to view ${book.title} details">
+                    ${book.featured ? '<span class="featured-badge">Featured</span>' : ''}
+                    <div class="cover-overlay">
+                        <span class="cover-hint">Click to view details</span>
                     </div>
                 </div>
+            </div>
+            
+            <div class="ebook-content apple-content">
+                <h3 class="ebook-title apple-title" onclick="ebookLibrary.openBookDetailModal('${book.id}')" style="cursor: pointer;">${book.title}</h3>
+                <p class="ebook-author apple-author">by ${book.author || 'Unknown Author'}</p>
                 
-                <div class="ebook-content">
-                    <h3 class="ebook-title" onclick="ebookLibrary.openBookDetailModal('${book.id}')" style="cursor: pointer;">${book.title}</h3>
-                    <p class="ebook-author">by ${book.author || 'Unknown Author'}</p>
-                    
-                    <div class="ebook-meta">
-                        ${book.category ? `<span class="ebook-category">${book.category}</span>` : ''}
-                        ${book.read_time_minutes ? `<span class="ebook-duration">${book.read_time_minutes} min read</span>` : ''}
-                    </div>
-                    
-                    <div class="ebook-actions">
-                        <button class="btn-read" onclick="ebookLibrary.readBookOnline('${book.id}', '${book.title}')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M15 19L18 22L23 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Read Online
-                        </button>
-                        
-                        <button class="btn-share" onclick="ebookLibrary.openSocialSharingModal('${book.id}')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24919 15.0227 5.37061L8.0826 9.84066C7.54305 9.32015 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.6798 8.0826 14.1593L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.4569 16.3202 15.9174 16.8407L8.97727 12.3706C8.99229 12.2492 9 12.1255 9 12C9 11.8745 8.99229 11.7508 8.97727 11.6294L15.9174 7.15934C16.4569 7.67985 17.1911 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Share
-                        </button>
-                    </div>
+                <div class="ebook-meta apple-meta">
+                    ${book.category ? `<span class="ebook-category apple-category">${book.category}</span>` : ''}
+                    ${book.read_time_minutes ? `<span class="ebook-duration apple-duration">${book.read_time_minutes} min read</span>` : ''}
+                </div>
+                
+                <div class="ebook-stats apple-stats">
+                    <span class="download-count">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="opacity: 0.6;">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" 
+                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        ${this.formatNumber(book.download_count || 0)} reads
+                    </span>
+                </div>
+                
+                <div class="ebook-actions apple-actions">
+                    <button class="btn-read apple-read-btn" onclick="ebookLibrary.readBookOnline('${book.id}', '${book.title}')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M15 19L18 22L23 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Read Online
+                    </button>
                 </div>
             </div>
         `;
@@ -942,7 +942,7 @@ class EbooksLibrary {
     }
     
     createBookListItem(book) {
-        const item = el('div', 'ebook-card list-item');
+        const item = el('div', 'ebook-card apple-list-item');
         const optimizedImage = this.optimizeImageForSEO(book.cover_url);
         
         item.innerHTML = `
@@ -974,6 +974,18 @@ class EbooksLibrary {
                     <p class="list-description">
                         ${book.description ? `${book.description.substring(0, 200)}...` : 'A Christian ebook for spiritual growth and Bible study.'}
                     </p>
+                    
+                    <div class="list-stats">
+                        <span class="download-count-list">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="opacity: 0.6;">
+                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" 
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            ${this.formatNumber(book.download_count || 0)} reads
+                        </span>
+                    </div>
                     
                     <div class="list-actions">
                         <button class="btn-read-list" onclick="ebookLibrary.readBookOnline('${book.id}', '${book.title}')">
@@ -1479,65 +1491,6 @@ class EbooksLibrary {
                 border-radius: 20px;
                 font-size: 14px;
                 font-weight: 600;
-            }
-            
-            /* Button styles */
-            .btn-read, .btn-read-list {
-                background: #34C759;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 10px 20px;
-                font-weight: 600;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                transition: all 0.2s ease;
-            }
-            
-            .btn-read:hover, .btn-read-list:hover {
-                background: #2DA84A;
-                transform: translateY(-2px);
-            }
-            
-            .btn-share, .btn-share-list {
-                background: #007AFF;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 10px 20px;
-                font-weight: 600;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                transition: all 0.2s ease;
-            }
-            
-            .btn-share:hover, .btn-share-list:hover {
-                background: #0056CC;
-                transform: translateY(-2px);
-            }
-            
-            .ebook-actions {
-                display: flex;
-                gap: 10px;
-                margin-top: 15px;
-            }
-            
-            .ebook-actions button {
-                flex: 1;
-            }
-            
-            .list-actions {
-                display: flex;
-                gap: 10px;
-                margin-top: 15px;
-            }
-            
-            .list-actions button {
-                flex: 1;
             }
         `;
         
@@ -2297,64 +2250,6 @@ toastStyles.textContent = `
             transform: translateX(100%);
             opacity: 0;
         }
-    }
-    
-    .seo-toast {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        padding: 12px 20px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 10000;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        animation: toastSlideIn 0.3s ease;
-        max-width: 400px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    
-    .toast-success {
-        background: #34C759;
-        color: white;
-    }
-    
-    .toast-error {
-        background: #FF3B30;
-        color: white;
-    }
-    
-    .toast-info {
-        background: #007AFF;
-        color: white;
-    }
-    
-    .seo-toast .toast-icon {
-        font-size: 18px;
-    }
-    
-    .seo-toast .toast-message {
-        flex: 1;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    
-    .seo-toast .toast-close {
-        background: none;
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.8;
-        transition: opacity 0.2s;
-    }
-    
-    .seo-toast .toast-close:hover {
-        opacity: 1;
     }
 `;
 
