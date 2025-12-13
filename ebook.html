@@ -30,16 +30,18 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://yourchurch.com/ebooks">
     
-    <!-- Preload Critical Resources -->
+  <!-- Preload Critical Resources -->
 <link rel="preload" href="/styles/ebooks.css" as="style">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap" crossorigin>
 
-<!-- Fonts -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap">
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Fonts with better loading strategy -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
+
+<!-- Fallback for browsers without JavaScript -->
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600&display=swap">
+</noscript>
+
     
     <!-- Manifest -->
     <link rel="manifest" href="/site.webmanifest">
