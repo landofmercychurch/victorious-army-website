@@ -2807,3 +2807,4 @@ if (typeof window !== 'undefined') {
     console.log("✅ Global debug helper available: window.debugEbooks()");
 }
 
+ 
