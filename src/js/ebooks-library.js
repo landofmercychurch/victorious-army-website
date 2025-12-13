@@ -999,9 +999,7 @@ class EbooksLibrary {
                         
                         <button class="btn-share-list" onclick="ebookLibrary.openSocialSharingModal('${book.id}')">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                                <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24919 15.0227 5.37061L8.0826 9.84066C7.54305 9.32015 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.6798 8.0826 14.1593L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569
-
-<path d="M15 19L18 22L23 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24919 15.0227 5.37061L8.0826 9.84066C7.54305 9.32015 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.6798 8.0826 14.1593L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.4569 16.3202 15.9174 16.8407L8.97727 12.3706C8.99229 12.2492 9 12.1255 9 12C9 11.8745 8.99229 11.7508 8.97727 11.6294L15.9174 7.15934C16.4569 7.67985 17.1911 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             Share
                         </button>
@@ -2074,7 +2072,7 @@ class EbooksLibrary {
         const book = this.books.find(b => b.id === bookId);
         if (!book) return;
         
-        const shareUrl = `${window.location.origin}/ebooks/book/${this.generateSl book.title)}?id=${book.id}`;
+        const shareUrl = `${window.location.origin}/ebooks/book/${this.generateSlug(book.title)}?id=${book.id}`;
         const shareText = `Check out "${book.title}" - a free Christian ebook by ${book.author || 'Unknown Author'}. ${shareUrl}`;
         
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
@@ -2806,5 +2804,3 @@ if (typeof window !== 'undefined') {
     
     console.log("✅ Global debug helper available: window.debugEbooks()");
 }
-
- 
