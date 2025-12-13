@@ -29,6 +29,13 @@ class EbooksLibrary {
             structuredDataInjected: false
         };
         
+        // Performance tracking
+        this.performanceMetrics = {
+            pageLoadStart: Date.now(),
+            searchDebounceTimer: null,
+            activeModals: new Set()
+        };
+        
         console.log("✅ Library initialized with:", {
             currentFilters: this.currentFilters,
             itemsPerPage: this.itemsPerPage
@@ -47,28 +54,36 @@ class EbooksLibrary {
         console.log("Step 1: Setting dynamic SEO meta tags");
         this.setDynamicMetaTags();
         
-        // 2. Setup navigation and search
-        console.log("Step 2: Setting up navigation");
+        // 2. Create book detail modal
+        console.log("Step 2: Creating book detail modal");
+        this.createBookDetailModal();
+        
+        // 3. Setup navigation and search
+        console.log("Step 3: Setting up navigation");
         this.setupNavigation();
         
-        // 3. Load data
-        console.log("Step 3: Loading data");
+        // 4. Load data
+        console.log("Step 4: Loading data");
         await this.loadData();
         
-        // 4. Setup UI and events
-        console.log("Step 4: Setting up event listeners");
+        // 5. Setup UI and events
+        console.log("Step 5: Setting up event listeners");
         this.setupEventListeners();
         
-        // 5. Render everything
-        console.log("Step 5: Rendering UI");
+        // 6. Render everything
+        console.log("Step 6: Rendering UI");
         this.render();
         
-        // 6. Inject comprehensive structured data
-        console.log("Step 6: Injecting structured data");
+        // 7. Check URL for book ID and open modal if present
+        console.log("Step 7: Checking URL parameters");
+        this.checkURLForBookDetail();
+        
+        // 8. Inject comprehensive structured data
+        console.log("Step 8: Injecting structured data");
         this.injectComprehensiveStructuredData();
         
-        // 7. Setup performance monitoring
-        console.log("Step 7: Setting up performance monitoring");
+        // 9. Setup performance monitoring
+        console.log("Step 9: Setting up performance monitoring");
         this.setupPerformanceMonitoring();
         
         console.log("✅ EbooksLibrary initialization complete");
@@ -81,7 +96,7 @@ class EbooksLibrary {
         return this;
     }
     
-    // ================ ORIGINAL METHODS ================
+    // ================ NAVIGATION METHODS ================
     
     setupNavigation() {
         console.log("🔧 Setting up navigation");
@@ -91,17 +106,9 @@ class EbooksLibrary {
         const menuBtn = document.querySelector('.nav-menu-btn');
         const mobileNav = document.querySelector('.mobile-nav');
         
-        console.log("Mobile menu elements:", {
-            menuBtn: menuBtn,
-            mobileNav: mobileNav,
-            menuBtnExists: !!menuBtn,
-            mobileNavExists: !!mobileNav
-        });
-        
         if (menuBtn && mobileNav) {
             menuBtn.addEventListener('click', () => {
                 const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-                console.log(`📱 Mobile menu ${isExpanded ? 'closing' : 'opening'}`);
                 menuBtn.setAttribute('aria-expanded', !isExpanded);
                 mobileNav.hidden = isExpanded;
             });
@@ -126,14 +133,6 @@ class EbooksLibrary {
         const searchCloseBtn = document.querySelector('.search-close-btn');
         const searchInput = document.querySelector('#global-search');
         
-        console.log("Search overlay elements found:", {
-            searchBtn: searchBtn,
-            searchOverlay: searchOverlay,
-            searchCloseBtn: searchCloseBtn,
-            searchInput: searchInput,
-            allExist: !!searchBtn && !!searchOverlay && !!searchCloseBtn && !!searchInput
-        });
-        
         if (!searchBtn || !searchOverlay) {
             console.error("❌ Critical search overlay elements missing!");
             console.groupEnd();
@@ -141,33 +140,27 @@ class EbooksLibrary {
         }
         
         // Initialize overlay as hidden
-        console.log("Initializing overlay as hidden");
         this.closeSearchOverlay();
         
         // Open search overlay
         searchBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("🔍 Opening search overlay via button click");
             this.openSearchOverlay();
         });
-        console.log("✅ Open button event listener added");
         
         // Close search overlay with close button
         if (searchCloseBtn) {
             searchCloseBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log("❌ Closing overlay via close button");
                 this.closeSearchOverlay();
             });
-            console.log("✅ Close button event listener added");
         }
         
         // Close search overlay when clicking on overlay background
         searchOverlay.addEventListener('click', (e) => {
             if (e.target === searchOverlay) {
-                console.log("🎯 Closing overlay via background click");
                 this.closeSearchOverlay();
             }
         });
@@ -175,78 +168,37 @@ class EbooksLibrary {
         // Close search overlay with Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !searchOverlay.hidden) {
-                console.log("⌨️ Closing overlay via Escape key");
                 this.closeSearchOverlay();
             }
         });
-        console.log("✅ Escape key event listener added");
-        
-        // Auto-close after 15 seconds of inactivity
-        let inactivityTimer;
-        const resetInactivityTimer = () => {
-            clearTimeout(inactivityTimer);
-            if (!searchOverlay.hidden) {
-                inactivityTimer = setTimeout(() => {
-                    console.log("⏰ Auto-closing overlay due to inactivity");
-                    this.closeSearchOverlay();
-                }, 15000);
-            }
-        };
-        
-        // Reset timer on user interaction
-        if (searchInput) {
-            searchInput.addEventListener('input', resetInactivityTimer);
-            searchInput.addEventListener('keydown', resetInactivityTimer);
-        }
-        searchOverlay.addEventListener('mousemove', resetInactivityTimer);
-        searchOverlay.addEventListener('click', resetInactivityTimer);
-        console.log("✅ Inactivity timer setup complete");
         
         // Handle search form submission
         const searchForm = document.querySelector('.search-form');
-        if (searchForm) {
+        if (searchForm && searchInput) {
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const searchTerm = searchInput?.value.trim();
-                console.log("📝 Search form submitted:", searchTerm);
+                const searchTerm = searchInput.value.trim();
                 
                 if (searchTerm) {
                     this.closeSearchOverlay();
                     
-                    // Transfer search to main search input
+                    // Set search and apply filters
                     const mainSearch = document.getElementById('ebook-search');
                     if (mainSearch) {
                         mainSearch.value = searchTerm;
                         this.currentFilters.search = searchTerm;
-                        console.log("🔄 Transferring search to main input:", searchTerm);
                         this.applyFilters();
+                        
+                        // Auto-scroll to results
+                        setTimeout(() => {
+                            const resultsSection = document.getElementById('ebooks-grid');
+                            if (resultsSection) {
+                                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }, 300);
                     }
                 }
             });
-            console.log("✅ Search form event listener added");
-        }
-        
-        // Clear search button functionality (inside overlay)
-        const searchClearBtn = document.querySelector('.search-clear-btn');
-        if (searchClearBtn && searchInput) {
-            // Show/hide clear button based on input
-            searchInput.addEventListener('input', (e) => {
-                const hasValue = !!e.target.value.trim();
-                searchClearBtn.hidden = !hasValue;
-                console.log(`🔄 Clear button ${hasValue ? 'shown' : 'hidden'}`);
-            });
-            
-            // Clear input when button clicked
-            searchClearBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log("🧹 Clearing search input");
-                searchInput.value = '';
-                searchClearBtn.hidden = true;
-                searchInput.focus();
-                resetInactivityTimer();
-            });
-            console.log("✅ Search clear button setup complete");
         }
         
         console.log("✅ Search overlay setup complete");
@@ -258,17 +210,9 @@ class EbooksLibrary {
         const searchOverlay = document.querySelector('.search-overlay');
         const searchInput = document.querySelector('#global-search');
         
-        console.log("Overlay state before opening:", {
-            overlay: searchOverlay,
-            hidden: searchOverlay?.hidden,
-            style: searchOverlay?.style.display
-        });
-        
         if (searchOverlay) {
             searchOverlay.hidden = false;
             searchOverlay.style.display = 'flex';
-            searchOverlay.style.visibility = 'visible';
-            searchOverlay.style.opacity = '1';
             
             // Prevent body scrolling
             document.body.style.overflow = 'hidden';
@@ -276,16 +220,10 @@ class EbooksLibrary {
             // Add open class for CSS targeting
             searchOverlay.classList.add('active');
             document.body.classList.add('search-overlay-open');
-            
-            console.log("✅ Overlay opened, CSS classes added:", {
-                hasActiveClass: searchOverlay.classList.contains('active'),
-                bodyHasClass: document.body.classList.contains('search-overlay-open')
-            });
         }
         
         if (searchInput) {
             setTimeout(() => {
-                console.log("🎯 Focusing search input");
                 searchInput.focus();
                 searchInput.select();
             }, 100);
@@ -297,16 +235,9 @@ class EbooksLibrary {
         const searchOverlay = document.querySelector('.search-overlay');
         const searchInput = document.querySelector('#global-search');
         
-        console.log("Overlay state before closing:", {
-            overlay: searchOverlay,
-            hidden: searchOverlay?.hidden
-        });
-        
         if (searchOverlay) {
             searchOverlay.hidden = true;
             searchOverlay.style.display = 'none';
-            searchOverlay.style.visibility = 'hidden';
-            searchOverlay.style.opacity = '0';
             
             // Restore body scrolling
             document.body.style.overflow = '';
@@ -314,15 +245,14 @@ class EbooksLibrary {
             // Remove open class
             searchOverlay.classList.remove('active');
             document.body.classList.remove('search-overlay-open');
-            
-            console.log("✅ Overlay closed, CSS classes removed");
         }
         
         if (searchInput) {
             searchInput.blur();
-            console.log("🔍 Search input blurred");
         }
     }
+    
+    // ================ DATA METHODS ================
     
     async loadData() {
         console.log("📥 Loading ebook data");
@@ -333,7 +263,6 @@ class EbooksLibrary {
             this.books = await api.get("/ebooks");
             
             console.log(`✅ Successfully loaded ${this.books.length} books`);
-            console.table(this.books.slice(0, 3)); // Log first 3 books
             
             // Extract metadata
             this.books.forEach(book => {
@@ -372,7 +301,6 @@ class EbooksLibrary {
     createDemoData() {
         console.log("📝 Creating demo data for development");
         
-        // Create sample books for development
         this.books = [
             {
                 id: '1',
@@ -427,45 +355,36 @@ class EbooksLibrary {
     
     sortBooks() {
         console.log(`🔄 Sorting books by: ${this.currentFilters.sort}`);
-        console.group("Book Sorting");
-        
-        const originalOrder = [...this.filteredBooks];
         
         switch (this.currentFilters.sort) {
             case 'newest':
-                console.log("📅 Sorting by newest (created date)");
                 this.filteredBooks.sort((a, b) => 
                     new Date(b.created_at) - new Date(a.created_at)
                 );
                 break;
             case 'popular':
-                console.log("🔥 Sorting by popularity (download count)");
                 this.filteredBooks.sort((a, b) => 
                     (b.download_count || 0) - (a.download_count || 0)
                 );
                 break;
             case 'title':
-                console.log("🔤 Sorting by title alphabetically");
                 this.filteredBooks.sort((a, b) => 
                     (a.title || '').localeCompare(b.title || '')
                 );
                 break;
             case 'author':
-                console.log("✍️ Sorting by author alphabetically");
                 this.filteredBooks.sort((a, b) => 
                     (a.author || '').localeCompare(b.author || '')
                 );
                 break;
             default:
-                console.warn("⚠️ Unknown sort option, defaulting to newest");
                 this.filteredBooks.sort((a, b) => 
                     new Date(b.created_at) - new Date(a.created_at)
                 );
         }
-        
-        console.log("✅ Books sorted");
-        console.groupEnd();
     }
+    
+    // ================ EVENT LISTENERS ================
     
     setupEventListeners() {
         console.log("🎮 Setting up event listeners");
@@ -476,12 +395,11 @@ class EbooksLibrary {
         if (searchInput) {
             console.log("🔍 Found main search input");
             
-            let searchTimeout;
-            const searchHandler = (e) => {
+            searchInput.addEventListener('input', (e) => {
                 const value = e.target.value;
-                clearTimeout(searchTimeout);
+                clearTimeout(this.performanceMetrics.searchDebounceTimer);
                 
-                searchTimeout = setTimeout(() => {
+                this.performanceMetrics.searchDebounceTimer = setTimeout(() => {
                     console.log(`🔍 Debounced search: "${value}"`);
                     this.currentFilters.search = value;
                     this.applyFilters();
@@ -493,38 +411,40 @@ class EbooksLibrary {
                     if (value) {
                         this.updateMetaTagsForSearch(value);
                     }
+                    
+                    // Auto-scroll to results if search is active
+                    if (value && this.filteredBooks.length > 0) {
+                        setTimeout(() => {
+                            const resultsSection = document.getElementById('ebooks-grid');
+                            if (resultsSection) {
+                                resultsSection.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'start' 
+                                });
+                            }
+                        }, 400);
+                    }
                 }, 350);
-            };
-            
-            searchInput.addEventListener('input', searchHandler);
+            });
             
             // Update clear button visibility
             const searchClearBtn = document.querySelector('.search-clear-btn');
-            searchInput.addEventListener('input', (e) => {
-                const value = e.target.value;
-                
-                // Show/hide clear button
-                if (searchClearBtn) {
+            if (searchClearBtn) {
+                searchInput.addEventListener('input', (e) => {
+                    const value = e.target.value;
                     searchClearBtn.hidden = !value;
-                    console.log(`🔄 Clear button ${value ? 'shown' : 'hidden'}`);
-                }
-            });
-            
-            // Clear search button
-            const clearBtn = document.querySelector('.search-clear-btn');
-            if (clearBtn) {
-                clearBtn.addEventListener('click', () => {
+                });
+                
+                // Clear search button
+                searchClearBtn.addEventListener('click', () => {
                     console.log("🧹 Clearing main search");
                     searchInput.value = '';
                     this.currentFilters.search = '';
-                    clearBtn.hidden = true;
+                    searchClearBtn.hidden = true;
                     this.applyFilters();
                     searchInput.focus();
                 });
-                console.log("✅ Main search clear button listener added");
             }
-        } else {
-            console.warn("⚠️ Main search input not found");
         }
         
         // Filters
@@ -542,9 +462,6 @@ class EbooksLibrary {
                     this.currentFilters[name] = e.target.value;
                     this.applyFilters();
                 });
-                console.log(`✅ ${name} filter listener added`);
-            } else {
-                console.warn(`⚠️ ${name} filter element not found`);
             }
         });
         
@@ -555,23 +472,10 @@ class EbooksLibrary {
                 console.log("🗑️ Clearing all filters");
                 this.clearAllFilters();
             });
-            console.log("✅ Clear filters button listener added");
         }
         
-        // Clear search & filters button
-        const clearSearchBtn = document.getElementById('clear-search-btn');
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener('click', () => {
-                console.log("🧹 Clearing search and filters");
-                this.clearAllFilters();
-            });
-            console.log("✅ Clear search button listener added");
-        }
-        
-        // View toggle buttons - FIXED: Proper view switching
+        // View toggle buttons
         const viewBtns = document.querySelectorAll('.view-btn');
-        console.log(`🔘 Found ${viewBtns.length} view toggle buttons`);
-        
         viewBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const view = e.target.dataset.view;
@@ -587,7 +491,6 @@ class EbooksLibrary {
                 console.log("⬇️ Loading more books");
                 this.loadMore();
             });
-            console.log("✅ Load more button listener added");
         }
         
         // Newsletter forms
@@ -604,9 +507,6 @@ class EbooksLibrary {
                     console.log(`📧 ${name} newsletter form submitted`);
                     this.handleNewsletter(e);
                 });
-                console.log(`✅ ${name} newsletter form listener added`);
-            } else {
-                console.warn(`⚠️ ${name} newsletter form not found: ${id}`);
             }
         });
         
@@ -619,10 +519,8 @@ class EbooksLibrary {
     
     clearAllFilters() {
         console.log("🔄 Clearing all filters");
-        console.group("Clear Filters");
         
         // Reset all filters
-        const oldFilters = { ...this.currentFilters };
         this.currentFilters = {
             category: '',
             series: '',
@@ -630,8 +528,6 @@ class EbooksLibrary {
             search: '',
             sort: 'newest'
         };
-        
-        console.log("Filters reset:", { from: oldFilters, to: this.currentFilters });
         
         // Reset UI elements
         const elements = {
@@ -646,7 +542,6 @@ class EbooksLibrary {
             const element = document.getElementById(id);
             if (element) {
                 element.value = this.currentFilters[type];
-                console.log(`✅ Reset ${type} filter UI`);
             }
         });
         
@@ -654,110 +549,52 @@ class EbooksLibrary {
         const searchClearBtn = document.querySelector('.search-clear-btn');
         if (searchClearBtn) {
             searchClearBtn.hidden = true;
-            console.log("✅ Search clear button hidden");
         }
         
-        // Apply filters (will reset everything)
+        // Apply filters
         this.applyFilters();
-        
-        console.groupEnd();
     }
     
-    switchView(view) {
-        console.log(`🔄 Switching to ${view} view`);
-        console.group("View Switch");
-        
-        const grid = document.getElementById('ebooks-grid');
-        const viewBtns = document.querySelectorAll('.view-btn');
-        
-        if (!grid) {
-            console.error("❌ Ebooks grid not found");
-            return;
-        }
-        
-        console.log(`Found ${viewBtns.length} view buttons`);
-        
-        // Update active button
-        viewBtns.forEach(btn => {
-            const isActive = btn.dataset.view === view;
-            btn.classList.toggle('active', isActive);
-            btn.setAttribute('aria-checked', isActive);
-            if (isActive) {
-                console.log(`✅ Activated ${view} view button`);
-            }
-        });
-        
-        // Update grid view - FIXED: Proper view switching
-        const oldView = grid.dataset.view;
-        grid.dataset.view = view;
-        
-        // Remove all existing view classes
-        grid.classList.remove('grid-view', 'list-view');
-        
-        // Add the new view class
-        grid.classList.add(view === 'list' ? 'list-view' : 'grid-view');
-        
-        console.log(`View changed: ${oldView} → ${view}`);
-        console.log(`Grid classes: ${grid.className}`);
-        
-        // Re-render books with new view
-        this.renderBooks();
-        
-        console.groupEnd();
-    }
+    // ================ FILTER METHODS ================
     
     applyFilters() {
         console.log("🔄 Applying filters");
-        console.group("Filter Application");
-        
-        console.log("Current filters:", this.currentFilters);
-        console.log(`Starting with ${this.books.length} total books`);
         
         this.filteredBooks = [...this.books];
         
         // Apply search
         if (this.currentFilters.search) {
             const searchTerm = this.currentFilters.search.toLowerCase();
-            const beforeSearch = this.filteredBooks.length;
-            
             this.filteredBooks = this.filteredBooks.filter(book => {
-                const matches = 
+                return (
                     book.title?.toLowerCase().includes(searchTerm) ||
                     book.author?.toLowerCase().includes(searchTerm) ||
                     book.description?.toLowerCase().includes(searchTerm) ||
                     book.series?.toLowerCase().includes(searchTerm) ||
-                    book.category?.toLowerCase().includes(searchTerm);
-                return matches;
+                    book.category?.toLowerCase().includes(searchTerm)
+                );
             });
-            
-            console.log(`🔍 Search filter "${searchTerm}": ${beforeSearch} → ${this.filteredBooks.length} books`);
         }
         
         // Apply category filter
         if (this.currentFilters.category) {
-            const beforeCategory = this.filteredBooks.length;
             this.filteredBooks = this.filteredBooks.filter(
                 book => book.category === this.currentFilters.category
             );
-            console.log(`📂 Category filter "${this.currentFilters.category}": ${beforeCategory} → ${this.filteredBooks.length} books`);
         }
         
         // Apply series filter
         if (this.currentFilters.series) {
-            const beforeSeries = this.filteredBooks.length;
             this.filteredBooks = this.filteredBooks.filter(
                 book => book.series === this.currentFilters.series
             );
-            console.log(`📚 Series filter "${this.currentFilters.series}": ${beforeSeries} → ${this.filteredBooks.length} books`);
         }
         
         // Apply author filter
         if (this.currentFilters.author) {
-            const beforeAuthor = this.filteredBooks.length;
             this.filteredBooks = this.filteredBooks.filter(
                 book => book.author === this.currentFilters.author
             );
-            console.log(`✍️ Author filter "${this.currentFilters.author}": ${beforeAuthor} → ${this.filteredBooks.length} books`);
         }
         
         console.log(`📊 After filters: ${this.filteredBooks.length} books remaining`);
@@ -767,9 +604,8 @@ class EbooksLibrary {
         
         // Reset pagination
         this.currentPage = 1;
-        console.log(`📄 Pagination reset to page 1`);
         
-        // Update URL for SEO (optional)
+        // Update URL for SEO
         this.updateURL();
         
         // Re-render
@@ -778,12 +614,18 @@ class EbooksLibrary {
         // Update results count
         this.updateResultsCount();
         
-        console.groupEnd();
+        // Track filter usage
+        this.trackSEOMetric('filters_applied', {
+            search: this.currentFilters.search,
+            category: this.currentFilters.category,
+            series: this.currentFilters.series,
+            author: this.currentFilters.author,
+            sort: this.currentFilters.sort,
+            results_count: this.filteredBooks.length
+        });
     }
     
     updateURL() {
-        console.log("🌐 Updating browser URL");
-        
         const params = new URLSearchParams();
         if (this.currentFilters.search) params.set('q', this.currentFilters.search);
         if (this.currentFilters.category) params.set('category', this.currentFilters.category);
@@ -795,66 +637,49 @@ class EbooksLibrary {
             ? `/ebooks?${params.toString()}`
             : '/ebooks';
         
-        console.log(`URL parameters: ${params.toString() || 'none'}`);
-        console.log(`New URL: ${newUrl}`);
-        
         window.history.pushState({}, '', newUrl);
     }
     
     updateResultsCount() {
-        console.log("🔢 Updating results count");
-        
         const resultsCount = document.getElementById('ebooks-count');
         const noResults = document.getElementById('no-results');
         
         if (resultsCount) {
             resultsCount.textContent = this.filteredBooks.length;
-            console.log(`✅ Results count updated: ${this.filteredBooks.length}`);
         }
         
         if (noResults) {
-            const shouldHide = this.filteredBooks.length > 0;
-            noResults.hidden = shouldHide;
-            console.log(`📭 No results message ${shouldHide ? 'hidden' : 'shown'}`);
+            noResults.hidden = this.filteredBooks.length > 0;
         }
     }
     
+    // ================ RENDER METHODS ================
+    
     render() {
         console.log("🎨 Rendering UI components");
-        console.group("UI Rendering");
         
         // Render stats
-        console.log("Step 1: Rendering stats");
         this.renderStats();
         
         // Render filters
-        console.log("Step 2: Rendering filters");
         this.renderFilters();
         
         // Render books
-        console.log("Step 3: Rendering books");
         this.renderBooks();
         
-        // Render featured books (if any)
-        console.log("Step 4: Rendering featured books");
+        // Render featured books
         this.renderFeatured();
         
         // Render categories
-        console.log("Step 5: Rendering categories");
         this.renderCategories();
         
         // Update results count
-        console.log("Step 6: Updating results count");
         this.updateResultsCount();
         
         console.log("✅ All UI components rendered");
-        console.groupEnd();
     }
     
     renderStats() {
-        console.log("📊 Rendering statistics");
-        console.group("Statistics");
-        
         const totalBooks = document.getElementById('total-ebooks');
         const totalAuthors = document.getElementById('total-authors');
         const totalDownloads = document.getElementById('total-downloads');
@@ -862,17 +687,14 @@ class EbooksLibrary {
         
         if (totalBooks) {
             totalBooks.textContent = this.books.length;
-            console.log(`✅ Total books: ${this.books.length}`);
         }
         
         if (totalAuthors) {
             totalAuthors.textContent = this.authors.size;
-            console.log(`✅ Total authors: ${this.authors.size}`);
         }
         
         if (totalSeries) {
             totalSeries.textContent = this.series.size;
-            console.log(`✅ Total series: ${this.series.size}`);
         }
         
         // Calculate total downloads
@@ -882,75 +704,48 @@ class EbooksLibrary {
                 ? `${Math.floor(downloads / 1000)}K`
                 : downloads;
             totalDownloads.textContent = display;
-            console.log(`✅ Total downloads: ${downloads} (display: ${display})`);
         }
-        
-        console.groupEnd();
     }
     
     renderFilters() {
-        console.log("🔧 Rendering filter dropdowns");
-        console.group("Filter Rendering");
-        
         // Populate category dropdown
         const categoryFilter = document.getElementById('category-filter');
         if (categoryFilter) {
             const categories = [...this.categories].sort();
-            console.log(`Adding ${categories.length} categories to dropdown`);
-            
             categories.forEach(category => {
                 const option = el('option', '', { value: category, text: category });
                 categoryFilter.appendChild(option);
             });
-            console.log("✅ Category dropdown populated");
         }
         
         // Populate series dropdown
         const seriesFilter = document.getElementById('series-filter');
         if (seriesFilter) {
             const series = [...this.series].sort();
-            console.log(`Adding ${series.length} series to dropdown`);
-            
             series.forEach(seriesName => {
                 const option = el('option', '', { value: seriesName, text: seriesName });
                 seriesFilter.appendChild(option);
             });
-            console.log("✅ Series dropdown populated");
         }
         
         // Populate author dropdown
         const authorFilter = document.getElementById('author-filter');
         if (authorFilter) {
             const authors = [...this.authors].sort();
-            console.log(`Adding ${authors.length} authors to dropdown`);
-            
             authors.forEach(author => {
                 const option = el('option', '', { value: author, text: author });
                 authorFilter.appendChild(option);
             });
-            console.log("✅ Author dropdown populated");
         }
         
         // Render sidebar filters
-        console.log("📋 Rendering sidebar filters");
         this.renderSidebarFilters();
-        
-        console.groupEnd();
     }
     
     renderSidebarFilters() {
-        console.log("📁 Rendering sidebar filter lists");
-        console.group("Sidebar Filters");
-        
         const categoryList = document.getElementById('category-list');
         const seriesList = document.getElementById('series-list');
         const authorList = document.getElementById('author-list');
-        
-        console.log("Filter list elements:", {
-            categoryList: !!categoryList,
-            seriesList: !!seriesList,
-            authorList: !!authorList
-        });
         
         // Count occurrences
         const categoryCounts = {};
@@ -963,15 +758,9 @@ class EbooksLibrary {
             if (book.author) authorCounts[book.author] = (authorCounts[book.author] || 0) + 1;
         });
         
-        console.log("Category counts:", categoryCounts);
-        console.log("Series counts:", seriesCounts);
-        console.log("Top 5 author counts:", Object.entries(authorCounts).sort((a,b) => b[1]-a[1]).slice(0,5));
-        
         // Render category list
         if (categoryList) {
             const categories = [...this.categories].sort();
-            console.log(`Rendering ${categories.length} categories`);
-            
             categoryList.innerHTML = categories
                 .map(category => `
                     <div class="filter-item ${this.currentFilters.category === category ? 'active' : ''}"
@@ -981,14 +770,11 @@ class EbooksLibrary {
                         <span class="filter-count">${categoryCounts[category] || 0}</span>
                     </div>
                 `).join('');
-            console.log("✅ Category list rendered");
         }
         
         // Render series list
         if (seriesList) {
             const series = [...this.series].sort();
-            console.log(`Rendering ${series.length} series`);
-            
             seriesList.innerHTML = series
                 .map(seriesName => `
                     <div class="filter-item ${this.currentFilters.series === seriesName ? 'active' : ''}"
@@ -998,7 +784,6 @@ class EbooksLibrary {
                         <span class="filter-count">${seriesCounts[seriesName] || 0}</span>
                     </div>
                 `).join('');
-            console.log("✅ Series list rendered");
         }
         
         // Render author list (top 10)
@@ -1006,8 +791,6 @@ class EbooksLibrary {
             const topAuthors = [...this.authors]
                 .sort((a, b) => (authorCounts[b] || 0) - (authorCounts[a] || 0))
                 .slice(0, 10);
-            
-            console.log(`Rendering top ${topAuthors.length} authors`);
             
             authorList.innerHTML = topAuthors
                 .map(author => `
@@ -1018,13 +801,10 @@ class EbooksLibrary {
                         <span class="filter-count">${authorCounts[author] || 0}</span>
                     </div>
                 `).join('');
-            console.log("✅ Author list rendered");
         }
         
         // Add click handlers to filter items
         const filterItems = document.querySelectorAll('.filter-item');
-        console.log(`Adding click handlers to ${filterItems.length} filter items`);
-        
         filterItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 const type = item.dataset.type;
@@ -1033,128 +813,23 @@ class EbooksLibrary {
                 
                 if (wasActive) {
                     this.currentFilters[type] = ''; // Toggle off
-                    console.log(`🔘 ${type} filter deactivated: "${value}"`);
                 } else {
                     this.currentFilters[type] = value; // Toggle on
-                    console.log(`🔘 ${type} filter activated: "${value}"`);
                 }
                 
                 // Update dropdowns
                 const dropdown = document.getElementById(`${type}-filter`);
                 if (dropdown) {
                     dropdown.value = this.currentFilters[type];
-                    console.log(`🔄 Updated ${type} dropdown to: "${this.currentFilters[type]}"`);
                 }
                 
                 this.applyFilters();
             });
         });
-        
-        console.log("✅ Sidebar filters rendered");
-        console.groupEnd();
-    }
-    
-    renderFeatured() {
-        console.log("⭐ Rendering featured books");
-        console.group("Featured Books");
-        
-        const featuredContainer = document.getElementById('featured-ebooks');
-        if (!featuredContainer) {
-            console.warn("⚠️ Featured books container not found");
-            return;
-        }
-        
-        const featuredBooks = this.books
-            .filter(book => book.featured)
-            .slice(0, 4);
-        
-        console.log(`Found ${featuredBooks.length} featured books`);
-        
-        if (featuredBooks.length === 0) {
-            featuredContainer.style.display = 'none';
-            console.log("📭 No featured books, hiding container");
-        } else {
-            featuredContainer.style.display = '';
-            featuredContainer.innerHTML = featuredBooks.map(book => `
-                <div class="featured-card" onclick="ebookLibrary.openBookDetail('${book.id}')">
-                    <div class="featured-cover" 
-                         style="background-image: url('${this.optimizeImageForSEO(book.cover_url)}')">
-                    </div>
-                    <div class="featured-content">
-                        <div class="featured-badges">
-                            <span class="badge featured">Featured</span>
-                            ${book.category ? `<span class="badge">${book.category}</span>` : ''}
-                        </div>
-                        <h3 class="featured-title">${book.title}</h3>
-                        <p class="featured-author">by ${book.author || 'Unknown'}</p>
-                        <div class="featured-actions">
-                            <button class="btn-outline" onclick="event.stopPropagation(); ebookLibrary.readBookOnline('${book.id}', '${book.title}')">
-                                Read Online
-                            </button>
-                            <button class="btn-outline" onclick="event.stopPropagation(); ebookLibrary.downloadEbook('${book.id}', '${book.title}')">
-                                Download PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            console.log("✅ Featured books rendered");
-            console.table(featuredBooks.map(b => ({ title: b.title, author: b.author, category: b.category })));
-        }
-        
-        console.groupEnd();
-    }
-    
-    renderCategories() {
-        console.log("📂 Rendering category cards");
-        console.group("Categories");
-        
-        const categoriesGrid = document.getElementById('categories-grid');
-        if (!categoriesGrid) {
-            console.warn("⚠️ Categories grid not found");
-            return;
-        }
-        
-        // Count books per category
-        const categoryCounts = {};
-        this.books.forEach(book => {
-            if (book.category) {
-                categoryCounts[book.category] = (categoryCounts[book.category] || 0) + 1;
-            }
-        });
-        
-        console.log("Category counts:", categoryCounts);
-        
-        // Get top 6 categories
-        const topCategories = [...this.categories]
-            .sort((a, b) => (categoryCounts[b] || 0) - (categoryCounts[a] || 0))
-            .slice(0, 6);
-        
-        console.log(`Rendering top ${topCategories.length} categories`);
-        
-        categoriesGrid.innerHTML = topCategories.map(category => `
-            <div class="category-card" onclick="ebookLibrary.filterByCategory('${category}')">
-                <div class="category-icon">📚</div>
-                <h3 class="category-name">${category}</h3>
-                <p class="category-count">${categoryCounts[category] || 0} books</p>
-            </div>
-        `).join('');
-        
-        console.log("✅ Categories rendered");
-        console.groupEnd();
-    }
-    
-    filterByCategory(category) {
-        console.log(`📂 Filtering by category: "${category}"`);
-        this.currentFilters.category = category;
-        document.getElementById('category-filter').value = category;
-        console.log(`✅ Category filter set to: "${category}"`);
-        this.applyFilters();
     }
     
     renderBooks() {
-        console.log("📚 Rendering books with improved layout");
+        console.log("📚 Rendering books");
         
         const grid = document.getElementById('ebooks-grid');
         if (!grid) {
@@ -1177,21 +852,20 @@ class EbooksLibrary {
         
         // Get current view type
         const currentView = grid.classList.contains('list-view') ? 'list' : 'grid';
-        console.log(`Current view: ${currentView}`);
         
-        // Render each book with improved structure
-        booksToShow.forEach((book, index) => {
-            const card = this.createBookCard(book, currentView, index);
+        // Render each book
+        booksToShow.forEach((book) => {
+            const card = this.createBookCard(book, currentView);
             grid.appendChild(card);
         });
         
         // Update load more button
         this.updateLoadMoreButton();
         
-        console.log(`✅ ${booksToShow.length} books rendered successfully`);
+        console.log(`✅ ${booksToShow.length} books rendered`);
     }
     
-    createBookCard(book, view, index) {
+    createBookCard(book, view) {
         const isGridView = view !== 'list';
         
         if (isGridView) {
@@ -1202,20 +876,15 @@ class EbooksLibrary {
     }
     
     createBookGridItem(book) {
-        console.log(`📐 Creating grid item for: "${book.title}"`);
-        
-        const card = el('div', 'ebook-card grid-item apple-style-grid-item');
+        const card = el('div', 'ebook-card grid-item');
         const optimizedImage = this.optimizeImageForSEO(book.cover_url);
         
-        console.log(`Book cover URL: ${book.cover_url || 'none'} → Optimized: ${optimizedImage}`);
-        
-        // FIX 1: Apple/Amazon style grid - small, clean, no description
         card.innerHTML = `
-            <div class="ebook-card-inner apple-style" itemprop="mainEntity" itemscope itemtype="https://schema.org/Book">
+            <div class="ebook-card-inner" itemprop="mainEntity" itemscope itemtype="https://schema.org/Book">
                 <meta itemprop="url" content="${window.location.origin}/ebooks/${this.generateSlug(book.title)}">
                 
-                <div class="ebook-cover-container" onclick="ebookLibrary.openBookDetailPage('${book.id}')">
-                    <div class="ebook-cover apple-cover" 
+                <div class="ebook-cover-container" onclick="ebookLibrary.openBookDetailModal('${book.id}')">
+                    <div class="ebook-cover" 
                          style="background-image: url('${optimizedImage}')"
                          aria-label="Cover of ${book.title}"
                          itemprop="image">
@@ -1223,59 +892,42 @@ class EbooksLibrary {
                     </div>
                 </div>
                 
-                <div class="ebook-content apple-content">
-                    <h3 class="ebook-title apple-title" itemprop="name">${book.title}</h3>
-                    <p class="ebook-author apple-author" itemprop="author">${book.author || 'Unknown Author'}</p>
+                <div class="ebook-content">
+                    <h3 class="ebook-title" itemprop="name">${book.title}</h3>
+                    <p class="ebook-author" itemprop="author">${book.author || 'Unknown Author'}</p>
                     
-                    <div class="ebook-meta apple-meta">
-                        ${book.category ? `<span class="ebook-category apple-category" itemprop="genre">${book.category}</span>` : ''}
-                        ${book.read_time_minutes ? `<span class="ebook-duration apple-duration">${book.read_time_minutes} min</span>` : ''}
+                    <div class="ebook-meta">
+                        ${book.category ? `<span class="ebook-category" itemprop="genre">${book.category}</span>` : ''}
+                        ${book.read_time_minutes ? `<span class="ebook-duration">${book.read_time_minutes} min</span>` : ''}
                     </div>
                     
-                    <div class="ebook-stats apple-stats">
+                    <div class="ebook-stats">
                         ${book.download_count ? `<span class="download-count">${this.formatNumber(book.download_count)} downloads</span>` : ''}
                     </div>
                     
-                    <div class="ebook-actions apple-actions">
-                        <button class="btn-read apple-read-btn" 
-                                onclick="event.stopPropagation(); ebookLibrary.readBookOnline('${book.id}', '${book.title}')"
-                                aria-label="Read ${book.title} online">
-                            Read
-                        </button>
-                        
-                        <button class="btn-download apple-download-btn" 
+                    <div class="ebook-actions">
+                        <button class="btn-read" 
                                 onclick="event.stopPropagation(); ebookLibrary.downloadEbook('${book.id}', '${book.title}')"
                                 aria-label="Download ${book.title}">
-                            Download
+                            Download PDF
                         </button>
                     </div>
                 </div>
             </div>
         `;
         
-        console.log(`✅ Grid card created for: "${book.title}"`);
         return card;
     }
     
     createBookListItem(book) {
-        console.log(`📋 Creating list item for: "${book.title}"`);
-        
-        const item = el('div', 'ebook-card list-item apple-list-item');
+        const item = el('div', 'ebook-card list-item');
         const optimizedImage = this.optimizeImageForSEO(book.cover_url);
-        
-        console.log(`Book data:`, {
-            title: book.title,
-            author: book.author,
-            descriptionLength: book.description?.length || 0,
-            category: book.category,
-            series: book.series
-        });
         
         item.innerHTML = `
             <div class="ebook-list-item-inner" itemprop="mainEntity" itemscope itemtype="https://schema.org/Book">
                 <meta itemprop="url" content="${window.location.origin}/ebooks/${this.generateSlug(book.title)}">
                 
-                <div class="list-cover-container" onclick="ebookLibrary.openBookDetailPage('${book.id}')">
+                <div class="list-cover-container" onclick="ebookLibrary.openBookDetailModal('${book.id}')">
                     <div class="list-cover" 
                          style="background-image: url('${optimizedImage}')"
                          aria-label="Cover of ${book.title}"
@@ -1304,24 +956,8 @@ class EbooksLibrary {
                     <div class="list-footer">
                         <div class="list-actions">
                             <button class="btn-read-list" 
-                                    onclick="event.stopPropagation(); ebookLibrary.readBookOnline('${book.id}', '${book.title}')"
-                                    aria-label="Read ${book.title} online">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                    <path d="M12 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M15 19L18 22L23 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                Read Online
-                            </button>
-                            
-                            <button class="btn-download-list" 
                                     onclick="event.stopPropagation(); ebookLibrary.downloadEbook('${book.id}', '${book.title}')"
                                     aria-label="Download ${book.title}">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
                                 Download PDF
                             </button>
                         </div>
@@ -1335,98 +971,842 @@ class EbooksLibrary {
             </div>
         `;
         
-        console.log(`✅ List item created for: "${book.title}"`);
         return item;
     }
-
+    
     updateLoadMoreButton() {
-        console.log("🔘 Updating load more button");
-        console.group("Load More Button");
-        
         const loadMoreBtn = document.getElementById('load-more-btn');
         const remainingCount = document.querySelector('.remaining-count');
         
-        if (!loadMoreBtn) {
-            console.warn("⚠️ Load more button not found");
-            console.groupEnd();
-            return;
-        }
+        if (!loadMoreBtn) return;
         
         const loadedCount = this.currentPage * this.itemsPerPage;
         const totalCount = this.filteredBooks.length;
         const remaining = totalCount - loadedCount;
         
-        console.log(`Books: Loaded ${loadedCount} of ${totalCount}, ${remaining} remaining`);
-        
         if (loadedCount >= totalCount) {
             loadMoreBtn.hidden = true;
-            console.log("✅ Load more button hidden (all books loaded)");
         } else {
             loadMoreBtn.hidden = false;
             loadMoreBtn.textContent = `Load More Ebooks`;
             if (remainingCount) {
                 remainingCount.textContent = `(${remaining} remaining)`;
-                console.log(`✅ Remaining count updated: ${remaining} books`);
             }
-            console.log("✅ Load more button shown");
         }
-        
-        console.groupEnd();
     }
     
     loadMore() {
-        console.log("⬇️ Loading more books");
-        console.group("Load More");
-        
-        const previousPage = this.currentPage;
         this.currentPage++;
-        
-        console.log(`Page incremented: ${previousPage} → ${this.currentPage}`);
-        console.log(`Items per page: ${this.itemsPerPage}`);
-        console.log(`Will show: ${this.currentPage * this.itemsPerPage} of ${this.filteredBooks.length} total`);
-        
         this.renderBooks();
-        
-        console.log("✅ More books loaded");
-        console.groupEnd();
     }
     
-    // FIX 2: New method for opening book detail page
-    openBookDetailPage(bookId) {
-        console.log("📖 Opening book detail page");
-        console.group("Book Detail Page");
+    switchView(view) {
+        const grid = document.getElementById('ebooks-grid');
+        const viewBtns = document.querySelectorAll('.view-btn');
+        
+        if (!grid) return;
+        
+        // Update active button
+        viewBtns.forEach(btn => {
+            const isActive = btn.dataset.view === view;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-checked', isActive);
+        });
+        
+        // Update grid view
+        const oldView = grid.dataset.view;
+        grid.dataset.view = view;
+        
+        // Remove all existing view classes
+        grid.classList.remove('grid-view', 'list-view');
+        
+        // Add the new view class
+        grid.classList.add(view === 'list' ? 'list-view' : 'grid-view');
+        
+        // Re-render books with new view
+        this.renderBooks();
+    }
+    
+    renderFeatured() {
+        const featuredContainer = document.getElementById('featured-ebooks');
+        if (!featuredContainer) return;
+        
+        const featuredBooks = this.books
+            .filter(book => book.featured)
+            .slice(0, 4);
+        
+        if (featuredBooks.length === 0) {
+            featuredContainer.style.display = 'none';
+        } else {
+            featuredContainer.style.display = '';
+            featuredContainer.innerHTML = featuredBooks.map(book => `
+                <div class="featured-card" onclick="ebookLibrary.openBookDetailModal('${book.id}')">
+                    <div class="featured-cover" 
+                         style="background-image: url('${this.optimizeImageForSEO(book.cover_url)}')">
+                    </div>
+                    <div class="featured-content">
+                        <div class="featured-badges">
+                            <span class="badge featured">Featured</span>
+                            ${book.category ? `<span class="badge">${book.category}</span>` : ''}
+                        </div>
+                        <h3 class="featured-title">${book.title}</h3>
+                        <p class="featured-author">by ${book.author || 'Unknown'}</p>
+                        <div class="featured-actions">
+                            <button class="btn-outline" onclick="event.stopPropagation(); ebookLibrary.downloadEbook('${book.id}', '${book.title}')">
+                                Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+    
+    renderCategories() {
+        const categoriesGrid = document.getElementById('categories-grid');
+        if (!categoriesGrid) return;
+        
+        // Count books per category
+        const categoryCounts = {};
+        this.books.forEach(book => {
+            if (book.category) {
+                categoryCounts[book.category] = (categoryCounts[book.category] || 0) + 1;
+            }
+        });
+        
+        // Get top 6 categories
+        const topCategories = [...this.categories]
+            .sort((a, b) => (categoryCounts[b] || 0) - (categoryCounts[a] || 0))
+            .slice(0, 6);
+        
+        categoriesGrid.innerHTML = topCategories.map(category => `
+            <div class="category-card" onclick="ebookLibrary.filterByCategory('${category}')">
+                <div class="category-icon">📚</div>
+                <h3 class="category-name">${category}</h3>
+                <p class="category-count">${categoryCounts[category] || 0} books</p>
+            </div>
+        `).join('');
+    }
+    
+    filterByCategory(category) {
+        this.currentFilters.category = category;
+        document.getElementById('category-filter').value = category;
+        this.applyFilters();
+    }
+    
+    // ================ BOOK DETAIL MODAL METHODS ================
+    
+    createBookDetailModal() {
+        console.log("📖 Creating book detail modal");
+        
+        // Create modal HTML structure
+        const modalHTML = `
+            <div class="book-detail-modal" id="book-detail-modal" hidden>
+                <div class="book-detail-overlay" onclick="ebookLibrary.closeBookDetailModal()"></div>
+                <div class="book-detail-container">
+                    <button class="book-detail-close" onclick="ebookLibrary.closeBookDetailModal()" aria-label="Close book details">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="book-detail-content" id="book-detail-content">
+                        <!-- Content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to the body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add CSS styles for the modal
+        this.addBookDetailModalStyles();
+    }
+    
+    addBookDetailModalStyles() {
+        const styles = document.createElement('style');
+        styles.textContent = `
+            /* Mobile-first responsive modal styles */
+            .book-detail-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .book-detail-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(5px);
+                z-index: 1;
+            }
+            
+            .book-detail-container {
+                position: relative;
+                width: 100%;
+                max-width: 800px;
+                background: white;
+                margin: 0;
+                z-index: 2;
+                min-height: 100vh;
+                overflow-y: auto;
+                box-shadow: none;
+            }
+            
+            .book-detail-close {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                width: 44px;
+                height: 44px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                z-index: 3;
+                cursor: pointer;
+            }
+            
+            /* Tablet styles */
+            @media (min-width: 768px) {
+                .book-detail-container {
+                    margin: 20px;
+                    border-radius: 16px;
+                    min-height: auto;
+                    max-height: 90vh;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                }
+                
+                .book-detail-close {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                }
+            }
+            
+            /* Desktop styles */
+            @media (min-width: 1024px) {
+                .book-detail-container {
+                    margin: 40px auto;
+                    border-radius: 20px;
+                }
+                
+                .book-detail-close {
+                    top: 24px;
+                    right: 24px;
+                    transition: all 0.2s ease;
+                }
+                
+                .book-detail-close:hover {
+                    background: #f8f8f8;
+                    transform: scale(1.05);
+                }
+            }
+            
+            /* Book detail content styles */
+            .book-detail-content {
+                padding: 20px;
+            }
+            
+            .book-detail-layout {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            
+            /* Mobile layout */
+            @media (max-width: 767px) {
+                .book-detail-layout {
+                    flex-direction: column;
+                }
+            }
+            
+            /* Tablet and desktop layout */
+            @media (min-width: 768px) {
+                .book-detail-layout {
+                    flex-direction: row;
+                    gap: 32px;
+                }
+                
+                .detail-left-column {
+                    flex: 0 0 300px;
+                }
+                
+                .detail-right-column {
+                    flex: 1;
+                }
+            }
+            
+            /* Detail cover */
+            .detail-cover-container {
+                margin-bottom: 20px;
+            }
+            
+            .detail-cover {
+                width: 100%;
+                height: 400px;
+                border-radius: 12px;
+                background-size: cover;
+                background-position: center;
+                position: relative;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            }
+            
+            .detail-featured-badge {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                background: #FF3B30;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            
+            /* Detail stats */
+            .detail-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                margin-bottom: 24px;
+                text-align: center;
+            }
+            
+            .stat-item {
+                background: #f8f8f8;
+                padding: 16px 8px;
+                border-radius: 8px;
+            }
+            
+            .stat-value {
+                display: block;
+                font-size: 20px;
+                font-weight: 700;
+                color: #007AFF;
+                margin-bottom: 4px;
+            }
+            
+            .stat-label {
+                display: block;
+                font-size: 12px;
+                color: #666;
+            }
+            
+            /* Detail actions */
+            .detail-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+            
+            .detail-action-btn {
+                width: 100%;
+                padding: 16px;
+                border-radius: 12px;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                font-weight: 600;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .download-btn {
+                background: #007AFF;
+                color: white;
+            }
+            
+            .download-btn:hover {
+                background: #0056CC;
+            }
+            
+            .read-btn {
+                background: #34C759;
+                color: white;
+            }
+            
+            .read-btn:hover {
+                background: #2DA84A;
+            }
+            
+            /* Book header */
+            .book-header {
+                margin-bottom: 24px;
+            }
+            
+            .book-title {
+                font-size: 24px;
+                font-weight: 700;
+                margin-bottom: 8px;
+                color: #1D1D1F;
+            }
+            
+            .book-author {
+                font-size: 16px;
+                color: #666;
+                margin-bottom: 16px;
+            }
+            
+            .book-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+            
+            .meta-badge {
+                padding: 6px 12px;
+                background: #f8f8f8;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                color: #666;
+            }
+            
+            /* Book description */
+            .book-description-section {
+                margin-bottom: 24px;
+            }
+            
+            .book-description-section h3 {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 12px;
+                color: #1D1D1F;
+            }
+            
+            .book-description {
+                line-height: 1.6;
+                color: #333;
+            }
+            
+            /* Book details */
+            .book-details-section {
+                margin-bottom: 24px;
+            }
+            
+            .book-details-section h3 {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 12px;
+                color: #1D1D1F;
+            }
+            
+            .details-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .detail-item {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .detail-label {
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 4px;
+            }
+            
+            .detail-value {
+                font-size: 14px;
+                font-weight: 500;
+                color: #1D1D1F;
+            }
+            
+            /* Related books */
+            .related-books-section {
+                margin-top: 24px;
+            }
+            
+            .related-books-section h3 {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 16px;
+                color: #1D1D1F;
+            }
+            
+            .related-books-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .related-book-card {
+                background: #f8f8f8;
+                border-radius: 12px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            }
+            
+            .related-book-card:hover {
+                transform: translateY(-4px);
+            }
+            
+            .related-book-cover {
+                width: 100%;
+                height: 120px;
+                background-size: cover;
+                background-position: center;
+            }
+            
+            .related-book-info {
+                padding: 12px;
+            }
+            
+            .related-book-info h4 {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                color: #1D1D1F;
+            }
+            
+            .related-book-info p {
+                font-size: 12px;
+                color: #666;
+            }
+            
+            /* Loading spinner */
+            .book-detail-loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 300px;
+                gap: 16px;
+            }
+            
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid #007AFF;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        
+        document.head.appendChild(styles);
+    }
+    
+    openBookDetailModal(bookId) {
+        console.log("📖 Opening book detail modal");
         
         const book = this.books.find(b => b.id === bookId);
         if (!book) {
-            console.error(`❌ Book not found with ID: ${bookId}`);
-            console.groupEnd();
+            this.showToast('Book not found', 'error');
             return;
         }
         
-        console.log(`Book found: "${book.title}" by ${book.author}`);
-        
-        // Create book detail page URL
+        // Update URL for shareable link
         const slug = this.generateSlug(book.title);
         const newUrl = `/ebooks/book/${slug}?id=${bookId}`;
+        window.history.pushState({}, '', newUrl);
         
-        console.log(`Navigating to detail page: ${newUrl}`);
+        // Show loading state
+        this.showBookDetailLoading();
         
-        // Navigate to the book detail page
-        window.location.href = newUrl;
+        // Load book data and show modal
+        this.loadBookDetail(book);
         
-        console.groupEnd();
+        // Track modal open event
+        this.trackSEOMetric('book_detail_viewed', {
+            book_id: bookId,
+            book_title: book.title,
+            category: book.category
+        });
     }
     
-    // Keep original method for backward compatibility
-    openBookDetail(bookId) {
-        this.openBookDetailPage(bookId);
+    showBookDetailLoading() {
+        const modal = document.getElementById('book-detail-modal');
+        const contentDiv = document.getElementById('book-detail-content');
+        
+        contentDiv.innerHTML = `
+            <div class="book-detail-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading book details...</p>
+            </div>
+        `;
+        
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        
+        // Add to active modals
+        this.performanceMetrics.activeModals.add('book-detail');
     }
     
-    // ================ SEO OPTIMIZATION METHODS ================
-
+    loadBookDetail(book) {
+        console.log(`📥 Loading book details for: "${book.title}"`);
+        
+        // Format date
+        const formatDate = (dateString) => {
+            if (!dateString) return 'Recently added';
+            const date = new Date(dateString);
+            return `Added ${date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })}`;
+        };
+        
+        // Find related books (same category)
+        const relatedBooks = this.books
+            .filter(b => b.id !== book.id && b.category === book.category)
+            .slice(0, 4);
+        
+        // Generate related books HTML
+        let relatedBooksHTML = '';
+        if (relatedBooks.length > 0) {
+            relatedBooksHTML = `
+                <div class="related-books-section">
+                    <h3>Related Books</h3>
+                    <div class="related-books-grid">
+                        ${relatedBooks.map(relatedBook => `
+                            <div class="related-book-card" onclick="ebookLibrary.openBookDetailModal('${relatedBook.id}')">
+                                <div class="related-book-cover" 
+                                     style="background-image: url('${this.optimizeImageForSEO(relatedBook.cover_url)}')">
+                                </div>
+                                <div class="related-book-info">
+                                    <h4>${relatedBook.title}</h4>
+                                    <p>${relatedBook.author || 'Unknown Author'}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Generate the full book detail HTML
+        const contentDiv = document.getElementById('book-detail-content');
+        contentDiv.innerHTML = `
+            <div class="book-detail-layout">
+                <!-- Left Column: Cover & Actions -->
+                <div class="detail-left-column">
+                    <div class="detail-cover-container">
+                        <div class="detail-cover" 
+                             style="background-image: url('${this.optimizeImageForSEO(book.cover_url)}')">
+                            ${book.featured ? '<span class="detail-featured-badge">Featured</span>' : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="detail-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">${book.download_count || 0}</span>
+                            <span class="stat-label">Downloads</span>
+                        </div>
+                        ${book.read_time_minutes ? `
+                        <div class="stat-item">
+                            <span class="stat-value">${book.read_time_minutes}</span>
+                            <span class="stat-label">Minutes</span>
+                        </div>
+                        ` : ''}
+                        <div class="stat-item">
+                            <span class="stat-value">PDF</span>
+                            <span class="stat-label">Format</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-actions">
+                        <button class="detail-action-btn download-btn" onclick="ebookLibrary.downloadEbook('${book.id}', '${book.title}')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Book Info -->
+                <div class="detail-right-column">
+                    <div class="book-header">
+                        <h1 class="book-title">${book.title}</h1>
+                        <p class="book-author">by ${book.author || 'Unknown Author'}</p>
+                        
+                        <div class="book-meta">
+                            ${book.category ? `<span class="meta-badge category">${book.category}</span>` : ''}
+                            ${book.series ? `<span class="meta-badge series">${book.series}</span>` : ''}
+                            ${book.read_time_minutes ? `<span class="meta-badge duration">${book.read_time_minutes} min read</span>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="book-description-section">
+                        <h3>Description</h3>
+                        <div class="book-description">
+                            ${book.description || 'No description available for this book.'}
+                        </div>
+                    </div>
+                    
+                    <div class="book-details-section">
+                        <h3>Details</h3>
+                        <div class="details-grid">
+                            ${book.created_at ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Added</span>
+                                <span class="detail-value">${formatDate(book.created_at)}</span>
+                            </div>
+                            ` : ''}
+                            
+                            ${book.series_order && book.series_order > 0 ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Series Order</span>
+                                <span class="detail-value">Book ${book.series_order}</span>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Format</span>
+                                <span class="detail-value">PDF (Printable)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${relatedBooksHTML}
+                </div>
+            </div>
+        `;
+        
+        // Scroll to top of modal content
+        contentDiv.scrollTop = 0;
+    }
+    
+    closeBookDetailModal() {
+        const modal = document.getElementById('book-detail-modal');
+        modal.hidden = true;
+        document.body.style.overflow = '';
+        
+        // Reset URL to main ebooks page
+        window.history.pushState({}, '', '/ebooks');
+        
+        // Remove from active modals
+        this.performanceMetrics.activeModals.delete('book-detail');
+    }
+    
+    checkURLForBookDetail() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id');
+        
+        if (bookId) {
+            // Check if we have a book with this ID
+            const book = this.books.find(b => b.id === bookId);
+            if (book) {
+                // Open the modal after a short delay to allow page to load
+                setTimeout(() => {
+                    this.openBookDetailModal(bookId);
+                }, 300);
+            }
+        }
+    }
+    
+    // ================ DOWNLOAD METHODS ================
+    
+    async downloadEbook(bookId, bookTitle) {
+        console.log(`⬇️ Downloading ebook: "${bookTitle}"`);
+        
+        const book = this.books.find(b => b.id === bookId);
+        if (!book) {
+            this.showToast('Book not found');
+            return;
+        }
+        
+        // Show downloading toast
+        this.showToast(`Starting download: ${bookTitle}`);
+        
+        // Track download event
+        try {
+            await api.post(`/ebooks/${bookId}/download`);
+            
+            // SEO event tracking
+            this.trackSEOMetric('ebook_download', {
+                book_id: bookId,
+                book_title: bookTitle,
+                category: book.category,
+                author: book.author,
+                file_format: 'PDF'
+            });
+        } catch (error) {
+            console.error("⚠️ Failed to track download event:", error);
+        }
+        
+        // Create download link - USING SAME URL FOR BOTH DOWNLOAD AND READ
+        const downloadUrl = `${API}/ebooks/download/${bookId}`;
+        const fileName = `${this.generateSlug(bookTitle)}.pdf`;
+        
+        // Try Fetch API first for better user experience
+        try {
+            const response = await fetch(downloadUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Download failed: ${response.status}`);
+            }
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up URL object
+            window.URL.revokeObjectURL(url);
+            
+            this.showToast(`Download complete: ${bookTitle}`);
+            
+        } catch (error) {
+            console.error('Download error:', error);
+            
+            // Fallback to direct link (opens in same window)
+            const fallbackWindow = window.open(downloadUrl, '_blank');
+            if (fallbackWindow) {
+                this.showToast(`Opening PDF for ${bookTitle}`);
+            } else {
+                this.showToast('Please allow popups to download the book', 'error');
+            }
+        }
+    }
+    
+    // ================ SEO METHODS ================
+    
     setDynamicMetaTags() {
-        console.log("🏷️ Setting dynamic SEO meta tags");
-        
         // Get URL parameters for dynamic titles
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('q');
@@ -1479,10 +1859,8 @@ class EbooksLibrary {
         
         console.log("✅ Dynamic meta tags set:", { pageTitle, metaDescription });
     }
-
+    
     updateCanonicalURL() {
-        console.log("🔗 Updating canonical URL");
-        
         const params = new URLSearchParams();
         // Only include important filters for canonical
         if (this.currentFilters.category) params.set('category', this.currentFilters.category);
@@ -1501,13 +1879,9 @@ class EbooksLibrary {
             document.head.appendChild(canonicalLink);
         }
         canonicalLink.href = canonicalURL;
-        
-        console.log(`✅ Canonical URL updated: ${canonicalURL}`);
     }
-
+    
     updateOpenGraphTags() {
-        console.log("🔄 Updating Open Graph tags");
-        
         const ogTags = {
             'og:title': this.seoData.pageTitle,
             'og:description': this.seoData.metaDescription.substring(0, 200),
@@ -1546,12 +1920,9 @@ class EbooksLibrary {
             meta.content = content;
         });
     }
-
+    
     injectComprehensiveStructuredData() {
-        console.log("📊 Injecting comprehensive structured data");
-        
         if (this.seoData.structuredDataInjected) {
-            console.log("⚠️ Structured data already injected");
             return;
         }
         
@@ -1646,7 +2017,7 @@ class EbooksLibrary {
         this.seoData.structuredDataInjected = true;
         console.log("✅ Comprehensive structured data injected");
     }
-
+    
     injectSchema(schemaData, id) {
         // Remove existing
         const existing = document.getElementById(id);
@@ -1659,7 +2030,7 @@ class EbooksLibrary {
         script.textContent = JSON.stringify(schemaData, null, 2);
         document.head.appendChild(script);
     }
-
+    
     updateMetaTagsForSearch(searchTerm) {
         document.title = `Search: ${searchTerm} | Christian Ebooks Library`;
         
@@ -1670,178 +2041,7 @@ class EbooksLibrary {
         
         this.updateOpenGraphTags();
     }
-
-    // ================ IMPROVED FUNCTIONALITY METHODS ================
-
-    async readBookOnline(bookId, bookTitle) {
-        console.log(`👁️ Reading book online: "${bookTitle}"`);
-        
-        const book = this.books.find(b => b.id === bookId);
-        if (!book) {
-            this.showToast('Book not found');
-            return;
-        }
-        
-        // Track read event for analytics
-        try {
-            await api.post(`/ebooks/${bookId}/read`);
-            
-            // SEO event tracking
-            this.trackSEOMetric('book_read', {
-                book_id: bookId,
-                book_title: bookTitle,
-                category: book.category,
-                author: book.author
-            });
-        } catch (error) {
-            console.error("⚠️ Failed to track read event:", error);
-        }
-        
-        // Open reading interface in new tab
-        const readUrl = `${API}/ebooks/read/${bookId}`;
-        const features = 'width=1200,height=800,scrollbars=yes,resizable=yes';
-        const newWindow = window.open(readUrl, '_blank', features);
-        
-        if (newWindow) {
-            // Focus the new window
-            newWindow.focus();
-            this.showToast(`Opening "${bookTitle}" for reading`);
-        } else {
-            this.showToast('Please allow popups to read the book');
-        }
-    }
-
-    async downloadEbook(bookId, bookTitle) {
-        console.log(`⬇️ Downloading ebook: "${bookTitle}"`);
-        
-        const book = this.books.find(b => b.id === bookId);
-        if (!book) {
-            this.showToast('Book not found');
-            return;
-        }
-        
-        // Show downloading toast
-        this.showToast(`Starting download: ${bookTitle}`);
-        
-        // Track download event
-        try {
-            await api.post(`/ebooks/${bookId}/download`);
-            
-            // SEO event tracking
-            this.trackSEOMetric('ebook_download', {
-                book_id: bookId,
-                book_title: bookTitle,
-                category: book.category,
-                author: book.author,
-                file_format: 'PDF'
-            });
-        } catch (error) {
-            console.error("⚠️ Failed to track download event:", error);
-        }
-        
-        // Create download link
-        const downloadUrl = `${API}/ebooks/download/${bookId}`;
-        const fileName = `${this.generateSlug(bookTitle)}.pdf`;
-        
-        // Use Fetch API for better error handling
-        try {
-            const response = await fetch(downloadUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/pdf'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Download failed: ${response.status}`);
-            }
-            
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = fileName;
-            link.style.display = 'none';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Clean up URL object
-            window.URL.revokeObjectURL(url);
-            
-            this.showToast(`Download complete: ${bookTitle}`);
-            
-        } catch (error) {
-            console.error('Download error:', error);
-            this.showToast('Download failed. Please try again.');
-            
-            // Fallback to direct link
-            window.location.href = downloadUrl;
-        }
-    }
-
-    // ================ SEO HELPER METHODS ================
-
-    optimizeImageForSEO(url) {
-        if (!url) {
-            return 'https://via.placeholder.com/400x600/f5f5f7/8e8e93?text=Christian+Ebook';
-        }
-        
-        // Optimize Cloudinary URLs for better performance
-        if (url.includes('cloudinary.com') && url.includes('/upload/')) {
-            // Responsive image optimization
-            const optimized = url.replace('/upload/', '/upload/f_auto,q_auto,w_400,c_fill/');
-            return optimized;
-        }
-        
-        // Add lazy loading attribute
-        return url;
-    }
-
-    generateSlug(text) {
-        if (!text) return 'christian-ebook';
-        
-        return text.toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-|-$/g, '');
-    }
-
-    formatNumber(num) {
-        if (!num) return '0';
-        if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-        if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-        return num.toString();
-    }
-
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-        });
-    }
-
-    formatFileSize(bytes) {
-        if (!bytes) return '';
-        const units = ['B', 'KB', 'MB', 'GB'];
-        let size = bytes;
-        let unitIndex = 0;
-        
-        while (size >= 1024 && unitIndex < units.length - 1) {
-            size /= 1024;
-            unitIndex++;
-        }
-        
-        return `${size.toFixed(1)} ${units[unitIndex]}`;
-    }
-
-    // ================ SEO TRACKING AND ANALYTICS ================
-
+    
     setupSEOTracking() {
         // Track filter usage
         document.addEventListener('click', (e) => {
@@ -1860,15 +2060,7 @@ class EbooksLibrary {
         
         // Track book interactions
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.btn-read, .btn-read-list')) {
-                const bookCard = e.target.closest('[itemtype="https://schema.org/Book"]');
-                if (bookCard) {
-                    const title = bookCard.querySelector('[itemprop="name"]')?.textContent;
-                    this.trackSEOMetric('read_clicked', { book_title: title });
-                }
-            }
-            
-            if (e.target.closest('.btn-download, .btn-download-list')) {
+            if (e.target.closest('.btn-read, .btn-read-list, .btn-download, .btn-download-list')) {
                 const bookCard = e.target.closest('[itemtype="https://schema.org/Book"]');
                 if (bookCard) {
                     const title = bookCard.querySelector('[itemprop="name"]')?.textContent;
@@ -1877,7 +2069,7 @@ class EbooksLibrary {
             }
         });
     }
-
+    
     trackSEOMetric(action, data = {}) {
         // Send to Google Analytics (if available)
         if (typeof gtag !== 'undefined') {
@@ -1903,14 +2095,61 @@ class EbooksLibrary {
         
         console.log(`📊 SEO Metric: ${action}`, data);
     }
-
+    
+    // ================ HELPER METHODS ================
+    
+    optimizeImageForSEO(url) {
+        if (!url) {
+            return 'https://via.placeholder.com/400x600/f5f5f7/8e8e93?text=Christian+Ebook';
+        }
+        
+        // Optimize Cloudinary URLs for better performance
+        if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+            // Responsive image optimization
+            const optimized = url.replace('/upload/', '/upload/f_auto,q_auto,w_400,c_fill/');
+            return optimized;
+        }
+        
+        return url;
+    }
+    
+    generateSlug(text) {
+        if (!text) return 'christian-ebook';
+        
+        return text.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+    
+    formatNumber(num) {
+        if (!num) return '0';
+        if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+        if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+        return num.toString();
+    }
+    
+    formatFileSize(bytes) {
+        if (!bytes) return '';
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes;
+        let unitIndex = 0;
+        
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+        
+        return `${size.toFixed(1)} ${units[unitIndex]}`;
+    }
+    
+    // ================ PERFORMANCE MONITORING ================
+    
     setupPerformanceMonitoring() {
         // Track Core Web Vitals
         const perfObserver = new PerformanceObserver((list) => {
             list.getEntries().forEach((entry) => {
-                console.log(`⚡ Performance: ${entry.name} = ${entry.startTime}ms`);
-                
-                // Log to analytics if LCP, FID, or CLS
                 if (entry.entryType === 'largest-contentful-paint') {
                     this.trackSEOMetric('lcp_metric', { value: entry.startTime });
                 } else if (entry.entryType === 'first-input') {
@@ -1928,9 +2167,9 @@ class EbooksLibrary {
             this.trackSEOMetric('page_load_time', { value: loadTime });
         });
     }
-
-    // ================ IMPROVED TOAST NOTIFICATION ================
-
+    
+    // ================ TOAST NOTIFICATION ================
+    
     showToast(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = `seo-toast toast-${type}`;
@@ -1980,7 +2219,7 @@ class EbooksLibrary {
             this.removeToast(toast);
         }, 5000);
     }
-
+    
     removeToast(toast) {
         toast.style.animation = 'toastSlideOut 0.3s ease';
         setTimeout(() => {
@@ -1989,12 +2228,11 @@ class EbooksLibrary {
             }
         }, 300);
     }
-
-    // ================ ADDITIONAL ORIGINAL METHODS ================
+    
+    // ================ ADDITIONAL METHODS ================
     
     async handleNewsletter(e) {
         console.log("📧 Handling newsletter subscription");
-        console.group("Newsletter");
         
         e.preventDefault();
         const form = e.target;
@@ -2002,25 +2240,18 @@ class EbooksLibrary {
         const email = emailInput?.value;
         
         if (!email) {
-            console.error("❌ No email provided");
             this.showToast('Please enter an email address');
-            console.groupEnd();
             return;
         }
-        
-        console.log(`Email: ${email}`);
-        console.log(`Form:`, form);
         
         try {
             console.log("📡 Subscribing to newsletter via API");
             await api.post('/newsletter/subscribe', { email });
             
-            console.log("✅ Successfully subscribed");
             this.showToast('Subscribed successfully!', 'success');
             
             // Reset form
             form.reset();
-            console.log("✅ Form reset");
             
             // Track subscription
             this.trackSEOMetric('newsletter_subscription', { email: email });
@@ -2029,8 +2260,6 @@ class EbooksLibrary {
             console.error("❌ Subscription failed:", error);
             this.showToast('Subscription failed. Please try again.', 'error');
         }
-        
-        console.groupEnd();
     }
     
     // Debugging methods
@@ -2058,88 +2287,21 @@ class EbooksLibrary {
             loadedCount: this.currentPage * this.itemsPerPage
         });
         
-        console.log("🌐 API:", {
-            API: API,
-            baseURL: window.location.origin
-        });
+        console.log("🌐 URL:", window.location.href);
         
         console.log("🔧 DOM Elements:", {
             container: this.container,
             searchOverlay: document.querySelector('.search-overlay')?.hidden,
             grid: document.getElementById('ebooks-grid'),
-            filters: {
-                category: document.getElementById('category-filter')?.value,
-                search: document.getElementById('ebook-search')?.value
-            }
+            modal: document.getElementById('book-detail-modal')?.hidden
         });
-        
-        console.groupEnd();
-        return this;
-    }
-    
-    debugSearchOverlay() {
-        console.log("🔍 Debugging Search Overlay");
-        console.group("Search Overlay Debug");
-        
-        const overlay = document.querySelector('.search-overlay');
-        const searchBtn = document.querySelector('.nav-search-btn');
-        const searchInput = document.querySelector('#global-search');
-        
-        console.log("Elements:", {
-            overlay: {
-                element: overlay,
-                exists: !!overlay,
-                hidden: overlay?.hidden,
-                display: overlay?.style.display,
-                computedDisplay: overlay ? getComputedStyle(overlay).display : 'N/A',
-                classes: overlay?.className
-            },
-            searchBtn: {
-                element: searchBtn,
-                exists: !!searchBtn,
-                type: searchBtn?.nodeName
-            },
-            searchInput: {
-                element: searchInput,
-                exists: !!searchInput,
-                value: searchInput?.value
-            }
-        });
-        
-        console.log("Event Listeners:", {
-            searchBtnClick: searchBtn ? searchBtn.onclick : 'none',
-            overlayClick: overlay ? overlay.onclick : 'none'
-        });
-        
-        console.log("CSS Classes:", {
-            body: document.body.className,
-            overlay: overlay?.className,
-            hasActive: overlay?.classList.contains('active')
-        });
-        
-        console.groupEnd();
-    }
-    
-    dumpBooks() {
-        console.log("📋 Dumping All Books");
-        console.group("Books Data");
-        
-        console.table(this.books.map(book => ({
-            id: book.id,
-            title: book.title,
-            author: book.author,
-            category: book.category,
-            series: book.series,
-            downloads: book.download_count || 0,
-            featured: book.featured || false
-        })));
         
         console.groupEnd();
         return this;
     }
 }
 
-// Export the enhanced class
+// Export the class
 export default EbooksLibrary;
 
 // Add CSS animations for toast
@@ -2238,10 +2400,10 @@ if (typeof window !== 'undefined') {
         console.log("🛠️ Ebooks Library Debug Helper");
         console.log("Available commands:");
         console.log("- window.ebookLibrary.debugState() - Show library state");
-        console.log("- window.ebookLibrary.debugSearchOverlay() - Debug search");
-        console.log("- window.ebookLibrary.dumpBooks() - List all books");
-        console.log("- window.ebookLibrary.openSearchOverlay() - Open search");
-        console.log("- window.ebookLibrary.closeSearchOverlay() - Close search");
+        console.log("- window.ebookLibrary.openBookDetailModal('book-id') - Open book detail");
+        console.log("- window.ebookLibrary.closeBookDetailModal() - Close book detail");
+        console.log("- window.ebookLibrary.downloadEbook('book-id', 'Book Title') - Download book");
+        console.log("- window.ebookLibrary.applyFilters() - Apply current filters");
     };
     
     console.log("✅ Global debug helper available: window.debugEbooks()");
