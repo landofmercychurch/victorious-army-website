@@ -1087,13 +1087,13 @@ class EbooksLibrary {
         console.groupEnd();
     }
     
-    filterByCategory(category) {
-        console.log(`📂 Filtering by category: "${category}"`);
-        this.current this.currentFilters.category = category;
-        document.getElementById('category-filter').value = category;
-        console.log(`✅ Category filter set to: "${category}"`);
-        this.applyFilters();
-    }
+   filterByCategory(category) {
+    console.log(`📂 Filtering by category: "${category}"`);
+    this.currentFilters.category = category;  // FIXED: Removed extra "this.current"
+    document.getElementById('category-filter').value = category;
+    console.log(`✅ Category filter set to: "${category}"`);
+    this.applyFilters();
+}
     
     renderBooks() {
         console.log("📚 Rendering books");
