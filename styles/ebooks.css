@@ -1,7 +1,8 @@
-/* ============ APPLE/AMAZON STYLE GRID IMPROVEMENTS ============ */
+/* ============ APPLE/AMAZON STYLE GRID FIXES ============ */
+/* These styles are added for the new Apple/Amazon style without affecting existing design */
 
-/* Apple/Amazon style grid items */
-.apple-style-grid-item {
+/* Apple/Amazon style grid items - COMPLETELY NEW */
+.ebook-card.apple-style-grid-item {
     background: white;
     border-radius: 8px;
     overflow: hidden;
@@ -11,22 +12,21 @@
     display: flex;
     flex-direction: column;
     border: 1px solid #e5e5e7;
+    margin: 0;
 }
 
-.apple-style-grid-item:hover {
+.ebook-card.apple-style-grid-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     border-color: #d2d2d7;
 }
 
-.apple-style .ebook-cover-container {
+/* Apple cover - NEW */
+.ebook-cover-container .apple-cover {
     aspect-ratio: 2/3;
     overflow: hidden;
     position: relative;
     background: #f5f5f7;
-}
-
-.apple-cover {
     width: 100%;
     height: 100%;
     background-size: cover;
@@ -34,18 +34,19 @@
     transition: transform 0.3s ease;
 }
 
-.apple-style-grid-item:hover .apple-cover {
+.ebook-card.apple-style-grid-item:hover .apple-cover {
     transform: scale(1.03);
 }
 
-.apple-content {
+/* Apple content - NEW */
+.ebook-content.apple-content {
     padding: 12px;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.apple-title {
+.ebook-title.apple-title {
     font-size: 14px;
     font-weight: 600;
     line-height: 1.3;
@@ -58,7 +59,7 @@
     min-height: 36px;
 }
 
-.apple-author {
+.ebook-author.apple-author {
     font-size: 13px;
     color: #636366;
     margin-bottom: 8px;
@@ -68,14 +69,15 @@
     overflow: hidden;
 }
 
-.apple-meta {
+/* Apple meta - NEW */
+.ebook-meta.apple-meta {
     display: flex;
     gap: 6px;
     margin-bottom: 12px;
     flex-wrap: wrap;
 }
 
-.apple-category {
+.ebook-category.apple-category {
     background: #f0f7ff;
     color: #007AFF;
     padding: 3px 8px;
@@ -85,7 +87,7 @@
     letter-spacing: 0.2px;
 }
 
-.apple-duration {
+.ebook-duration.apple-duration {
     color: #8e8e93;
     font-size: 11px;
     display: flex;
@@ -93,31 +95,38 @@
     gap: 3px;
 }
 
-/* Hide description in Apple style grid */
-.apple-style .ebook-description {
+/* Hide description in Apple style grid - NEW */
+.ebook-card.apple-style-grid-item .ebook-description {
     display: none !important;
 }
 
-.apple-stats {
+/* Apple stats - NEW */
+.ebook-stats.apple-stats {
     margin-top: auto;
     padding-top: 8px;
     border-top: 1px solid #f0f0f0;
+    display: block;
 }
 
-.apple-stats .download-count {
+.ebook-stats.apple-stats .download-count {
     font-size: 11px;
     color: #8e8e93;
     display: block;
 }
 
-.apple-actions {
+.ebook-stats.apple-stats .upload-date {
+    display: none;
+}
+
+/* Apple actions - NEW */
+.ebook-actions.apple-actions {
     display: flex;
     gap: 8px;
     margin-top: 12px;
 }
 
-.apple-read-btn,
-.apple-download-btn {
+.btn-read.apple-read-btn,
+.btn-download.apple-download-btn {
     flex: 1;
     padding: 8px 12px;
     border-radius: 6px;
@@ -134,61 +143,46 @@
     min-height: 36px;
 }
 
-.apple-read-btn {
+.btn-read.apple-read-btn {
     background: #007AFF;
     color: white;
     border: 1px solid #007AFF;
 }
 
-.apple-read-btn:hover {
+.btn-read.apple-read-btn:hover {
     background: #0056CC;
     border-color: #0056CC;
 }
 
-.apple-download-btn {
+.btn-download.apple-download-btn {
     background: white;
     color: #007AFF;
     border: 1px solid #d2d2d7;
 }
 
-.apple-download-btn:hover {
+.btn-download.apple-download-btn:hover {
     background: #f5f5f7;
     border-color: #007AFF;
 }
 
-/* Apple List View */
-.apple-list-item {
-    background: white;
+/* ============ GRID/LIST SWITCHER FIXES ============ */
+/* These fixes don't affect existing styles, only add new functionality */
+
+/* Grid view layout adjustments for Apple style */
+.grid-view .ebook-card.apple-style-grid-item {
+    min-height: 320px;
+}
+
+/* Fix for view switcher - ENHANCED without affecting existing */
+.view-controls {
+    display: flex;
+    gap: 4px;
+    background: #f5f5f7;
+    padding: 4px;
     border-radius: 8px;
     border: 1px solid #e5e5e7;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    transition: all 0.2s ease;
 }
 
-.apple-list-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    border-color: #d2d2d7;
-}
-
-/* ============ GRID/LIST SWITCHER FIXES ============ */
-
-/* Grid view specific styles */
-.grid-view .ebook-card:not(.apple-style-grid-item) {
-    /* Existing grid styles */
-    min-height: 380px;
-}
-
-/* List view specific styles */
-.list-view .ebook-card:not(.apple-list-item) {
-    /* Existing list styles */
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 16px;
-}
-
-/* Fix for view switcher active states */
 .view-btn {
     position: relative;
     padding: 8px 16px;
@@ -229,66 +223,73 @@
     border-radius: 1px;
 }
 
-/* Grid switcher improvements */
-.view-controls {
-    display: flex;
-    gap: 4px;
-    background: #f5f5f7;
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid #e5e5e7;
-}
-
-/* Ensure proper grid switching */
-.ebooks-grid.grid-view {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    width: 100%;
-}
-
-.ebooks-grid.list-view {
+/* Ensure grid switching works with Apple style */
+.ebooks-grid.grid-view .ebook-card.apple-style-grid-item {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    width: 100%;
 }
 
-/* Apple style grid layout adjustments */
-.ebooks-grid.grid-view .apple-style-grid-item {
-    height: 100%;
-    min-height: 320px;
+.ebooks-grid.list-view .ebook-card.apple-style-grid-item {
+    display: none;
 }
 
-/* Responsive adjustments for Apple grid */
+/* Apple List View - NEW but doesn't affect existing */
+.ebook-card.apple-list-item {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e5e7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    display: none; /* Hidden by default, shown via JavaScript */
+}
+
+.ebook-card.apple-list-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: #d2d2d7;
+}
+
+/* Show Apple list items when list view is active */
+.ebooks-grid.list-view .ebook-card.apple-list-item {
+    display: flex;
+}
+
+/* Hide Apple grid items when list view is active */
+.ebooks-grid.list-view .ebook-card.apple-style-grid-item {
+    display: none;
+}
+
+/* Show Apple grid items when grid view is active */
+.ebooks-grid.grid-view .ebook-card.apple-style-grid-item {
+    display: flex;
+}
+
+/* Hide Apple list items when grid view is active */
+.ebooks-grid.grid-view .ebook-card.apple-list-item {
+    display: none;
+}
+
+/* ============ RESPONSIVE ADJUSTMENTS FOR APPLE STYLE ============ */
+/* These only apply to the Apple style, not existing design */
+
 @media (min-width: 768px) {
-    .ebooks-grid.grid-view {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-    
-    .ebooks-grid.grid-view .apple-style-grid-item {
+    .ebook-card.apple-style-grid-item {
         min-height: 340px;
     }
     
-    .apple-title {
+    .ebook-title.apple-title {
         font-size: 15px;
     }
     
-    .apple-read-btn,
-    .apple-download-btn {
+    .btn-read.apple-read-btn,
+    .btn-download.apple-download-btn {
         padding: 9px 14px;
         font-size: 14px;
     }
 }
 
 @media (min-width: 1024px) {
-    .ebooks-grid.grid-view {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-    }
-    
-    .ebooks-grid.grid-view .apple-style-grid-item {
+    .ebook-card.apple-style-grid-item {
         min-height: 360px;
     }
 }
@@ -296,72 +297,55 @@
 @media (min-width: 1280px) {
     .ebooks-grid.grid-view {
         grid-template-columns: repeat(5, 1fr);
-        gap: 24px;
     }
 }
 
-/* Mobile adjustments for Apple grid */
 @media (max-width: 767px) {
-    .ebooks-grid.grid-view {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-    
-    .ebooks-grid.grid-view .apple-style-grid-item {
+    .ebook-card.apple-style-grid-item {
         min-height: 300px;
     }
     
-    .apple-title {
+    .ebook-title.apple-title {
         font-size: 13px;
         min-height: 32px;
     }
     
-    .apple-author {
+    .ebook-author.apple-author {
         font-size: 12px;
     }
     
-    .apple-actions {
+    .ebook-actions.apple-actions {
         flex-direction: column;
         gap: 6px;
     }
     
-    .apple-read-btn,
-    .apple-download-btn {
+    .btn-read.apple-read-btn,
+    .btn-download.apple-download-btn {
         width: 100%;
         padding: 7px 10px;
         font-size: 12px;
     }
 }
 
-/* Extra small screens */
 @media (max-width: 480px) {
-    .ebooks-grid.grid-view {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-    
-    .apple-content {
+    .ebook-content.apple-content {
         padding: 8px;
     }
     
-    .apple-title {
+    .ebook-title.apple-title {
         font-size: 12px;
         min-height: 28px;
     }
 }
 
 /* ============ TRANSITION FIXES FOR VIEW SWITCHING ============ */
+/* Smooth transitions only for Apple style */
 
-/* Smooth transitions for view switching */
-.ebooks-grid {
-    transition: grid-template-columns 0.3s ease;
-}
-
-.ebooks-grid.grid-view .ebook-card {
+.ebooks-grid.grid-view .ebook-card.apple-style-grid-item {
     animation: fadeInUp 0.3s ease;
 }
 
-.ebooks-grid.list-view .ebook-card {
+.ebooks-grid.list-view .ebook-card.apple-list-item {
     animation: fadeIn 0.3s ease;
 }
 
@@ -385,102 +369,104 @@
     }
 }
 
-/* ============ ACCESSIBILITY IMPROVEMENTS FOR APPLE STYLE ============ */
+/* ============ ACCESSIBILITY FOR APPLE STYLE ============ */
+/* New styles only for Apple buttons */
 
-.apple-read-btn:focus-visible,
-.apple-download-btn:focus-visible {
+.btn-read.apple-read-btn:focus-visible,
+.btn-download.apple-download-btn:focus-visible {
     outline: 2px solid #007AFF;
     outline-offset: 2px;
 }
 
-/* High contrast mode support */
+/* High contrast mode support for Apple style */
 @media (prefers-contrast: high) {
-    .apple-style-grid-item {
+    .ebook-card.apple-style-grid-item {
         border: 2px solid #000;
     }
     
-    .apple-read-btn,
-    .apple-download-btn {
+    .btn-read.apple-read-btn,
+    .btn-download.apple-download-btn {
         border-width: 2px;
     }
 }
 
-/* Reduced motion support */
+/* Reduced motion support for Apple style */
 @media (prefers-reduced-motion: reduce) {
-    .apple-style-grid-item,
+    .ebook-card.apple-style-grid-item,
     .apple-cover,
-    .apple-read-btn,
-    .apple-download-btn {
+    .btn-read.apple-read-btn,
+    .btn-download.apple-download-btn {
         transition: none;
     }
     
-    .ebooks-grid.grid-view .ebook-card,
-    .ebooks-grid.list-view .ebook-card {
+    .ebooks-grid.grid-view .ebook-card.apple-style-grid-item,
+    .ebooks-grid.list-view .ebook-card.apple-list-item {
         animation: none;
     }
 }
 
-/* ============ DARK MODE SUPPORT FOR APPLE STYLE ============ */
+/* ============ DARK MODE FOR APPLE STYLE ============ */
+/* Only affects Apple style elements */
 
 @media (prefers-color-scheme: dark) {
-    .apple-style-grid-item {
+    .ebook-card.apple-style-grid-item {
         background: #1d1d1f;
         border-color: #2c2c2e;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
-    .apple-style-grid-item:hover {
+    .ebook-card.apple-style-grid-item:hover {
         border-color: #3a3a3c;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
     
-    .apple-style .ebook-cover-container {
+    .ebook-cover-container .apple-cover {
         background: #2c2c2e;
     }
     
-    .apple-title {
+    .ebook-title.apple-title {
         color: #e5e5ea;
     }
     
-    .apple-author {
+    .ebook-author.apple-author {
         color: #aeaeb2;
     }
     
-    .apple-category {
+    .ebook-category.apple-category {
         background: rgba(0, 122, 255, 0.2);
         color: #64d2ff;
     }
     
-    .apple-duration {
+    .ebook-duration.apple-duration {
         color: #8e8e93;
     }
     
-    .apple-stats {
+    .ebook-stats.apple-stats {
         border-top-color: #2c2c2e;
     }
     
-    .apple-stats .download-count {
+    .ebook-stats.apple-stats .download-count {
         color: #8e8e93;
     }
     
-    .apple-read-btn {
+    .btn-read.apple-read-btn {
         background: #007AFF;
         color: white;
         border-color: #007AFF;
     }
     
-    .apple-read-btn:hover {
+    .btn-read.apple-read-btn:hover {
         background: #0056CC;
         border-color: #0056CC;
     }
     
-    .apple-download-btn {
+    .btn-download.apple-download-btn {
         background: #2c2c2e;
         color: #64d2ff;
         border-color: #3a3a3c;
     }
     
-    .apple-download-btn:hover {
+    .btn-download.apple-download-btn:hover {
         background: #3a3a3c;
         border-color: #007AFF;
     }
@@ -505,66 +491,28 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
-    .apple-list-item {
+    .ebook-card.apple-list-item {
         background: #1d1d1f;
         border-color: #2c2c2e;
     }
 }
 
 /* ============ PRINT STYLES FOR APPLE GRID ============ */
+/* Only affects Apple style */
 
 @media print {
-    .apple-style-grid-item {
+    .ebook-card.apple-style-grid-item {
         break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid #e5e5e7 !important;
         page-break-inside: avoid;
     }
     
-    .apple-actions {
+    .ebook-actions.apple-actions {
         display: none !important;
     }
     
-    .apple-stats {
+    .ebook-stats.apple-stats {
         border-top: 1px solid #e5e5e7;
     }
 }
-
-/* ============ FIX FOR VIEW SWITCHER VISIBILITY ============ */
-
-/* Ensure view switcher works correctly with Apple style */
-.ebooks-grid[data-view="grid"] .apple-style-grid-item {
-    display: flex;
-}
-
-.ebooks-grid[data-view="list"] .apple-style-grid-item {
-    display: none;
-}
-
-.ebooks-grid[data-view="list"] .apple-list-item {
-    display: block;
-}
-
-.ebooks-grid[data-view="grid"] .apple-list-item {
-    display: none;
-}
-
-/* Fix for mixed content when switching views */
-.ebooks-grid.grid-view .ebook-card:not(.apple-style-grid-item):not(.apple-list-item) {
-    display: flex;
-    flex-direction: column;
-}
-
-.ebooks-grid.list-view .ebook-card:not(.apple-style-grid-item):not(.apple-list-item) {
-    display: flex;
-    flex-direction: row;
-}
-
-/* Ensure proper spacing in all views */
-.ebooks-grid.grid-view > * {
-    width: 100%;
-}
-
-.ebooks-grid.list-view > * {
-    width: 100%;
-} 
