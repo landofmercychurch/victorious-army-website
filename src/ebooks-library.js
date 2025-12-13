@@ -58,91 +58,205 @@ class EbooksLibrary {
             });
         }
         
-        // Search overlay functionality
-        this.setupSearchOverlay();
+       // Search overlay functionality
+setupSearchOverlay() {
+    const searchBtn = document.querySelector('.nav-search-btn');
+    const searchOverlay = document.querySelector('.search-overlay');
+    const searchCloseBtn = document.querySelector('.search-close-btn');
+    const searchInput = document.querySelector('#global-search');
+    
+    console.log('Search overlay setup - Elements:', {
+        searchBtn: !!searchBtn,
+        searchOverlay: !!searchOverlay,
+        searchCloseBtn: !!searchCloseBtn,
+        searchInput: !!searchInput
+    });
+    
+    if (!searchBtn || !searchOverlay) {
+        console.warn('Search overlay elements not found');
+        return;
     }
     
-    // ADD THIS NEW METHOD: Setup Search Overlay
-    setupSearchOverlay() {
-        const searchBtn = document.querySelector('.nav-search-btn');
-        const searchOverlay = document.querySelector('.search-overlay');
-        const searchCloseBtn = document.querySelector('.search-close-btn');
-        const searchInput = document.querySelector('#global-search');
-        
-        if (!searchBtn || !searchOverlay) return;
-        
-        // Open search overlay
-        searchBtn.addEventListener('click', () => {
-            searchOverlay.hidden = false;
-            searchInput?.focus();
+    // Initialize overlay as hidden
+    this.closeSearchOverlay();
+    
+    // Open search overlay
+    searchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Opening search overlay');
+        this.openSearchOverlay();
+    });
+    
+    // Close search overlay with close button
+    if (searchCloseBtn) {
+        searchCloseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Closing via close button');
+            this.closeSearchOverlay();
         });
-        
-        // Close search overlay with close button
-        searchCloseBtn?.addEventListener('click', () => {
-            searchOverlay.hidden = true;
-        });
-        
-        // Close search overlay when clicking on overlay background
-        searchOverlay.addEventListener('click', (e) => {
-            if (e.target === searchOverlay) {
-                searchOverlay.hidden = true;
-            }
-        });
-        
-        // Close search overlay with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !searchOverlay.hidden) {
-                searchOverlay.hidden = true;
-            }
-        });
-        
-        // Handle search form submission
-        const searchForm = document.querySelector('.search-form');
-        if (searchForm) {
-            searchForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const searchTerm = searchInput?.value.trim();
-                if (searchTerm) {
-                    // Close search overlay
-                    searchOverlay.hidden = true;
-                    
-                    // Apply search to main search
-                    const mainSearch = document.getElementById('ebook-search');
-                    if (mainSearch) {
-                        mainSearch.value = searchTerm;
-                        this.currentFilters.search = searchTerm;
-                        this.applyFilters();
-                    }
-                }
-            });
+    }
+    
+    // Close search overlay when clicking on overlay background
+    searchOverlay.addEventListener('click', (e) => {
+        if (e.target === searchOverlay) {
+            console.log('Closing via background click');
+            this.closeSearchOverlay();
         }
-        
-        // Clear search button functionality
-        const searchClearBtn = document.querySelector('.search-clear-btn');
-        if (searchClearBtn) {
-            searchInput?.addEventListener('input', (e) => {
-                searchClearBtn.hidden = !e.target.value;
-            });
+    });
+    
+    // Close search overlay with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !searchOverlay.hidden) {
+            console.log('Closing via Escape key');
+            this.closeSearchOverlay();
+        }
+    });
+    
+    // Auto-close after 15 seconds of inactivity
+    let inactivityTimer;
+    const resetInactivityTimer = () => {
+        clearTimeout(inactivityTimer);
+        if (!searchOverlay.hidden) {
+            inactivityTimer = setTimeout(() => {
+                console.log('Auto-closing due to inactivity');
+                this.closeSearchOverlay();
+            }, 15000);
+        }
+    };
+    
+    // Reset timer on user interaction
+    if (searchInput) {
+        searchInput.addEventListener('input', resetInactivityTimer);
+        searchInput.addEventListener('keydown', resetInactivityTimer);
+    }
+    searchOverlay.addEventListener('mousemove', resetInactivityTimer);
+    searchOverlay.addEventListener('click', resetInactivityTimer);
+    
+    // Handle search form submission
+    const searchForm = document.querySelector('.search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const searchTerm = searchInput?.value.trim();
             
-            searchClearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                searchClearBtn.hidden = true;
-                searchInput.focus();
-            });
-        }
-        
-        // Search action button in main search
-        const searchActionBtn = document.querySelector('.search-action-btn');
-        if (searchActionBtn) {
-            searchActionBtn.addEventListener('click', () => {
-                const searchInput = document.getElementById('ebook-search');
-                if (searchInput) {
-                    this.currentFilters.search = searchInput.value;
+            if (searchTerm) {
+                console.log('Search submitted:', searchTerm);
+                this.closeSearchOverlay();
+                
+                // Transfer search to main search input
+                const mainSearch = document.getElementById('ebook-search');
+                if (mainSearch) {
+                    mainSearch.value = searchTerm;
+                    this.currentFilters.search = searchTerm;
                     this.applyFilters();
                 }
-            });
-        }
+            }
+        });
     }
+    
+    // Clear search button functionality (inside overlay)
+    const searchClearBtn = document.querySelector('.search-clear-btn');
+    if (searchClearBtn && searchInput) {
+        // Show/hide clear button based on input
+        searchInput.addEventListener('input', (e) => {
+            searchClearBtn.hidden = !e.target.value.trim();
+        });
+        
+        // Clear input when button clicked
+        searchClearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            searchInput.value = '';
+            searchClearBtn.hidden = true;
+            searchInput.focus();
+            resetInactivityTimer();
+        });
+    }
+    
+    // Main search action button (outside overlay)
+    const searchActionBtn = document.querySelector('.search-action-btn');
+    if (searchActionBtn) {
+        searchActionBtn.addEventListener('click', () => {
+            const mainSearchInput = document.getElementById('ebook-search');
+            if (mainSearchInput) {
+                this.currentFilters.search = mainSearchInput.value;
+                this.applyFilters();
+            }
+        });
+    }
+    
+    console.log('Search overlay setup complete');
+}
+
+// NEW HELPER METHOD: Open search overlay
+openSearchOverlay() {
+    const searchOverlay = document.querySelector('.search-overlay');
+    const searchInput = document.querySelector('#global-search');
+    
+    if (searchOverlay) {
+        searchOverlay.hidden = false;
+        searchOverlay.style.display = 'flex';
+        searchOverlay.style.visibility = 'visible';
+        searchOverlay.style.opacity = '1';
+        
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
+        
+        // Add open class for CSS targeting
+        searchOverlay.classList.add('active');
+        document.body.classList.add('search-overlay-open');
+    }
+    
+    if (searchInput) {
+        setTimeout(() => {
+            searchInput.focus();
+            searchInput.select();
+        }, 100);
+    }
+}
+
+// NEW HELPER METHOD: Close search overlay
+closeSearchOverlay() {
+    const searchOverlay = document.querySelector('.search-overlay');
+    const searchInput = document.querySelector('#global-search');
+    
+    if (searchOverlay) {
+        searchOverlay.hidden = true;
+        searchOverlay.style.display = 'none';
+        searchOverlay.style.visibility = 'hidden';
+        searchOverlay.style.opacity = '0';
+        
+        // Restore body scrolling
+        document.body.style.overflow = '';
+        
+        // Remove open class
+        searchOverlay.classList.remove('active');
+        document.body.classList.remove('search-overlay-open');
+    }
+    
+    if (searchInput) {
+        searchInput.blur();
+    }
+}
+
+// Optional: Add this method to your class for debugging
+debugOverlayState() {
+    const overlay = document.querySelector('.search-overlay');
+    const state = {
+        element: overlay,
+        hidden: overlay?.hidden,
+        display: overlay?.style.display,
+        computedDisplay: overlay ? getComputedStyle(overlay).display : 'N/A',
+        visibility: overlay ? getComputedStyle(overlay).visibility : 'N/A',
+        opacity: overlay ? getComputedStyle(overlay).opacity : 'N/A',
+        hasActiveClass: overlay?.classList.contains('active'),
+        bodyHasClass: document.body.classList.contains('search-overlay-open')
+    };
+    console.log('🔍 Overlay State:', state);
+    return state;
+}
     
     setMetaTags() {
         // Update page title
