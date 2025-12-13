@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Allow: /ebook
+Allow: /ebooks
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /site.webmanifest
+
+Disallow: /admin/
+Disallow: /cgi-bin/
+Disallow: /private/
+Disallow: /*.php
+Disallow: /*.json
+
+# Crawl delay (be nice to server)
+Crawl-delay: 2
+
+# Sitemaps
+Sitemap: https://victoriousarmyrevivalmovementchurch.netlify.app/sitemap.xml
