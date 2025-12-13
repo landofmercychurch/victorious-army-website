@@ -44,22 +44,22 @@ class EbooksLibrary {
         return this;
     }
     
-    // ADD THIS NEW METHOD: Setup Navigation
     setupNavigation() {
-        // Mobile menu toggle
-        const menuBtn = document.querySelector('.nav-menu-btn');
-        const mobileNav = document.querySelector('.mobile-nav');
-        
-        if (menuBtn && mobileNav) {
-            menuBtn.addEventListener('click', () => {
-                const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-                menuBtn.setAttribute('aria-expanded', !isExpanded);
-                mobileNav.hidden = isExpanded;
-            });
-        }
-        
-       // Search overlay functionality
-setupSearchOverlay() {
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.nav-menu-btn');
+    const mobileNav = document.querySelector('.mobile-nav');
+    
+    if (menuBtn && mobileNav) {
+        menuBtn.addEventListener('click', () => {
+            const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+            menuBtn.setAttribute('aria-expanded', !isExpanded);
+            mobileNav.hidden = isExpanded;
+        });
+    }
+    
+    // Search overlay functionality - CALL THE METHOD
+    this.setupSearchOverlay();  // <-- CORRECT: Call the existing method
+}
     const searchBtn = document.querySelector('.nav-search-btn');
     const searchOverlay = document.querySelector('.search-overlay');
     const searchCloseBtn = document.querySelector('.search-close-btn');
