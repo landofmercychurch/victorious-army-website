@@ -568,7 +568,7 @@ class EbooksLibrary {
             console.log("✅ Clear search button listener added");
         }
         
-        // View toggle buttons
+        // View toggle buttons - FIXED: Proper view switching
         const viewBtns = document.querySelectorAll('.view-btn');
         console.log(`🔘 Found ${viewBtns.length} view toggle buttons`);
         
@@ -687,10 +687,15 @@ class EbooksLibrary {
             }
         });
         
-        // Update grid view
+        // Update grid view - FIXED: Proper view switching
         const oldView = grid.dataset.view;
         grid.dataset.view = view;
-        grid.className = `ebooks-grid ${view === 'list' ? 'list-view' : 'grid-view'}`;
+        
+        // Remove all existing view classes
+        grid.classList.remove('grid-view', 'list-view');
+        
+        // Add the new view class
+        grid.classList.add(view === 'list' ? 'list-view' : 'grid-view');
         
         console.log(`View changed: ${oldView} → ${view}`);
         console.log(`Grid classes: ${grid.className}`);
@@ -1170,9 +1175,13 @@ class EbooksLibrary {
             return;
         }
         
+        // Get current view type
+        const currentView = grid.classList.contains('list-view') ? 'list' : 'grid';
+        console.log(`Current view: ${currentView}`);
+        
         // Render each book with improved structure
         booksToShow.forEach((book, index) => {
-            const card = this.createBookCard(book, grid.dataset.view, index);
+            const card = this.createBookCard(book, currentView, index);
             grid.appendChild(card);
         });
         
@@ -1183,7 +1192,7 @@ class EbooksLibrary {
     }
     
     createBookCard(book, view, index) {
-        const isGridView = view === 'grid';
+        const isGridView = view !== 'list';
         
         if (isGridView) {
             return this.createBookGridItem(book);
@@ -1195,64 +1204,50 @@ class EbooksLibrary {
     createBookGridItem(book) {
         console.log(`📐 Creating grid item for: "${book.title}"`);
         
-        const card = el('div', 'ebook-card grid-item');
+        const card = el('div', 'ebook-card grid-item apple-style-grid-item');
         const optimizedImage = this.optimizeImageForSEO(book.cover_url);
         
         console.log(`Book cover URL: ${book.cover_url || 'none'} → Optimized: ${optimizedImage}`);
         
+        // FIX 1: Apple/Amazon style grid - small, clean, no description
         card.innerHTML = `
-            <div class="ebook-card-inner" itemprop="mainEntity" itemscope itemtype="https://schema.org/Book">
+            <div class="ebook-card-inner apple-style" itemprop="mainEntity" itemscope itemtype="https://schema.org/Book">
                 <meta itemprop="url" content="${window.location.origin}/ebooks/${this.generateSlug(book.title)}">
                 
-                <div class="ebook-cover-container" onclick="ebookLibrary.openBookDetail('${book.id}')">
-                    <div class="ebook-cover" 
+                <div class="ebook-cover-container" onclick="ebookLibrary.openBookDetailPage('${book.id}')">
+                    <div class="ebook-cover apple-cover" 
                          style="background-image: url('${optimizedImage}')"
                          aria-label="Cover of ${book.title}"
                          itemprop="image">
+                        ${book.featured ? '<span class="featured-badge">Featured</span>' : ''}
                     </div>
-                    ${book.featured ? '<span class="featured-badge">Featured</span>' : ''}
                 </div>
                 
-                <div class="ebook-content">
-                    <h3 class="ebook-title" itemprop="name">${book.title}</h3>
-                    <p class="ebook-author" itemprop="author">${book.author || 'Unknown Author'}</p>
+                <div class="ebook-content apple-content">
+                    <h3 class="ebook-title apple-title" itemprop="name">${book.title}</h3>
+                    <p class="ebook-author apple-author" itemprop="author">${book.author || 'Unknown Author'}</p>
                     
-                    <div class="ebook-meta">
-                        ${book.category ? `<span class="ebook-category" itemprop="genre">${book.category}</span>` : ''}
-                        ${book.read_time_minutes ? `<span class="ebook-duration">${book.read_time_minutes} min</span>` : ''}
+                    <div class="ebook-meta apple-meta">
+                        ${book.category ? `<span class="ebook-category apple-category" itemprop="genre">${book.category}</span>` : ''}
+                        ${book.read_time_minutes ? `<span class="ebook-duration apple-duration">${book.read_time_minutes} min</span>` : ''}
                     </div>
                     
-                    <div class="ebook-description" itemprop="description">
-                        ${book.description ? `${book.description.substring(0, 100)}...` : 'Christian ebook for spiritual growth.'}
+                    <div class="ebook-stats apple-stats">
+                        ${book.download_count ? `<span class="download-count">${this.formatNumber(book.download_count)} downloads</span>` : ''}
                     </div>
                     
-                    <div class="ebook-actions">
-                        <button class="btn-read" 
+                    <div class="ebook-actions apple-actions">
+                        <button class="btn-read apple-read-btn" 
                                 onclick="event.stopPropagation(); ebookLibrary.readBookOnline('${book.id}', '${book.title}')"
                                 aria-label="Read ${book.title} online">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M15 19L18 22L23 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Read Online
+                            Read
                         </button>
                         
-                        <button class="btn-download" 
+                        <button class="btn-download apple-download-btn" 
                                 onclick="event.stopPropagation(); ebookLibrary.downloadEbook('${book.id}', '${book.title}')"
                                 aria-label="Download ${book.title}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Download PDF
+                            Download
                         </button>
-                    </div>
-                    
-                    <div class="ebook-stats">
-                        ${book.download_count ? `<span class="download-count">${this.formatNumber(book.download_count)} downloads</span>` : ''}
-                        ${book.created_at ? `<span class="upload-date">${this.formatDate(book.created_at)}</span>` : ''}
                     </div>
                 </div>
             </div>
@@ -1265,7 +1260,7 @@ class EbooksLibrary {
     createBookListItem(book) {
         console.log(`📋 Creating list item for: "${book.title}"`);
         
-        const item = el('div', 'ebook-card list-item');
+        const item = el('div', 'ebook-card list-item apple-list-item');
         const optimizedImage = this.optimizeImageForSEO(book.cover_url);
         
         console.log(`Book data:`, {
@@ -1280,7 +1275,7 @@ class EbooksLibrary {
             <div class="ebook-list-item-inner" itemprop="mainEntity" itemscope itemtype="https://schema.org/Book">
                 <meta itemprop="url" content="${window.location.origin}/ebooks/${this.generateSlug(book.title)}">
                 
-                <div class="list-cover-container" onclick="ebookLibrary.openBookDetail('${book.id}')">
+                <div class="list-cover-container" onclick="ebookLibrary.openBookDetailPage('${book.id}')">
                     <div class="list-cover" 
                          style="background-image: url('${optimizedImage}')"
                          aria-label="Cover of ${book.title}"
@@ -1320,7 +1315,6 @@ class EbooksLibrary {
                             </button>
                             
                             <button class="btn-download-list" 
-                                    
                                     onclick="event.stopPropagation(); ebookLibrary.downloadEbook('${book.id}', '${book.title}')"
                                     aria-label="Download ${book.title}">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1397,9 +1391,10 @@ class EbooksLibrary {
         console.groupEnd();
     }
     
-    openBookDetail(bookId) {
-        console.log("📖 Opening book detail");
-        console.group("Book Detail");
+    // FIX 2: New method for opening book detail page
+    openBookDetailPage(bookId) {
+        console.log("📖 Opening book detail page");
+        console.group("Book Detail Page");
         
         const book = this.books.find(b => b.id === bookId);
         if (!book) {
@@ -1410,17 +1405,21 @@ class EbooksLibrary {
         
         console.log(`Book found: "${book.title}" by ${book.author}`);
         
-        // Navigate to book detail page
+        // Create book detail page URL
         const slug = this.generateSlug(book.title);
-        const seriesSlug = this.generateSlug(book.series || 'standalone');
-        const newUrl = `/ebooks/${seriesSlug}/${slug}?id=${bookId}`;
+        const newUrl = `/ebooks/book/${slug}?id=${bookId}`;
         
-        console.log(`Generated URL: ${newUrl}`);
-        console.log(`Slug: ${slug}, Series slug: ${seriesSlug}`);
+        console.log(`Navigating to detail page: ${newUrl}`);
         
+        // Navigate to the book detail page
         window.location.href = newUrl;
         
         console.groupEnd();
+    }
+    
+    // Keep original method for backward compatibility
+    openBookDetail(bookId) {
+        this.openBookDetailPage(bookId);
     }
     
     // ================ SEO OPTIMIZATION METHODS ================
