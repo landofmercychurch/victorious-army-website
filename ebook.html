@@ -726,7 +726,74 @@
     </script>
     
     <!-- Main App Script -->
-   <script type="module" src="/src/js/ebooks-library.js"></script>
+ <!-- Ebooks Library Initialization -->
+<script type="module">
+    import EbooksLibrary from '/src/js/ebooks-library.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('📚 DOM loaded, initializing EbooksLibrary...');
+        
+        try {
+            // Get the main content container
+            const container = document.querySelector('.main-content');
+            
+            if (!container) {
+                console.error('❌ Main content container not found!');
+                return;
+            }
+            
+            // Initialize the library
+            const library = new EbooksLibrary();
+            await library.init(container);
+            
+            console.log('✅ EbooksLibrary initialized successfully');
+            
+            // For debugging in console
+            window.ebookLibrary = library;
+            console.log('🌐 Library available as window.ebookLibrary');
+            
+        } catch (error) {
+            console.error('❌ Failed to initialize EbooksLibrary:', error);
+            
+            // Show user-friendly error
+            const errorElement = document.createElement('div');
+            errorElement.style.cssText = `
+                background: #fee;
+                border: 2px solid #f99;
+                color: #c00;
+                padding: 20px;
+                margin: 20px;
+                border-radius: 8px;
+                text-align: center;
+            `;
+            errorElement.innerHTML = `
+                <h3>⚠️ Unable to load ebook library</h3>
+                <p>Please refresh the page or try again later.</p>
+                <button onclick="location.reload()" style="
+                    background: #007AFF;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    cursor: pointer;
+                ">Refresh Page</button>
+            `;
+            
+            const main = document.querySelector('main');
+            if (main) {
+                main.prepend(errorElement);
+            }
+        }
+    });
+    
+    // Also initialize when window loads (for good measure)
+    window.addEventListener('load', () => {
+        console.log('🚀 Window fully loaded');
+    });
+</script>
+
+
     
     <!-- Structured Data -->
     <script type="application/ld+json">
