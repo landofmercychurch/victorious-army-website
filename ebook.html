@@ -65,15 +65,8 @@
     <!-- ============ PRELOAD CRITICAL RESOURCES ============ -->
     <link rel="preload" href="/styles/ebooks.css" as="style">
     <link rel="preload" href="/src/js/ebooks-library.js" as="script">
-    <link rel="preload" href="/api/ebooks" as="fetch" crossorigin="anonymous">
-    
-    <!-- ============ DNS-PREFETCH & PRE-CONNECT ============ -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="dns-prefetch" href="https://yourchurch.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://yourchurch.com">
     
     <!-- ============ FONT LOADING ============ -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
@@ -120,7 +113,7 @@
             --orange-500: #FF9500;
             --red-500: #FF3B30;
             
-            /* Gradients */
+            /* Performance optimized gradients */
             --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-blue: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
             --gradient-spiritual: linear-gradient(135deg, #4A90E2 0%, #9013FE 100%);
@@ -129,21 +122,31 @@
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --font-display: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             
+            /* Fluid typography */
+            --fluid-min-width: 320;
+            --fluid-max-width: 1440;
+            --fluid-min-size: 16;
+            --fluid-max-size: 18;
+            --fluid-min-ratio: 1.2;
+            --fluid-max-ratio: 1.333;
+            
             /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
+            --space-3xs: clamp(0.25rem, calc(0.2rem + 0.25vw), 0.375rem);
+            --space-2xs: clamp(0.5rem, calc(0.4rem + 0.5vw), 0.75rem);
+            --space-xs: clamp(0.75rem, calc(0.6rem + 0.75vw), 1.125rem);
+            --space-sm: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
+            --space-md: clamp(1.5rem, calc(1.2rem + 1.5vw), 2.25rem);
+            --space-lg: clamp(2rem, calc(1.6rem + 2vw), 3rem);
+            --space-xl: clamp(3rem, calc(2.4rem + 3vw), 4.5rem);
+            --space-2xl: clamp(4rem, calc(3.2rem + 4vw), 6rem);
             
             /* Border Radius */
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-2xl: 24px;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-3xl: 2rem;
             --radius-full: 9999px;
             
             /* Shadows */
@@ -177,11 +180,16 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
+            font-size: clamp(
+                calc(var(--fluid-min-size) / 16 * 1rem),
+                calc(var(--fluid-min-size) / 16 * 1rem + (var(--fluid-max-size) - var(--fluid-min-size)) * (100vw - var(--fluid-min-width) * 1px) / (var(--fluid-max-width) - var(--fluid-min-width))),
+                calc(var(--fluid-max-size) / 16 * 1rem)
+            );
         }
         
         body {
             font-family: var(--font-sans);
-            font-size: 16px;
+            font-size: 1rem;
             line-height: 1.6;
             color: var(--gray-900);
             background-color: var(--gray-50);
@@ -230,7 +238,7 @@
             left: 0;
             background: var(--blue-500);
             color: white;
-            padding: var(--space-sm) var(--space-md);
+            padding: var(--space-2xs) var(--space-xs);
             text-decoration: none;
             z-index: 9999;
             border-radius: var(--radius-md);
@@ -248,78 +256,10 @@
             border-radius: var(--radius-sm);
         }
         
-        /* ============ CRITICAL PRINT STYLES ============ */
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-                color: black !important;
-                font-size: 12pt !important;
-                line-height: 1.4 !important;
-            }
-            
-            a {
-                color: black !important;
-                text-decoration: underline !important;
-            }
-            
-            .main-content {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-        }
-        
-        /* ============ CRITICAL PERFORMANCE ============ */
-        img, video {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-        
         /* ============ CRITICAL LAYOUT UTILITIES ============ */
         .container {
-            width: 100%;
-            max-width: var(--container-max-width);
-            margin: 0 auto;
-            padding: 0 var(--container-padding);
-        }
-        
-        /* ============ CRITICAL HERO STYLES ============ */
-        .hero-section {
-            background: var(--gradient-spiritual);
-            color: white;
-            padding: var(--space-3xl) 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" opacity="0.1"><path d="M0,50 Q250,0 500,50 T1000,50 V100 H0 Z" fill="white"/></svg>') bottom center no-repeat;
-            background-size: cover;
-        }
-        
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .hero-subtitle {
-            font-size: clamp(1rem, 3vw, 1.25rem);
-            opacity: 0.95;
-            max-width: 600px;
-            margin-bottom: var(--space-2xl);
+            width: min(100% - 2rem, var(--container-max-width));
+            margin-inline: auto;
         }
         
         /* ============ CRITICAL NAVIGATION ============ */
@@ -332,102 +272,17 @@
             border-bottom: 1px solid var(--gray-200);
         }
         
-        .nav-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: var(--header-height);
-        }
-        
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            color: var(--gray-900);
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-        
-        .logo-highlight {
-            color: var(--blue-500);
-        }
-        
-        /* ============ CRITICAL BUTTON STYLES ============ */
-        .subscribe-btn {
-            background: white;
-            color: var(--blue-500);
-            border: none;
-            padding: var(--space-sm) var(--space-xl);
-            border-radius: var(--radius-full);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            white-space: nowrap;
-        }
-        
-        .subscribe-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-        
         /* ============ CRITICAL RESPONSIVE UTILITIES ============ */
-        @media (max-width: 768px) {
-            .mobile-hidden {
+        @media (max-width: 48em) {
+            .md\:hidden {
                 display: none !important;
             }
         }
         
-        @media (min-width: 769px) {
-            .desktop-hidden {
-                display: none !important;
+        @media (min-width: 48.0625em) {
+            .md\:block {
+                display: block !important;
             }
-        }
-        
-        /* ============ CRITICAL LAZY LOADING ============ */
-        .lazy {
-            opacity: 0;
-            transition: opacity var(--transition-slow);
-        }
-        
-        .lazy.loaded {
-            opacity: 1;
-        }
-        
-        /* ============ CRITICAL WEB VITALS OPTIMIZATION ============ */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-            line-height: 1.2;
-            margin-bottom: var(--space-md);
-        }
-        
-        p {
-            margin-bottom: var(--space-md);
-        }
-        
-        /* ============ CRITICAL FONT DISPLAY ============ */
-        @font-face {
-            font-family: 'Inter Fallback';
-            src: local('Arial');
-            ascent-override: 90%;
-            descent-override: 22%;
-            line-gap-override: 0%;
-            size-adjust: 107%;
-        }
-        
-        /* ============ CRITICAL CLS PREVENTION ============ */
-        .aspect-ratio {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 */
-        }
-        
-        .aspect-ratio > * {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
         }
     </style>
     
@@ -453,7 +308,7 @@
                     </a>
                     
                     <!-- Desktop Navigation -->
-                    <div class="nav-menu desktop-hidden" role="navigation" aria-label="Primary">
+                    <div class="nav-menu md:block" role="navigation" aria-label="Primary">
                         <ul class="nav-list" role="list">
                             <li role="listitem" itemprop="name"><a href="/" class="nav-link" itemprop="url">Home</a></li>
                             <li role="listitem" itemprop="name"><a href="/ebooks" class="nav-link active" aria-current="page" itemprop="url">Ebooks</a></li>
@@ -461,6 +316,18 @@
                             <li role="listitem" itemprop="name"><a href="/authors" class="nav-link" itemprop="url">Authors</a></li>
                             <li role="listitem" itemprop="name"><a href="/categories" class="nav-link" itemprop="url">Categories</a></li>
                             <li role="listitem" itemprop="name"><a href="/about" class="nav-link" itemprop="url">About</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Mobile Navigation Menu -->
+                    <div class="mobile-nav md:hidden" hidden role="navigation" aria-label="Mobile Menu">
+                        <ul class="mobile-nav-list" role="list">
+                            <li role="listitem"><a href="/" class="mobile-nav-link">Home</a></li>
+                            <li role="listitem"><a href="/ebooks" class="mobile-nav-link active" aria-current="page">Ebooks</a></li>
+                            <li role="listitem"><a href="/series" class="mobile-nav-link">Series</a></li>
+                            <li role="listitem"><a href="/authors" class="mobile-nav-link">Authors</a></li>
+                            <li role="listitem"><a href="/categories" class="mobile-nav-link">Categories</a></li>
+                            <li role="listitem"><a href="/about" class="mobile-nav-link">About</a></li>
                         </ul>
                     </div>
                     
@@ -472,7 +339,7 @@
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <button class="nav-menu-btn mobile-hidden" aria-label="Open menu" aria-expanded="false" data-menu-trigger>
+                        <button class="nav-menu-btn md:hidden" aria-label="Open menu" aria-expanded="false" data-menu-trigger>
                             <span class="menu-icon" aria-hidden="true">☰</span>
                         </button>
                     </div>
@@ -513,7 +380,7 @@
     <!-- ============ MAIN CONTENT ============ -->
     <main id="main-content" class="main-content" role="main" itemprop="mainContentOfPage">
         <!-- ============ HERO SECTION ============ -->
-        <section class="hero-section" aria-labelledby="hero-title" itemscope itemtype="https://schema.org/WPHeader">
+        <section class="hero-section" aria-labelledby="hero-title">
             <div class="container">
                 <div class="hero-content">
                     <h1 id="hero-title" class="hero-title" itemprop="headline">Free Christian Ebooks Library</h1>
@@ -533,6 +400,7 @@
                                        aria-required="true"
                                        class="email-input"
                                        autocomplete="email"
+                                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                        itemprop="object">
                                 <button type="submit" class="subscribe-btn" aria-label="Subscribe to newsletter" itemprop="agent">
                                     Subscribe
@@ -792,6 +660,7 @@
                                        aria-required="true"
                                        class="email-input-lg"
                                        autocomplete="email"
+                                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                        itemprop="object">
                                 <button type="submit" class="subscribe-btn-lg" aria-label="Subscribe to newsletter" itemprop="agent">
                                     Subscribe Free
@@ -914,78 +783,134 @@
         </div>
     </footer>
 
-    <!-- ============ PROGRESSIVE ENHANCEMENT SCRIPTS ============ -->
+    <!-- ============ IMPROVED SCRIPTS ============ -->
     <script>
-        // Remove no-js class for progressive enhancement
-        document.documentElement.classList.remove('no-js');
-        document.documentElement.classList.add('js');
-        
-        // Set current year in footer
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-        
-        // Initialize loading state
-        window.addEventListener('load', function() {
-            document.body.classList.remove('js-loading');
-        });
-        
-        // Basic mobile menu toggle (progressive enhancement)
-        const menuBtn = document.querySelector('[data-menu-trigger]');
-        const mobileNav = document.querySelector('.mobile-nav');
-        
-        if (menuBtn && mobileNav) {
-            menuBtn.addEventListener('click', function() {
-                const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                this.setAttribute('aria-expanded', !isExpanded);
-                mobileNav.hidden = isExpanded;
-            });
-        }
-        
-        // Basic search overlay toggle
-        const searchTriggers = document.querySelectorAll('[data-search-trigger]');
-        const searchOverlay = document.querySelector('[data-search-overlay]');
-        const searchClose = document.querySelector('[data-search-close]');
-        
-        if (searchTriggers.length && searchOverlay) {
-            searchTriggers.forEach(trigger => {
-                trigger.addEventListener('click', function() {
-                    searchOverlay.hidden = false;
-                    document.querySelector('[data-search-input]')?.focus();
-                });
-            });
+        // Enhanced progressive enhancement
+        (function() {
+            // Remove no-js class
+            document.documentElement.classList.remove('no-js');
+            document.documentElement.classList.add('js');
             
-            if (searchClose) {
-                searchClose.addEventListener('click', function() {
-                    searchOverlay.hidden = true;
+            // Set current year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Mobile menu functionality
+            function initMobileMenu() {
+                const menuBtn = document.querySelector('[data-menu-trigger]');
+                const mobileNav = document.querySelector('.mobile-nav');
+                
+                if (menuBtn && mobileNav) {
+                    menuBtn.addEventListener('click', function() {
+                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                        this.setAttribute('aria-expanded', !isExpanded);
+                        mobileNav.hidden = isExpanded;
+                        
+                        // Trap focus in mobile menu
+                        if (!isExpanded) {
+                            const firstLink = mobileNav.querySelector('a');
+                            if (firstLink) firstLink.focus();
+                        }
+                    });
+                    
+                    // Close menu on escape
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape' && !mobileNav.hidden) {
+                            menuBtn.click();
+                            menuBtn.focus();
+                        }
+                    });
+                }
+            }
+            
+            // Enhanced search overlay
+            function initSearchOverlay() {
+                const searchTriggers = document.querySelectorAll('[data-search-trigger]');
+                const searchOverlay = document.querySelector('[data-search-overlay]');
+                const searchClose = document.querySelector('[data-search-close]');
+                const searchInput = document.querySelector('[data-search-input]');
+                
+                if (!searchOverlay) return;
+                
+                // Toggle search overlay
+                function toggleSearchOverlay(show) {
+                    searchOverlay.hidden = !show;
+                    document.body.style.overflow = show ? 'hidden' : '';
+                    
+                    if (show && searchInput) {
+                        setTimeout(() => searchInput.focus(), 100);
+                    }
+                    
+                    // Update all trigger buttons
+                    searchTriggers.forEach(btn => {
+                        btn.setAttribute('aria-expanded', show);
+                    });
+                }
+                
+                // Open search
+                searchTriggers.forEach(trigger => {
+                    trigger.addEventListener('click', () => toggleSearchOverlay(true));
+                });
+                
+                // Close search
+                if (searchClose) {
+                    searchClose.addEventListener('click', () => toggleSearchOverlay(false));
+                }
+                
+                // Close on escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !searchOverlay.hidden) {
+                        toggleSearchOverlay(false);
+                    }
+                });
+                
+                // Close on overlay click
+                searchOverlay.addEventListener('click', (e) => {
+                    if (e.target === searchOverlay) {
+                        toggleSearchOverlay(false);
+                    }
                 });
             }
             
-            // Close on escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && !searchOverlay.hidden) {
-                    searchOverlay.hidden = true;
-                }
-            });
-        }
-        
-        // Lazy loading images
-        document.addEventListener('DOMContentLoaded', function() {
-            const lazyImages = document.querySelectorAll('.lazy');
-            
-            const imageObserver = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.add('loaded');
-                        imageObserver.unobserve(img);
-                    }
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initMobileMenu();
+                    initSearchOverlay();
+                    document.body.classList.remove('js-loading');
                 });
-            });
+            } else {
+                initMobileMenu();
+                initSearchOverlay();
+                document.body.classList.remove('js-loading');
+            }
             
-            lazyImages.forEach(function(img) {
-                imageObserver.observe(img);
-            });
-        });
+            // Enhanced lazy loading with intersection observer
+            if ('IntersectionObserver' in window) {
+                const lazyLoadObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.classList.add('loaded');
+                            }
+                            lazyLoadObserver.unobserve(img);
+                        }
+                    });
+                });
+                
+                // Observe all lazy images
+                document.querySelectorAll('img.lazy[data-src]').forEach((img) => {
+                    lazyLoadObserver.observe(img);
+                });
+            } else {
+                // Fallback for older browsers
+                document.querySelectorAll('img.lazy[data-src]').forEach((img) => {
+                    img.src = img.dataset.src;
+                    img.classList.add('loaded');
+                });
+            }
+        })();
     </script>
     
     <!-- ============ MAIN APP SCRIPT ============ -->
@@ -1048,7 +973,7 @@
         }
     </script>
     
-    <!-- ============ COMPREHENSIVE STRUCTURED DATA ============ -->
+    <!-- ============ STRUCTURED DATA ============ -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -1125,78 +1050,9 @@
                         "item": "https://yourchurch.com/ebooks"
                     }
                 ]
-            },
-            {
-                "@type": "Organization",
-                "@id": "https://yourchurch.com/#organization",
-                "name": "Your Church Name",
-                "alternateName": "Church Books",
-                "url": "https://yourchurch.com",
-                "logo": "https://yourchurch.com/logo.png",
-                "foundingDate": "2000",
-                "founders": [
-                    {
-                        "@type": "Person",
-                        "name": "Pastor Name"
-                    }
-                ],
-                "address": {
-                    "@type": "PostalAddress",
-                    "streetAddress": "123 Church Street",
-                    "addressLocality": "City",
-                    "addressRegion": "State",
-                    "postalCode": "12345",
-                    "addressCountry": "US"
-                },
-                "contactPoint": {
-                    "@type": "ContactPoint",
-                    "contactType": "customer support",
-                    "email": "support@yourchurch.com",
-                    "url": "https://yourchurch.com/contact"
-                },
-                "sameAs": [
-                    "https://facebook.com/yourchurch",
-                    "https://twitter.com/yourchurch",
-                    "https://instagram.com/yourchurch"
-                ],
-                "description": "A Christian church providing free spiritual resources and ebooks for spiritual growth"
-            },
-            {
-                "@type": "WebPage",
-                "@id": "https://yourchurch.com/ebooks#legalnotice",
-                "name": "Legal Notice",
-                "url": "https://yourchurch.com/terms",
-                "description": "Terms of Service and Privacy Policy for Church Books Ebook Library"
             }
         ]
     }
-    </script>
-    
-    <!-- ============ ANALYTICS (Optional) ============ -->
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXXX-X"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-XXXXXXXXX-X', {
-            'page_title': document.title,
-            'page_location': window.location.href,
-            'send_page_view': true
-        });
-    </script>
-    
-    <!-- ============ FALLBACK FOR OLD BROWSERS ============ -->
-    <script>
-        // ES6+ feature detection
-        if (!window.Promise || !window.fetch || !window.IntersectionObserver) {
-            document.body.classList.add('old-browser');
-            
-            // Load polyfills
-            const script = document.createElement('script');
-            script.src = 'https://polyfill.io/v3/polyfill.min.js?features=Promise,fetch,IntersectionObserver,URLSearchParams';
-            document.head.appendChild(script);
-        }
     </script>
 </body>
 </html>
