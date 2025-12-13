@@ -1,0 +1,10 @@
+{
+  "name": "Victorious Army Revival Movement Church",
+  "short_name": "VARM Church",
+  "description": "Christian eBook Library - Free spiritual resources",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": []
+}
