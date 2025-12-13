@@ -7,6 +7,23 @@
   to = "/index.html"
   status = 200
 
+# Google verification file
+[[redirects]]
+  from = "/googlefcce52d0b8aca093.html"
+  to = "/googlefcce52d0b8aca093.html"
+  status = 200
+
+# SEO files
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+
 [[headers]]
   for = "/site.webmanifest"
   [headers.values]
@@ -16,3 +33,19 @@
   for = "/*.svg"
   [headers.values]
     "Content-Type" = "image/svg+xml; charset=utf-8"
+
+# Security and SEO headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    "X-Robots-Tag" = "index, follow"
+    "Cache-Control" = "public, max-age=3600"
+    "X-Content-Type-Options" = "nosniff"
+    "X-Frame-Options" = "DENY"
+    "Referrer-Policy" = "strict-origin-when-cross-origin"
+
+# Force HTTPS (security)
+[[redirects]]
+  from = "http://victoriousarmyrevivalmovementchurch.netlify.app/*"
+  to = "https://victoriousarmyrevivalmovementchurch.netlify.app/:splat"
+  status = 301
