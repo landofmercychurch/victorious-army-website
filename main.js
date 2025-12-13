@@ -5,7 +5,7 @@ import { initPicturePosts } from "./picturePosts.js";
 import { initEvents } from "./events.js";
 import { initDailyVerse } from "./dailyVerse.js";
 
-import EbooksLibrary from "./src/js/ebooks-library.js"; 
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   // 1. Initialize the popup
@@ -42,12 +42,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const dailyVerseContainer = document.getElementById("dailyVerseContainer");
   if (dailyVerseContainer) await initDailyVerse(dailyVerseContainer);
-
-  const ebooksContainer = document.getElementById("ebooksContainer");
-  if (ebooksContainer) {
-    // 1. Create an instance of the library
-    window.ebookLibrary = new EbooksLibrary();
-    // 2. Initialize it with the container
-    await window.ebookLibrary.init(ebooksContainer);
-  }
 });
