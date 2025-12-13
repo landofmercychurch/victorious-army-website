@@ -5,7 +5,7 @@ import { initPicturePosts } from "./picturePosts.js";
 import { initEvents } from "./events.js";
 import { initDailyVerse } from "./dailyVerse.js";
 
-import EbooksLibrary from "./src/ebooks-library.js"; 
+import EbooksLibrary from "./src/js/ebooks-library.js"; 
 
 document.addEventListener("DOMContentLoaded", async () => {
   // 1. Initialize the popup
