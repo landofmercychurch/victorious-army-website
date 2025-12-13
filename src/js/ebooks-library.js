@@ -1025,4 +1025,4 @@ toastStyles.textContent = `
     }
 `;
 
-document.head.appendChild(toastStyles);
+document.head.appendChild(toastStyles); 
