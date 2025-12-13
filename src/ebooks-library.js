@@ -1,6 +1,6 @@
 // src/ebooks-library.js
-import { api, API } from "./api.js";
-import { el } from "./utils.js";
+import { api, API } from "../api.js";
+import { el } from "../utils.js";
 
 class EbooksLibrary {
     constructor() {
