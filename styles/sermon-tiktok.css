@@ -1,109 +1,100 @@
-/* ======================================================
-   ROOT
-====================================================== */
-:root {
-  --bg: #000;
-  --text: #fff;
-  --muted: rgba(255,255,255,0.8);
-}
-
-/* ======================================================
-   BASE
-====================================================== */
-* {
+html, body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* ======================================================
-   FEED CONTAINER
-====================================================== */
-.sermon-feed-container {
-  height: 100vh;
-  width: 100%;
+  height: 100%;
   background: #000;
   overflow: hidden;
+  font-family: system-ui, sans-serif;
 }
 
-/* ======================================================
-   SCROLL AREA
-====================================================== */
+/* Feed */
 .sermon-videos {
-  height: 100%;
-  width: 100%;
+  height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-
 .sermon-videos::-webkit-scrollbar {
   display: none;
 }
 
-/* ======================================================
-   VIDEO CARD (FULL SCREEN)
-====================================================== */
+/* Video Card */
 .tiktok-video {
   height: 100vh;
   width: 100%;
-  scroll-snap-align: start;
   position: relative;
+  scroll-snap-align: start;
   background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* ======================================================
-   VIDEO ELEMENT
-====================================================== */
+/* Video */
 .tiktok-video video {
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* TikTok behavior */
-  background: #000;
-  display: block;
+  object-fit: cover;
 }
 
-/* ======================================================
-   TITLE OVERLAY
-====================================================== */
-.sermon-title {
+/* Overlay */
+.sermon-overlay {
   position: absolute;
+  bottom: 90px;
   left: 16px;
   right: 16px;
-  bottom: 24px;
-  font-size: 1.1rem;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,.8);
+}
+.sermon-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.sermon-desc {
+  opacity: .85;
+  font-size: .95rem;
+}
+
+/* Actions */
+.sermon-actions {
+  position: absolute;
+  right: 12px;
+  bottom: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #fff;
+}
+.sermon-actions button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+/* YouTube */
+.youtube-btn {
+  position: absolute;
+  bottom: 30px;
+  left: 16px;
+  background: red;
+  color: #fff;
+  padding: 8px 12px;
+  text-decoration: none;
+  border-radius: 6px;
   font-weight: 600;
-  color: var(--text);
-  text-shadow: 0 2px 10px rgba(0,0,0,0.85);
-  line-height: 1.4;
 }
 
-/* ======================================================
-   MOBILE TUNING
-====================================================== */
-@media (max-width: 768px) {
-  .sermon-title {
-    font-size: 1rem;
-  }
+/* Comments */
+.comments-box {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.95);
+  color: #fff;
+  padding: 16px;
+  overflow-y: auto;
 }
-
-/* ======================================================
-   REDUCED MOTION
-====================================================== */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
+.comment {
+  margin-bottom: 10px;
+}
+.comment-form textarea,
+.comment-form input {
+  width: 100%;
+  margin: 6px 0;
 }
