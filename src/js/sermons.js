@@ -1,5 +1,5 @@
 import { api } from "../../api.js";
-import { el } from "../../utils.js";
+
 import { fetchSermonComments, postSermonComment } from "../../commentsPublic.js";
 
 /** SEO Meta */
