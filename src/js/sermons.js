@@ -1,10 +1,10 @@
 // src/js/sermons.js
-import { api } from "./api.js";
-import { el } from "./utils.js";
-import { fetchSermonComments, postSermonComment } from "./commentsPublic.js";
+import { api } from "../../api.js";
+import { el } from "../../utils.js";
+import { fetchSermonComments, postSermonComment } from "../../commentsPublic.js";
 
 /** 🧩 OpenGraph/Twitter meta */
-function setOpenGraphMeta({ title, description, image, url }) {
+export function setOpenGraphMeta({ title, description, image, url }) {
   const head = document.head;
   function setMeta(property, content, isName = false) {
     const selector = isName ? `meta[name="${property}"]` : `meta[property="${property}"]`;
@@ -22,10 +22,48 @@ function setOpenGraphMeta({ title, description, image, url }) {
   setMeta("og:description", description);
   setMeta("og:image", image);
   setMeta("og:url", url);
-  setMeta("twitter:card", "summary_large_image", true);
+  setMeta("og:type", "video.other");
+  setMeta("og:video:url", url);
+  setMeta("og:video:secure_url", url);
+  setMeta("og:video:type", "text/html");
+  setMeta("og:video:width", "1280");
+  setMeta("og:video:height", "720");
+  
+  setMeta("twitter:card", "player", true);
   setMeta("twitter:title", title, true);
   setMeta("twitter:description", description, true);
   setMeta("twitter:image", image, true);
+  setMeta("twitter:player", url, true);
+  setMeta("twitter:player:width", "1280", true);
+  setMeta("twitter:player:height", "720", true);
+}
+
+/** 🧩 Structured Data for SEO */
+export function setStructuredData(sermon) {
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": sermon.title,
+    "description": sermon.description || "Watch this inspiring sermon",
+    "thumbnailUrl": sermon.thumbnail_url || "default-thumbnail.jpg",
+    "uploadDate": new Date(sermon.created_at).toISOString(),
+    "contentUrl": sermon.video_url || sermon.urls?.mp4_url || "",
+    "embedUrl": `${window.location.origin}/sermon-detail.html?id=${sermon.id}`,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Victorious Army Revival Movement",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${window.location.origin}/logo.png`
+      }
+    }
+  };
+  
+  script.textContent = JSON.stringify(structuredData);
+  document.head.appendChild(script);
 }
 
 /** ================================================
@@ -49,69 +87,21 @@ export async function initSermonThumbnails(container) {
     for (const sermon of sermons) {
       const card = el("div", "sermon-thumbnail-card");
       card.dataset.id = sermon.id;
-      card.style.cssText = `
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        background: white;
-        transition: transform 0.3s ease;
-      `;
-      
-      card.onmouseenter = () => {
-        card.style.transform = "translateY(-5px)";
-      };
-      card.onmouseleave = () => {
-        card.style.transform = "translateY(0)";
-      };
 
-      // Thumbnail image (click goes to detail page)
+      // Thumbnail with link to detail page
       const thumbnailLink = el("a", "sermon-thumbnail-link");
       thumbnailLink.href = `sermon-detail.html?id=${sermon.id}`;
-      thumbnailLink.style.cssText = `
-        display: block;
-        position: relative;
-        text-decoration: none;
-      `;
       
       const thumbnailImg = el("img", "thumbnail-img");
       thumbnailImg.src = sermon.thumbnail_url || "default-thumb.jpg";
-      thumbnailImg.alt = sermon.title;
+      thumbnailImg.alt = `${sermon.title} - Victorious Army Revival Movement`;
       thumbnailImg.loading = "lazy";
-      thumbnailImg.style.cssText = `
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        display: block;
-      `;
+      thumbnailImg.width = 320;
+      thumbnailImg.height = 180;
       
       // Play overlay
       const playOverlay = el("div", "play-overlay");
-      playOverlay.innerHTML = "▶️";
-      playOverlay.style.cssText = `
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.7);
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      `;
-      
-      thumbnailLink.onmouseenter = () => {
-        playOverlay.style.opacity = "1";
-      };
-      thumbnailLink.onmouseleave = () => {
-        playOverlay.style.opacity = "0";
-      };
+      playOverlay.innerHTML = "▶";
       
       thumbnailLink.appendChild(thumbnailImg);
       thumbnailLink.appendChild(playOverlay);
@@ -119,63 +109,39 @@ export async function initSermonThumbnails(container) {
       
       // Content
       const content = el("div", "thumbnail-content");
-      content.style.cssText = `
-        padding: 15px;
-      `;
       
-      // Title
+      // Title with proper heading hierarchy
       const titleLink = el("a", "title-link");
       titleLink.href = `sermon-detail.html?id=${sermon.id}`;
-      titleLink.innerHTML = `<h3 style="margin: 0 0 8px 0; color: #333;">${sermon.title || "Untitled Sermon"}</h3>`;
-      titleLink.style.cssText = `
-        text-decoration: none;
-        display: block;
-      `;
+      titleLink.innerHTML = `<h3>${sermon.title || "Untitled Sermon"}</h3>`;
       content.appendChild(titleLink);
       
-      // Meta
+      // Meta data
       const meta = el("div", "thumbnail-meta");
-      meta.style.cssText = `
-        display: flex;
-        gap: 10px;
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 8px;
-      `;
       meta.innerHTML = `
         <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
         ${sermon.speaker ? `<span>👤 ${sermon.speaker}</span>` : ''}
+        <span>⏱️ ${formatDuration(sermon.duration_seconds)}</span>
       `;
       content.appendChild(meta);
       
-      // Description
+      // Description snippet for SEO
       if (sermon.description) {
         const desc = el("p", "thumbnail-desc");
-        desc.textContent = sermon.description.substring(0, 100) + "...";
-        desc.style.cssText = `
-          margin: 0;
-          color: #444;
-          font-size: 14px;
-          line-height: 1.4;
-        `;
+        desc.textContent = sermon.description.substring(0, 150) + "...";
         content.appendChild(desc);
       }
+      
+      // View count
+      const viewCount = el("div", "view-count");
+      viewCount.textContent = `👁️ ${formatViewCount(sermon.view_count || 0)} views`;
+      content.appendChild(viewCount);
       
       // Watch button
       const watchBtn = el("a", "watch-btn");
       watchBtn.href = `sermon-detail.html?id=${sermon.id}`;
-      watchBtn.textContent = "Watch Sermon →";
-      watchBtn.style.cssText = `
-        display: inline-block;
-        margin-top: 10px;
-        padding: 8px 15px;
-        background: #4CAF50;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: bold;
-        font-size: 14px;
-      `;
+      watchBtn.textContent = "Watch Sermon";
+      watchBtn.setAttribute("aria-label", `Watch ${sermon.title}`);
       content.appendChild(watchBtn);
       
       card.appendChild(content);
@@ -184,12 +150,12 @@ export async function initSermonThumbnails(container) {
     
   } catch (err) {
     console.error("Failed to load sermons:", err);
-    container.innerHTML = `<p style="color:red; padding: 20px; text-align: center;">Failed to load sermons.</p>`;
+    container.innerHTML = `<p>Failed to load sermons. Please try again later.</p>`;
   }
 }
 
 /** ================================================
- * 2️⃣ SERMON LISTING PAGE: YouTube-style with Videos
+ * 2️⃣ SERMON LISTING PAGE: YouTube-style
  * ================================================ */
 export async function initSermonListing(container) {
   if (!container) return;
@@ -202,439 +168,428 @@ export async function initSermonListing(container) {
       return;
     }
 
-    // 🕒 Latest-first order
     sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     container.innerHTML = "";
-
-    const videos = [];
 
     for (const sermon of sermons) {
       const card = el("div", "sermon-listing-card");
       card.dataset.id = sermon.id;
-      card.style.cssText = `
-        margin-bottom: 30px;
-        border-radius: 8px;
-        overflow: hidden;
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      `;
 
-      // Video Container
+      // Video container with thumbnail fallback
       const videoContainer = el("div", "video-container");
-      videoContainer.style.cssText = `
-        position: relative;
-        background: #000;
-        cursor: pointer;
-      `;
-
-      // Video Element
+      
+      // Video element (lazy loaded)
       const video = el("video");
       video.playsInline = true;
-      video.controls = false; // We'll add custom controls
+      video.controls = false;
       video.preload = "metadata";
       video.poster = sermon.thumbnail_url || "";
-      video.style.cssText = `
-        width: 100%;
-        height: auto;
-        max-height: 400px;
-        display: block;
-      `;
+      video.setAttribute("aria-label", sermon.title);
       
-      // Video Overlay (shows thumbnail when not playing)
-      const videoOverlay = el("div", "video-overlay");
-      videoOverlay.style.cssText = `
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 0.3s ease;
-      `;
-      
+      // Thumbnail overlay (shows if thumbnail exists)
+      const thumbnailOverlay = el("div", "thumbnail-overlay");
       if (sermon.thumbnail_url) {
-        videoOverlay.style.backgroundImage = `url('${sermon.thumbnail_url}')`;
-      } else {
-        videoOverlay.style.backgroundColor = "#222";
+        thumbnailOverlay.style.backgroundImage = `url('${sermon.thumbnail_url}')`;
+        thumbnailOverlay.style.backgroundSize = "cover";
+        thumbnailOverlay.style.backgroundPosition = "center";
       }
       
-      // Play Button on Overlay
-      const overlayPlayBtn = el("div", "overlay-play-btn");
-      overlayPlayBtn.innerHTML = "▶️";
-      overlayPlayBtn.style.cssText = `
-        background: rgba(0,0,0,0.7);
-        color: white;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-      `;
+      // Play button
+      const playBtn = el("button", "play-button");
+      playBtn.innerHTML = "▶";
+      playBtn.setAttribute("aria-label", `Play ${sermon.title}`);
       
-      overlayPlayBtn.onmouseenter = () => {
-        overlayPlayBtn.style.transform = "scale(1.1)";
-      };
-      overlayPlayBtn.onmouseleave = () => {
-        overlayPlayBtn.style.transform = "scale(1)";
-      };
-      
-      videoOverlay.appendChild(overlayPlayBtn);
-      
-      // Custom Video Controls
-      const customControls = el("div", "custom-controls");
-      customControls.style.cssText = `
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(transparent, rgba(0,0,0,0.8));
-        padding: 10px;
-        display: none;
-        align-items: center;
-        gap: 10px;
-      `;
-      
-      const playPauseBtn = el("button", "control-btn");
-      playPauseBtn.innerHTML = "⏸️";
-      playPauseBtn.style.cssText = `
-        background: none;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-      `;
-      
-      const progressBar = el("div", "progress-bar");
-      progressBar.style.cssText = `
-        flex: 1;
-        height: 4px;
-        background: rgba(255,255,255,0.3);
-        border-radius: 2px;
-        overflow: hidden;
-      `;
-      
-      const progressFill = el("div", "progress-fill");
-      progressFill.style.cssText = `
-        width: 0%;
-        height: 100%;
-        background: #4CAF50;
-        transition: width 0.1s;
-      `;
-      progressBar.appendChild(progressFill);
-      
-      const timeDisplay = el("span", "time-display");
-      timeDisplay.textContent = "0:00 / 0:00";
-      timeDisplay.style.cssText = `
-        color: white;
-        font-size: 12px;
-        min-width: 100px;
-      `;
-      
-      const fullscreenBtn = el("button", "control-btn");
-      fullscreenBtn.innerHTML = "🔲";
-      fullscreenBtn.style.cssText = `
-        background: none;
-        border: none;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-      `;
-      
-      customControls.appendChild(playPauseBtn);
-      customControls.appendChild(progressBar);
-      customControls.appendChild(timeDisplay);
-      customControls.appendChild(fullscreenBtn);
-      
+      thumbnailOverlay.appendChild(playBtn);
       videoContainer.appendChild(video);
-      videoContainer.appendChild(videoOverlay);
-      videoContainer.appendChild(customControls);
+      videoContainer.appendChild(thumbnailOverlay);
       card.appendChild(videoContainer);
       
-      // Video Info
+      // Video info
       const videoInfo = el("div", "video-info");
-      videoInfo.style.cssText = `
-        padding: 15px;
-      `;
       
-      // Title with link to detail page
+      // Title with proper heading
       const titleLink = el("a", "video-title-link");
       titleLink.href = `sermon-detail.html?id=${sermon.id}`;
-      titleLink.innerHTML = `<h3 style="margin: 0 0 8px 0; color: #333;">${sermon.title || "Untitled Sermon"}</h3>`;
-      titleLink.style.cssText = `
-        text-decoration: none;
-        display: block;
-      `;
+      titleLink.innerHTML = `<h3>${sermon.title || "Untitled Sermon"}</h3>`;
       videoInfo.appendChild(titleLink);
       
-      // Meta info
+      // Meta information
       const metaInfo = el("div", "video-meta");
-      metaInfo.style.cssText = `
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        color: #666;
-        font-size: 14px;
-      `;
-      
-      const leftMeta = el("div", "left-meta");
-      leftMeta.innerHTML = `
+      metaInfo.innerHTML = `
         <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
-        ${sermon.speaker ? `<span style="margin-left: 10px;">👤 ${sermon.speaker}</span>` : ''}
+        ${sermon.speaker ? `<span>👤 ${sermon.speaker}</span>` : ''}
+        <span>⏱️ ${formatDuration(sermon.duration_seconds)}</span>
+        <span>👁️ ${formatViewCount(sermon.view_count || 0)}</span>
       `;
-      
-      const viewCount = el("span", "view-count");
-      viewCount.textContent = "👁️ 0 views";
-      viewCount.style.marginLeft = "10px";
-      
-      metaInfo.appendChild(leftMeta);
-      metaInfo.appendChild(viewCount);
       videoInfo.appendChild(metaInfo);
       
-      // Description
+      // Description for SEO
       if (sermon.description) {
-        const desc = el("p", "video-desc");
+        const desc = el("p", "video-description");
         desc.textContent = sermon.description;
-        desc.style.cssText = `
-          margin: 0 0 15px 0;
-          color: #444;
-          font-size: 14px;
-          line-height: 1.5;
-        `;
         videoInfo.appendChild(desc);
       }
       
       // Action buttons
-      const actionButtons = el("div", "action-buttons");
-      actionButtons.style.cssText = `
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
+      const actions = el("div", "video-actions");
+      actions.innerHTML = `
+        <a href="sermon-detail.html?id=${sermon.id}" class="watch-full-btn">Watch Full Message</a>
+        <button class="share-btn" data-sermon-id="${sermon.id}">🔗 Share</button>
       `;
-      
-      const likeBtn = el("button", "action-btn");
-      likeBtn.innerHTML = "❤️ Like";
-      likeBtn.style.cssText = `
-        padding: 8px 15px;
-        background: #f0f0f0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      `;
-      
-      const commentBtn = el("button", "action-btn");
-      commentBtn.innerHTML = "💬 Comment";
-      commentBtn.style.cssText = likeBtn.style.cssText;
-      
-      const shareBtn = el("button", "action-btn");
-      shareBtn.innerHTML = "🔗 Share";
-      shareBtn.style.cssText = likeBtn.style.cssText;
-      
-      const watchFullBtn = el("a", "watch-full-btn");
-      watchFullBtn.href = `sermon-detail.html?id=${sermon.id}`;
-      watchFullBtn.textContent = "Watch Full →";
-      watchFullBtn.style.cssText = `
-        padding: 8px 15px;
-        background: #4CAF50;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-left: auto;
-      `;
-      
-      actionButtons.appendChild(likeBtn);
-      actionButtons.appendChild(commentBtn);
-      actionButtons.appendChild(shareBtn);
-      actionButtons.appendChild(watchFullBtn);
-      videoInfo.appendChild(actionButtons);
+      videoInfo.appendChild(actions);
       
       card.appendChild(videoInfo);
       container.appendChild(card);
       
-      // Store video reference for lazy loading
-      videos.push({ 
-        video, 
-        sermon, 
-        overlay: videoOverlay, 
-        controls: customControls,
-        progressFill,
-        timeDisplay,
-        playPauseBtn,
-        videoContainer
-      });
+      // Setup video lazy loading
+      setupLazyVideo(video, sermon, thumbnailOverlay, playBtn);
+      
+      // Setup share button
+      const shareBtn = actions.querySelector('.share-btn');
+      shareBtn.onclick = () => shareSermon(sermon);
     }
-    
-    // Setup video lazy loading and controls
-    setupYouTubeStyleVideos(videos);
     
   } catch (err) {
     console.error("Failed to load sermons:", err);
-    container.innerHTML = `<p style="color:red; padding: 20px; text-align: center;">Failed to load sermons.</p>`;
+    container.innerHTML = `<p>Failed to load sermons. Please try again later.</p>`;
   }
 }
 
 /** ================================================
- * 3️⃣ ORIGINAL FUNCTION: Full TikTok-style (Preserved)
+ * 3️⃣ SERMON DETAIL PAGE: Single Video Page
  * ================================================ */
-export async function initSermons(container) {
-  // YOUR EXISTING initSermons CODE HERE (UNCHANGED)
-  // Keep all your original TikTok-style functionality
-  // ... [Your existing initSermons code]
+export async function initSermonDetail(container, sermonId) {
+  if (!container || !sermonId) return;
+  container.innerHTML = "<p>Loading sermon…</p>";
+
+  try {
+    const sermon = await api.get(`/sermons/${sermonId}`);
+    
+    // Set SEO meta tags
+    setOpenGraphMeta({
+      title: sermon.title,
+      description: sermon.description || "Watch this inspiring sermon from Victorious Army Revival Movement",
+      image: sermon.thumbnail_url || "default-thumbnail.jpg",
+      url: `${window.location.origin}/sermon-detail.html?id=${sermonId}`
+    });
+    
+    // Set structured data
+    setStructuredData(sermon);
+    
+    // Update page title
+    document.title = `${sermon.title} - Victorious Army Revival Movement`;
+    
+    // Render sermon detail
+    container.innerHTML = `
+      <article class="sermon-detail">
+        <header class="sermon-header">
+          <h1>${sermon.title}</h1>
+          <div class="sermon-meta">
+            <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
+            ${sermon.speaker ? `<span>👤 ${sermon.speaker}</span>` : ''}
+            <span>⏱️ ${formatDuration(sermon.duration_seconds)}</span>
+            <span>👁️ ${formatViewCount(sermon.view_count || 0)} views</span>
+          </div>
+        </header>
+        
+        <div class="video-container">
+          <div id="videoPlayer" class="video-player" role="region" aria-label="Video player">
+            <!-- Video loads here -->
+          </div>
+          <div class="video-controls">
+            <button id="playPauseBtn" aria-label="Play/Pause">⏯️</button>
+            <button id="fullscreenBtn" aria-label="Fullscreen">🔲</button>
+            <button id="shareBtn" class="share-btn" aria-label="Share this sermon">🔗 Share</button>
+            ${sermon.youtube_url ? `<a href="${sermon.youtube_url}" target="_blank" rel="noopener noreferrer" class="youtube-link">📺 Watch on YouTube</a>` : ''}
+          </div>
+        </div>
+        
+        <section class="sermon-description" aria-labelledby="description-heading">
+          <h2 id="description-heading">Description</h2>
+          <p>${sermon.description || 'No description available.'}</p>
+        </section>
+        
+        <section class="bible-verses" aria-labelledby="verses-heading">
+          <h2 id="verses-heading">📖 Scripture References</h2>
+          <div id="scriptureReferences"></div>
+        </section>
+        
+        <section class="comments-section" aria-labelledby="comments-heading">
+          <h2 id="comments-heading">💬 Comments & Testimonies</h2>
+          <div id="commentsContainer"></div>
+        </section>
+        
+        <section class="related-sermons" aria-labelledby="related-heading">
+          <h2 id="related-heading">📺 More Sermons</h2>
+          <div id="relatedSermons" class="related-grid"></div>
+        </section>
+      </article>
+    `;
+
+    // Setup video player
+    setupDetailVideoPlayer(sermon);
+    
+    // Load comments
+    loadComments(sermonId, container);
+    
+    // Load related sermons
+    loadRelatedSermons(sermonId, container);
+    
+    // Setup share button
+    document.getElementById('shareBtn').addEventListener('click', () => shareSermon(sermon));
+    
+    // Increment view count
+    incrementViewCount(sermonId);
+    
+  } catch (err) {
+    console.error("Failed to load sermon:", err);
+    container.innerHTML = `
+      <div class="error-message">
+        <h2>Sermon Not Found</h2>
+        <p>The sermon you're looking for is not available.</p>
+        <a href="sermon.html" class="btn">Browse All Sermons</a>
+      </div>
+    `;
+  }
 }
 
 /** ================================================
- * 🔧 HELPER: Setup YouTube-style video controls
+ * 🔧 VIDEO SETUP FUNCTIONS
  * ================================================ */
-function setupYouTubeStyleVideos(videos) {
-  videos.forEach(({ video, sermon, overlay, controls, progressFill, timeDisplay, playPauseBtn, videoContainer }) => {
-    let isPlaying = false;
-    let videoLoaded = false;
-    
-    // Lazy load video when scrolled into view
-    const videoObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && !videoLoaded) {
-            loadVideoSource(video, sermon);
-            videoLoaded = true;
-            videoObserver.unobserve(videoContainer);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    
-    videoObserver.observe(videoContainer);
-    
-    // Load video source
-    function loadVideoSource(videoEl, sermonData) {
-      const urls = sermonData.urls || {};
-      if (urls.hls_url && window.Hls && Hls.isSupported()) {
-        const hls = new Hls({ startLevel: -1, maxBufferLength: 30 });
-        hls.loadSource(urls.hls_url);
-        hls.attachMedia(videoEl);
-      } else if (urls.hls_url && videoEl.canPlayType("application/vnd.apple.mpegurl")) {
-        videoEl.src = urls.hls_url;
-      } else {
-        videoEl.src = urls.mp4_url || urls.webm_url || sermonData.video_url || "";
-      }
-      
-      // Setup time update
-      videoEl.addEventListener('timeupdate', updateProgress);
-      videoEl.addEventListener('loadedmetadata', () => {
-        timeDisplay.textContent = `0:00 / ${formatTime(videoEl.duration)}`;
-      });
-    }
-    
-    // Overlay click to play
-    overlay.querySelector('.overlay-play-btn').onclick = () => {
-      if (!videoLoaded) {
+function setupLazyVideo(video, sermon, thumbnailOverlay, playBtn) {
+  let videoLoaded = false;
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !videoLoaded) {
         loadVideoSource(video, sermon);
         videoLoaded = true;
+        observer.unobserve(video.parentElement);
       }
-      video.play();
-      isPlaying = true;
-      overlay.style.opacity = "0";
-      controls.style.display = "flex";
-      playPauseBtn.innerHTML = "⏸️";
-    };
-    
-    // Video click to toggle play/pause
-    video.onclick = () => {
-      if (video.paused) {
-        video.play();
-        isPlaying = true;
-        overlay.style.opacity = "0";
-        controls.style.display = "flex";
-        playPauseBtn.innerHTML = "⏸️";
-      } else {
-        video.pause();
-        isPlaying = false;
-        playPauseBtn.innerHTML = "▶️";
-      }
-    };
-    
-    // Custom controls
-    playPauseBtn.onclick = () => {
-      if (video.paused) {
-        video.play();
-        isPlaying = true;
-        playPauseBtn.innerHTML = "⏸️";
-      } else {
-        video.pause();
-        isPlaying = false;
-        playPauseBtn.innerHTML = "▶️";
-      }
-    };
-    
-    // Progress bar click
-    controls.querySelector('.progress-bar').onclick = (e) => {
-      const rect = e.target.getBoundingClientRect();
-      const percent = (e.clientX - rect.left) / rect.width;
-      video.currentTime = percent * video.duration;
-      updateProgress();
-    };
-    
-    // Fullscreen
-    controls.querySelector('.fullscreen-btn').onclick = () => {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) {
-        video.webkitRequestFullscreen();
-      }
-    };
-    
-    // Update progress bar
-    function updateProgress() {
-      const percent = (video.currentTime / video.duration) * 100;
-      progressFill.style.width = `${percent}%`;
-      timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+    });
+  }, { threshold: 0.1 });
+  
+  observer.observe(video.parentElement);
+  
+  // Play button click
+  playBtn.onclick = () => {
+    if (!videoLoaded) {
+      loadVideoSource(video, sermon);
+      videoLoaded = true;
     }
-    
-    // Show/hide controls on hover
-    videoContainer.onmouseenter = () => {
-      if (isPlaying) {
-        controls.style.display = "flex";
-      }
-    };
-    
-    videoContainer.onmouseleave = () => {
-      if (isPlaying) {
-        setTimeout(() => {
-          controls.style.display = "none";
-        }, 2000);
-      }
-    };
-    
-    // When video ends
-    video.onended = () => {
-      isPlaying = false;
-      playPauseBtn.innerHTML = "▶️";
-      overlay.style.opacity = "1";
-      controls.style.display = "none";
-    };
-  });
+    video.play();
+    thumbnailOverlay.style.display = 'none';
+  };
+  
+  // Video click to play/pause
+  video.onclick = () => {
+    if (video.paused) {
+      video.play();
+      thumbnailOverlay.style.display = 'none';
+    } else {
+      video.pause();
+    }
+  };
+  
+  // Show thumbnail when video ends
+  video.onended = () => {
+    thumbnailOverlay.style.display = 'flex';
+  };
+}
+
+function setupDetailVideoPlayer(sermon) {
+  const videoPlayer = document.getElementById('videoPlayer');
+  const video = el('video');
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "auto";
+  video.style.width = '100%';
+  video.setAttribute('title', sermon.title);
+  
+  videoPlayer.appendChild(video);
+  
+  // Load video source
+  const urls = sermon.urls || {};
+  if (urls.hls_url && window.Hls && Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(urls.hls_url);
+    hls.attachMedia(video);
+  } else if (urls.hls_url && video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = urls.hls_url;
+  } else {
+    video.src = urls.mp4_url || sermon.video_url || '';
+  }
+  
+  // Custom controls
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  playPauseBtn.onclick = () => {
+    if (video.paused) {
+      video.play();
+      playPauseBtn.innerHTML = '⏸️';
+    } else {
+      video.pause();
+      playPauseBtn.innerHTML = '▶️';
+    }
+  };
+  
+  fullscreenBtn.onclick = () => {
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    } else if (video.webkitRequestFullscreen) {
+      video.webkitRequestFullscreen();
+    }
+  };
+  
+  // Update play button state
+  video.onplay = () => playPauseBtn.innerHTML = '⏸️';
+  video.onpause = () => playPauseBtn.innerHTML = '▶️';
+}
+
+function loadVideoSource(video, sermon) {
+  const urls = sermon.urls || {};
+  if (urls.hls_url && window.Hls && Hls.isSupported()) {
+    const hls = new Hls({ startLevel: -1 });
+    hls.loadSource(urls.hls_url);
+    hls.attachMedia(video);
+  } else if (urls.hls_url && video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = urls.hls_url;
+  } else {
+    video.src = urls.mp4_url || sermon.video_url || '';
+  }
 }
 
 /** ================================================
- * 🔧 HELPER: Format time (MM:SS)
+ * 🔧 HELPER FUNCTIONS
  * ================================================ */
-function formatTime(seconds) {
-  if (!seconds || isNaN(seconds)) return "0:00";
+async function loadComments(sermonId, container) {
+  try {
+    const comments = await fetchSermonComments(String(sermonId));
+    const commentsContainer = container.querySelector('#commentsContainer');
+    
+    if (!Array.isArray(comments) || comments.length === 0) {
+      commentsContainer.innerHTML = '<p>No comments yet. Be the first to share!</p>';
+    } else {
+      commentsContainer.innerHTML = comments.map(comment => `
+        <div class="comment" itemscope itemtype="http://schema.org/Comment">
+          <strong itemprop="author">${comment.name || 'Guest'}:</strong>
+          <p itemprop="text">${comment.content}</p>
+          <small><time itemprop="dateCreated" datetime="${new Date(comment.created_at).toISOString()}">
+            ${new Date(comment.created_at).toLocaleString()}
+          </time></small>
+        </div>
+      `).join('');
+    }
+    
+    // Add comment form
+    const form = el('form', 'comment-form');
+    form.innerHTML = `
+      <textarea placeholder="Share your testimony..." required></textarea>
+      <input type="text" placeholder="Your name (optional)">
+      <button type="submit">Post Comment</button>
+    `;
+    
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const content = form.querySelector('textarea').value.trim();
+      const name = form.querySelector('input').value.trim() || 'Guest';
+      
+      if (!content) return;
+      
+      try {
+        await postSermonComment({ sermon_id: sermonId, name, content });
+        loadComments(sermonId, container);
+        form.reset();
+      } catch (error) {
+        console.error('Error posting comment:', error);
+      }
+    };
+    
+    commentsContainer.appendChild(form);
+    
+  } catch (error) {
+    console.error('Error loading comments:', error);
+  }
+}
+
+async function loadRelatedSermons(currentSermonId, container) {
+  try {
+    const sermons = await api.get('/sermons');
+    const related = sermons
+      .filter(s => s.id !== currentSermonId)
+      .slice(0, 4);
+    
+    const relatedContainer = container.querySelector('#relatedSermons');
+    
+    relatedContainer.innerHTML = related.map(sermon => `
+      <article class="related-sermon" itemscope itemtype="http://schema.org/VideoObject">
+        <a href="sermon-detail.html?id=${sermon.id}" itemprop="url">
+          <img src="${sermon.thumbnail_url || 'default-thumb.jpg'}" 
+               alt="${sermon.title}" 
+               itemprop="thumbnailUrl"
+               loading="lazy"
+               width="300"
+               height="169">
+          <h4 itemprop="name">${sermon.title}</h4>
+          <p itemprop="description">${sermon.description?.substring(0, 100) || ''}...</p>
+          <meta itemprop="uploadDate" content="${new Date(sermon.created_at).toISOString()}">
+        </a>
+      </article>
+    `).join('');
+    
+  } catch (error) {
+    console.error('Error loading related sermons:', error);
+  }
+}
+
+async function incrementViewCount(sermonId) {
+  try {
+    await api.post(`/sermons/${sermonId}/view`);
+  } catch (error) {
+    console.warn('Could not increment view count:', error);
+  }
+}
+
+function shareSermon(sermon) {
+  const shareUrl = `${window.location.origin}/sermon-detail.html?id=${sermon.id}`;
+  const shareText = `Watch "${sermon.title}" from Victorious Army Revival Movement`;
   
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
+  if (navigator.share) {
+    navigator.share({
+      title: sermon.title,
+      text: sermon.description || shareText,
+      url: shareUrl
+    });
+  } else {
+    navigator.clipboard.writeText(shareUrl);
+    alert('Link copied to clipboard!');
+  }
+}
+
+function formatDuration(seconds) {
+  if (!seconds) return 'N/A';
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  
+  if (hrs > 0) {
+    return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatViewCount(count) {
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M';
+  if (count >= 1000) return (count / 1000).toFixed(1) + 'K';
+  return count;
+}
+
+/** ================================================
+ * 4️⃣ ORIGINAL TIKTOK STYLE (Preserved)
+ * ================================================ */
+export async function initSermons(container) {
+  // YOUR ORIGINAL CODE HERE - KEEP UNCHANGED
+  // This maintains backward compatibility
+  // ... [Your original initSermons function]
 }
