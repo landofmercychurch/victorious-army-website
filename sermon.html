@@ -1,0 +1,40 @@
+//sermonlisting
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sermon Library - Victorious Army Revival Movement</title>
+  <meta name="description" content="Browse all sermons from Victorious Army Revival Movement. Watch inspiring messages and teachings.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sermon-list.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">🏠 Home</a> | 
+    <a href="#all">All Sermons</a> |
+    <a href="#featured">Featured</a> |
+    <a href="#series">Series</a>
+  </nav>
+  
+  <header class="sermon-header">
+    <h1>📖 Sermon Library</h1>
+    <p>Watch, listen, and grow with our collection of messages</p>
+  </header>
+  
+  <main>
+    <div id="sermonListContainer" class="sermon-list-container">
+      <!-- Sermons will load here -->
+    </div>
+  </main>
+  
+  <script type="module">
+    import { initSermonThumbnails } from "./src/sermons.js";
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initSermonThumbnails(document.getElementById('sermonListContainer'));
+    });
+  </script>
+</body>
+</html>
