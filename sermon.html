@@ -4,15 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Primary Meta Tags -->
+  <!-- =========================================== -->
+  <!-- PRIMARY SEO META TAGS -->
+  <!-- =========================================== -->
   <title>TikTok-Style Sermon Feed | Victorious Army Revival Movement</title>
   <meta name="description" content="Browse and watch inspiring short sermon clips in our TikTok-style vertical feed. Discover powerful messages from Pastor Isaac T. Adeola and other ministers.">
   <meta name="keywords" content="Christian sermons, Bible teaching, short sermons, TikTok sermons, Victorious Army Revival Movement, Land of Mercy, spiritual growth">
   
-  <!-- Canonical URL -->
+  <!-- =========================================== -->
+  <!-- CANONICAL & URL META -->
+  <!-- =========================================== -->
   <link rel="canonical" href="https://victoriousarmyrevivalmovementchurch.netlify.app/sermon.html">
   
-  <!-- Open Graph / Facebook -->
+  <!-- =========================================== -->
+  <!-- OPEN GRAPH / FACEBOOK META -->
+  <!-- =========================================== -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://victoriousarmyrevivalmovementchurch.netlify.app/sermon.html">
   <meta property="og:title" content="TikTok-Style Sermon Feed | Victorious Army Revival Movement">
@@ -22,7 +28,9 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Victorious Army Revival Movement TikTok-Style Sermon Feed">
   
-  <!-- Twitter -->
+  <!-- =========================================== -->
+  <!-- TWITTER CARD META -->
+  <!-- =========================================== -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@VictoriousArmy">
   <meta name="twitter:title" content="TikTok-Style Sermon Feed | Victorious Army Revival Movement">
@@ -30,12 +38,16 @@
   <meta name="twitter:image" content="https://victoriousarmyrevivalmovementchurch.netlify.app/images/sermon-feed-social.jpg">
   <meta name="twitter:image:alt" content="Victorious Army Revival Movement TikTok-Style Sermon Feed">
   
-  <!-- Additional Meta Tags -->
+  <!-- =========================================== -->
+  <!-- ADDITIONAL META TAGS -->
+  <!-- =========================================== -->
   <meta name="author" content="Victorious Army Revival Movement">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="theme-color" content="#000000">
   
-  <!-- Structured Data -->
+  <!-- =========================================== -->
+  <!-- STRUCTURED DATA (JSON-LD) -->
+  <!-- =========================================== -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -73,34 +85,51 @@
   }
   </script>
   
-  <!-- Favicon -->
+  <!-- =========================================== -->
+  <!-- FAVICONS -->
+  <!-- =========================================== -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   
-  <!-- Stylesheets -->
+  <!-- =========================================== -->
+  <!-- STYLESHEETS -->
+  <!-- =========================================== -->
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="styles/sermon-tiktok.css">
   
-  <!-- Preload Critical Assets -->
+  <!-- =========================================== -->
+  <!-- PRELOAD CRITICAL ASSETS -->
+  <!-- =========================================== -->
   <link rel="preload" href="styles/sermon-tiktok.css" as="style">
   <link rel="preload" href="src/js/sermons.js" as="script">
   
-  <!-- DNS Prefetch -->
+  <!-- =========================================== -->
+  <!-- DNS PREFETCH -->
+  <!-- =========================================== -->
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   
-  <!-- HLS.js for video streaming -->
+  <!-- =========================================== -->
+  <!-- HLS.js FOR VIDEO STREAMING -->
+  <!-- =========================================== -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.4/dist/hls.min.js" defer></script>
   
-  <!-- Inline Critical CSS -->
+  <!-- =========================================== -->
+  <!-- INLINE CRITICAL CSS -->
+  <!-- =========================================== -->
   <style>
-    /* Critical Above-the-Fold CSS */
+    /* ========================================== */
+    /* CRITICAL ABOVE-THE-FOLD CSS */
+    /* ========================================== */
     :root {
       --primary-color: #4CAF50;
+      --danger-color: #FF0000;
       --dark-bg: #000000;
       --text-primary: #FFFFFF;
+      --text-secondary: #B0B0B0;
+      --surface-bg: #1E1E1E;
     }
     
     * {
@@ -121,7 +150,9 @@
       line-height: 1.6;
     }
     
-    /* Skip to Content Link for Accessibility */
+    /* ========================================== */
+    /* SKIP TO CONTENT (ACCESSIBILITY) */
+    /* ========================================== */
     .skip-to-content {
       position: absolute;
       top: -40px;
@@ -137,7 +168,9 @@
       top: 0;
     }
     
-    /* Navigation */
+    /* ========================================== */
+    /* NAVIGATION */
+    /* ========================================== */
     .main-navigation {
       position: fixed;
       top: 0;
@@ -185,7 +218,9 @@
       font-weight: 600;
     }
     
-    /* Page Header */
+    /* ========================================== */
+    /* PAGE HEADER */
+    /* ========================================== */
     .page-header {
       position: fixed;
       top: 70px;
@@ -210,7 +245,9 @@
       margin: 0 auto;
     }
     
-    /* Main Content */
+    /* ========================================== */
+    /* MAIN CONTENT AREA */
+    /* ========================================== */
     main {
       position: relative;
       min-height: 100vh;
@@ -223,7 +260,9 @@
       background: var(--dark-bg);
     }
     
-    /* Loading State */
+    /* ========================================== */
+    /* LOADING STATE */
+    /* ========================================== */
     .sermon-loading {
       position: absolute;
       top: 50%;
@@ -247,13 +286,17 @@
       100% { transform: rotate(360deg); }
     }
     
-    /* Accessibility Improvements */
+    /* ========================================== */
+    /* ACCESSIBILITY IMPROVEMENTS */
+    /* ========================================== */
     :focus-visible {
       outline: 2px solid var(--primary-color);
       outline-offset: 2px;
     }
     
-    /* Reduced Motion */
+    /* ========================================== */
+    /* REDUCED MOTION SUPPORT */
+    /* ========================================== */
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -264,7 +307,9 @@
       }
     }
     
-    /* Mobile Optimization */
+    /* ========================================== */
+    /* MOBILE OPTIMIZATION */
+    /* ========================================== */
     @media (max-width: 768px) {
       .main-navigation {
         padding: 0.75rem 1rem;
@@ -306,11 +351,14 @@
       }
     }
     
-    /* Print Styles */
+    /* ========================================== */
+    /* PRINT STYLES */
+    /* ========================================== */
     @media print {
       .main-navigation,
       .page-header,
-      .feed-controls {
+      .feed-controls,
+      .user-guidance {
         display: none;
       }
       
@@ -325,13 +373,19 @@
     }
   </style>
 </head>
+
 <body itemscope itemtype="https://schema.org/WebPage">
-  <!-- Skip to Content for Accessibility -->
+  
+  <!-- ========================================== -->
+  <!-- SKIP TO CONTENT (ACCESSIBILITY) -->
+  <!-- ========================================== -->
   <a href="#sermonFeedContainer" class="skip-to-content" aria-label="Skip to main content">
     Skip to Sermon Feed
   </a>
   
-  <!-- Navigation -->
+  <!-- ========================================== -->
+  <!-- MAIN NAVIGATION -->
+  <!-- ========================================== -->
   <nav class="main-navigation" role="navigation" aria-label="Main Navigation">
     <div class="nav-container">
       <ul class="nav-links" role="menubar">
@@ -362,7 +416,9 @@
     </div>
   </nav>
   
-  <!-- Page Header -->
+  <!-- ========================================== -->
+  <!-- PAGE HEADER -->
+  <!-- ========================================== -->
   <header class="page-header" role="banner">
     <h1 itemprop="headline">🎬 TikTok-Style Sermon Feed</h1>
     <p itemprop="description">
@@ -371,29 +427,34 @@
     </p>
   </header>
   
-  <!-- Main Content -->
+  <!-- ========================================== -->
+  <!-- MAIN CONTENT -->
+  <!-- ========================================== -->
   <main id="main-content" role="main">
-    <!-- Sermon Feed Container -->
+    
+    <!-- SERMON FEED CONTAINER -->
     <div id="sermonFeedContainer" class="sermon-feed-container" aria-live="polite" aria-label="Sermon Videos Feed">
-      <!-- Initial Loading State -->
+      
+      <!-- INITIAL LOADING STATE -->
       <div class="sermon-loading" aria-label="Loading sermons">
         <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading inspiring sermons...</p>
       </div>
+      
     </div>
     
-    <!-- User Guidance -->
+    <!-- ========================================== -->
+    <!-- USER GUIDANCE -->
+    <!-- ========================================== -->
     <div class="user-guidance" role="complementary" aria-label="Navigation Tips">
-      <div class="scroll-hint" id="scrollHint" aria-label="Scroll instructions">
-        <span aria-hidden="true">⬆️⬇️</span> Scroll or use arrow keys <span aria-hidden="true">⬆️⬇️</span>
-      </div>
-      <div class="keyboard-hint" aria-label="Keyboard shortcuts">
-        <span aria-hidden="true">⌨️</span> <span class="sr-only">Keyboard shortcuts:</span> 
-        Spacebar = Next • Arrow keys = Navigate
+      <div class="tiktok-swipe-guide" id="swipeGuide" aria-label="Swipe instructions">
+        <span>⬆️⬇️</span> Swipe to scroll
       </div>
     </div>
     
-    <!-- SEO Content (Hidden from visual users, accessible to screen readers) -->
+    <!-- ========================================== -->
+    <!-- SEO CONTENT (HIDDEN VISUALLY) -->
+    <!-- ========================================== -->
     <div class="seo-content" hidden>
       <h2>Short Sermon Clips Collection</h2>
       <p>Browse our collection of inspirational short sermon clips from Victorious Army Revival Movement (Land of Mercy). 
@@ -419,9 +480,12 @@
         <li>View detailed sermon information</li>
       </ul>
     </div>
+    
   </main>
 
-  <!-- JavaScript Module -->
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT MODULE -->
+  <!-- ========================================== -->
   <script type="module" defer>
     import { initSermonTikTokFeed } from "./src/js/sermons.js";
     
@@ -434,28 +498,6 @@
       if (loadingElement) {
         loadingElement.style.display = 'none';
       }
-      
-      // Hide scroll hint after user interaction
-      const scrollHint = document.getElementById('scrollHint');
-      const hideHint = () => {
-        if (scrollHint) {
-          scrollHint.style.opacity = '0';
-          scrollHint.style.transition = 'opacity 0.5s ease';
-          setTimeout(() => {
-            scrollHint.style.display = 'none';
-          }, 500);
-          // Remove event listeners
-          document.removeEventListener('scroll', hideHint);
-          document.removeEventListener('keydown', hideHint);
-          document.removeEventListener('click', hideHint);
-        }
-      };
-      
-      // Set timeout and event listeners
-      setTimeout(hideHint, 8000);
-      document.addEventListener('scroll', hideHint, { once: true });
-      document.addEventListener('keydown', hideHint, { once: true });
-      document.addEventListener('click', hideHint, { once: true });
       
       // Initialize TikTok feed
       try {
@@ -503,7 +545,9 @@
     }
   </script>
   
-  <!-- NoScript Fallback -->
+  <!-- ========================================== -->
+  <!-- NOSCRIPT FALLBACK -->
+  <!-- ========================================== -->
   <noscript>
     <style>
       .sermon-loading { display: none; }
@@ -523,5 +567,6 @@
       <a href="index.html">main website</a>.</p>
     </div>
   </noscript>
+  
 </body>
 </html>
