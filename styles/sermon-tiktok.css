@@ -6,12 +6,16 @@ html, body {
   width: 100%;
   background: #000;
   font-family: system-ui, sans-serif;
-  overflow: hidden;
+}
+
+main, #sermonFeedContainer {
+  height: 100%;
+  width: 100%;
 }
 
 /* ================= FEED ================= */
 .sermon-videos {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
@@ -26,13 +30,13 @@ html, body {
 /* ================= VIDEO CARD ================= */
 .tiktok-video {
   position: relative;
-  height: 100vh; /* full viewport height */
+  height: 100%; /* matches container */
   width: 100%;
   scroll-snap-align: start;
-  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #000;
 }
 
 .video-wrapper {
@@ -91,7 +95,7 @@ html, body {
 .sermon-actions {
   position: absolute;
   right: 12px;
-  bottom: 120px; /* aligns with overlay */
+  bottom: 120px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -142,11 +146,11 @@ html, body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 60%;
+  height: 60vh;
   background: rgba(0,0,0,0.95);
   color: #fff;
   display: flex;
-  flex-direction: column-reverse; /* input always at bottom */
+  flex-direction: column-reverse; /* input fixed at bottom */
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   z-index: 999;
@@ -154,6 +158,7 @@ html, body {
   transition: transform 0.3s ease;
 }
 
+/* Header inside comments box */
 .comments-header {
   position: absolute;
   top: 12px;
@@ -172,11 +177,12 @@ html, body {
   cursor: pointer;
 }
 
-/* Scrollable comment list above input */
+/* Scrollable comments list */
 .comment-list {
   flex: 1;
   overflow-y: auto;
   padding: 12px 16px;
+  margin-top: 40px; /* leave space for header */
 }
 
 .comment {
@@ -223,4 +229,13 @@ html, body {
 
 .comment-form button:hover {
   background: #0056b3;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .sermon-title { font-size: 1.2rem; }
+  .sermon-desc { font-size: 0.9rem; }
+  .sermon-actions button { font-size: 1.3rem; padding: 6px; }
+  .youtube-btn { padding: 6px 10px; font-size: 0.9rem; }
+  .play-btn { font-size: 2.5rem; }
 }
