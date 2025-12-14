@@ -3,47 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading Sermon...</title>
-  <meta name="description" content="Watch this inspiring sermon from Victorious Army Revival Movement">
+  <title>Loading Sermon Details...</title>
+  <meta name="description" content="View full details about this sermon from Victorious Army Revival Movement">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="sermon-detail.css">
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.4/dist/hls.min.js"></script>
 </head>
 <body>
-  <nav>
+  <nav style="padding: 1rem; background: #f5f5f5;">
     <a href="index.html">🏠 Home</a> | 
-    <a href="src/js/sermons.html">📺 All Sermons</a>
+    <a href="index.html#sermons">🎬 TikTok Feed</a> |
+    <a href="sermon.html">📚 All Sermons</a>
   </nav>
 
-  <main id="sermonDetailContainer" class="sermon-detail-container">
-    <div class="loading">Loading sermon...</div>
+  <main id="sermonDetailContainer" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div class="loading">Loading sermon details...</div>
   </main>
 
-  <footer>
-    <p>&copy; 2025 Victorious Army Revival Movement</p>
-  </footer>
-
   <script type="module">
-    import { initSermonDetail } from "./src/js/sermons.js";
+    import { api } from "./src/api.js";
+    import { el } from "./src/utils.js";
     
-    document.addEventListener('DOMContentLoaded', () => {
+    async function loadSermonDetail() {
       const params = new URLSearchParams(window.location.search);
       const sermonId = params.get('id');
       
-      if (sermonId) {
-        initSermonDetail(
-          document.getElementById('sermonDetailContainer'),
-          sermonId
-        );
-      } else {
+      if (!sermonId) {
         document.getElementById('sermonDetailContainer').innerHTML = `
-          <div class="error">
+          <div style="text-align: center; padding: 40px;">
             <h2>No Sermon Selected</h2>
-            <p>Please select a sermon from the <a href="sermon.html">sermon library</a>.</p>
+            <p>Return to the <a href="index.html#sermons">sermon feed</a> to select a sermon.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      try {
+        const sermon = await api.get(`/sermons/${sermonId}`);
+        
+        // Set page title
+        document.title = `${sermon.title} - Full Details | Victorious Army Revival Movement`;
+        
+        // Render detailed view
+        const container = document.getElementById('sermonDetailContainer');
+        container.innerHTML = `
+          <article class="sermon-detail-article">
+            <header>
+              <h1>${sermon.title}</h1>
+              <div class="sermon-meta">
+                <span>👤 ${sermon.speaker || 'Unknown Speaker'}</span>
+                <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
+                <span>⏱️ ${formatDuration(sermon.duration_seconds)}</span>
+                <span>👁️ ${sermon.view_count || 0} views</span>
+              </div>
+            </header>
+            
+            <div class="sermon-media">
+              <img src="${sermon.thumbnail_url || 'default-thumb.jpg'}" 
+                   alt="${sermon.title}"
+                   style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 8px;">
+              
+              ${sermon.youtube_url ? `
+                <div style="margin-top: 20px; text-align: center;">
+                  <a href="${sermon.youtube_url}" target="_blank" 
+                     style="display: inline-block; background: #FF0000; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                    📺 Watch Full Sermon on YouTube
+                  </a>
+                </div>
+              ` : ''}
+            </div>
+            
+            <section class="sermon-description">
+              <h2>Description</h2>
+              <p>${sermon.description || 'No description available.'}</p>
+            </section>
+            
+            <section class="sermon-scriptures">
+              <h2>📖 Scripture References</h2>
+              <div id="scriptureReferences">
+                ${sermon.bible_verses && Array.isArray(sermon.bible_verses) 
+                  ? sermon.bible_verses.map(verse => `<p class="bible-verse">${verse}</p>`).join('')
+                  : '<p>No scripture references provided.</p>'}
+              </div>
+            </section>
+            
+            <section class="sermon-actions">
+              <h2>Actions</h2>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="shareSermon()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                  🔗 Share This Sermon
+                </button>
+                <button onclick="window.history.back()" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                  ← Back to Feed
+                </button>
+              </div>
+            </section>
+          </article>
+        `;
+        
+      } catch (error) {
+        console.error('Error loading sermon details:', error);
+        document.getElementById('sermonDetailContainer').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: red;">
+            <h2>Error Loading Sermon</h2>
+            <p>Failed to load sermon details. Please try again.</p>
           </div>
         `;
       }
-    });
+    }
+    
+    function formatDuration(seconds) {
+      if (!seconds) return 'N/A';
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      
+      if (hrs > 0) {
+        return `${hrs}h ${mins}m ${secs}s`;
+      }
+      return `${mins}m ${secs}s`;
+    }
+    
+    function shareSermon() {
+      const shareUrl = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          url: shareUrl
+        });
+      } else {
+        navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard!');
+      }
+    }
+    
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', loadSermonDetail);
   </script>
 </body>
 </html>
