@@ -1,14 +1,41 @@
+/* Reset */
 html, body {
   margin: 0;
   height: 100%;
   background: #000;
-  overflow: hidden;
   font-family: system-ui, sans-serif;
+  overflow: hidden;
 }
 
-/* Feed */
+/* Header */
+header {
+  height: 60px; /* fixed header height */
+  width: 100%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Feed container */
+.sermon-feed-container {
+  height: calc(100vh - 60px); /* full viewport minus header */
+  margin-top: 60px; /* push below header */
+  overflow: hidden;
+  background: #000;
+}
+
+/* Scrollable videos */
 .sermon-videos {
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scrollbar-width: none;
@@ -19,59 +46,65 @@ html, body {
 
 /* Video Card */
 .tiktok-video {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   position: relative;
   scroll-snap-align: start;
   background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Video */
 .tiktok-video video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain; /* prevents cropping */
+  background: #000;
 }
 
 /* Overlay */
 .sermon-overlay {
   position: absolute;
-  bottom: 90px;
+  bottom: 100px; /* leaves room for buttons */
   left: 16px;
   right: 16px;
   color: #fff;
   text-shadow: 0 2px 10px rgba(0,0,0,.8);
 }
 .sermon-title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
 }
 .sermon-desc {
-  opacity: .85;
-  font-size: .95rem;
+  opacity: 0.85;
+  font-size: 1rem;
+  margin-top: 4px;
 }
 
-/* Actions */
+/* Action buttons */
 .sermon-actions {
   position: absolute;
   right: 12px;
-  bottom: 90px;
+  bottom: 80px; /* above bottom YouTube button */
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   color: #fff;
 }
 .sermon-actions button {
   background: none;
   border: none;
   color: #fff;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-/* YouTube */
+/* YouTube button */
 .youtube-btn {
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
   left: 16px;
   background: red;
   color: #fff;
@@ -81,14 +114,16 @@ html, body {
   font-weight: 600;
 }
 
-/* Comments */
+/* Comments box */
 .comments-box {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.95);
+  background: rgba(0,0,0,0.95);
   color: #fff;
   padding: 16px;
   overflow-y: auto;
+  display: none; /* hidden by default */
+  z-index: 20;
 }
 .comment {
   margin-bottom: 10px;
@@ -97,4 +132,18 @@ html, body {
 .comment-form input {
   width: 100%;
   margin: 6px 0;
+  padding: 6px;
+  border-radius: 4px;
+  border: none;
+  background: #222;
+  color: #fff;
+  resize: vertical;
+}
+
+/* Scroll hint */
+.scroll-indicator {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.85rem;
+  padding: 6px 0;
 }
