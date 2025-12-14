@@ -49,10 +49,18 @@ export async function initSermonTikTokFeed(container) {
 
   const videos = [];
 
-  /** Create a single TikTok-style comments box for the whole feed */
+  /** Global TikTok-style comments box */
   const globalCommentsBox = el("div", "comments-box");
   globalCommentsBox.style.display = "none";
   document.body.appendChild(globalCommentsBox);
+
+  /** Floating YouTube button */
+  const floatingYT = el("a", "youtube-btn");
+  floatingYT.target = "_blank";
+  floatingYT.rel = "noopener noreferrer";
+  floatingYT.textContent = "📺 Full Sermon";
+  floatingYT.style.display = "none";
+  document.body.appendChild(floatingYT);
 
   for (const sermon of sermons) {
     const card = el("div", "tiktok-video");
@@ -113,7 +121,7 @@ export async function initSermonTikTokFeed(container) {
       <button class="share-btn">🔗</button>
     `;
 
-    // YouTube button
+    // Per-card YouTube button
     if (sermon.youtube_url) {
       const yt = el("a", "youtube-btn");
       yt.href = sermon.youtube_url;
@@ -159,7 +167,6 @@ export async function initSermonTikTokFeed(container) {
       globalCommentsBox.style.display = "block";
       video.pause();
 
-      // Load comments
       const list = globalCommentsBox.querySelector(".comment-list");
       let comments = await fetchSermonComments(String(sermon.id));
       if (!Array.isArray(comments)) comments = [];
@@ -168,14 +175,12 @@ export async function initSermonTikTokFeed(container) {
         ? comments.map(c => `<div class="comment"><b>${c.name || "Guest"}:</b> <span>${c.content}</span></div>`).join("")
         : "<p>No comments yet.</p>";
 
-      // Close button
       globalCommentsBox.querySelector(".close-btn").onclick = () => {
         globalCommentsBox.style.display = "none";
         video.play();
         playBtn.style.display = "none";
       };
 
-      // Comment submit
       globalCommentsBox.querySelector(".comment-form").onsubmit = async (e) => {
         e.preventDefault();
         const name = e.target.querySelector("input").value || "Guest";
@@ -214,16 +219,27 @@ export async function initSermonTikTokFeed(container) {
     });
   }
 
-  /** Autoplay observer */
+  /** Autoplay observer with floating YouTube button update */
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
         const video = entry.target.querySelector("video");
         const playBtn = entry.target.querySelector(".play-btn");
+        const sermonId = entry.target.dataset.id;
+        const sermonData = sermons.find(s => s.id == sermonId);
+
         if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
           videos.forEach(v => v.video !== video && v.video.pause());
           video.play().catch(() => {});
           if (playBtn) playBtn.style.display = "none";
+
+          // Update floating YouTube button
+          if (sermonData && sermonData.youtube_url) {
+            floatingYT.href = sermonData.youtube_url;
+            floatingYT.style.display = "flex";
+          } else {
+            floatingYT.style.display = "none";
+          }
         } else {
           video.pause();
           if (playBtn) playBtn.style.display = "block";
@@ -232,5 +248,6 @@ export async function initSermonTikTokFeed(container) {
     },
     { threshold: 0.75 }
   );
+
   videos.forEach(v => observer.observe(v.card));
 }
