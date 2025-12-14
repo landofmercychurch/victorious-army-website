@@ -1,5 +1,4 @@
 //sermonlisting
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +8,7 @@
   <meta name="description" content="Browse all sermons from Victorious Army Revival Movement. Watch inspiring messages and teachings.">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="sermon-list.css">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.4/dist/hls.min.js"></script>
 </head>
 <body>
   <nav>
@@ -30,10 +30,10 @@
   </main>
   
   <script type="module">
-    import { initSermonThumbnails } from "./src/js/sermons.js";
+    import { initSermonListing } from "./src/js/sermons.js";
     
     document.addEventListener('DOMContentLoaded', () => {
-      initSermonThumbnails(document.getElementById('sermonListContainer'));
+      initSermonListing(document.getElementById('sermonListContainer'));
     });
   </script>
 </body>
