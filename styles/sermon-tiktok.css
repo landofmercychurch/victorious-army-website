@@ -126,31 +126,51 @@ main, #sermonFeedContainer {
   font-size: 0.9rem;
 }
 
-/* ================= YOUTUBE BUTTON ================= */
+/* ================= FLOATING YOUTUBE BUTTON ================= */
 .youtube-btn {
-  position: fixed;  /* changed from absolute */
-  top: 16px;        /* distance from top of viewport */
-  right: 16px;      /* distance from right of viewport */
+  position: fixed;          /* Stay visible while scrolling */
+  top: 16px;                /* Distance from top of viewport */
+  right: 16px;              /* Distance from right of viewport */
   background: rgba(255, 0, 0, 0.85);
   color: #fff;
-  padding: 5px 10px;
-  font-size: 0.75rem;
-  border-radius: 7px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  display: flex;
+  display: flex;            /* Center icon/text */
   align-items: center;
+  justify-content: center;
   gap: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-  z-index: 9999; /* ensure it stays on top */
+  z-index: 9999;            /* Ensure it stays above all elements */
 }
 
 .youtube-btn:hover {
   background: rgba(255, 0, 0, 1);
   transform: scale(1.08);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
 }
+
+/* ================= PER-CARD YOUTUBE BUTTON ================= */
+.tiktok-video .youtube-btn {
+  position: absolute;       /* Positioned inside card */
+  top: 16px;
+  right: 16px;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.tiktok-video .youtube-btn:hover {
+  background: rgba(255, 0, 0, 1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+}
+
+
 
 /* ================= COMMENTS BOX ================= */
 .comments-box {
@@ -260,4 +280,16 @@ main, #sermonFeedContainer {
   .comments-box { max-width: 92%; max-height: 45vh; }
   .comment-form input,
   .comment-form textarea { font-size: 0.8rem; }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .youtube-btn {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  .tiktok-video .youtube-btn {
+    font-size: 0.65rem;
+    padding: 3px 6px;
+  }
 }
