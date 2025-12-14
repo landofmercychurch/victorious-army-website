@@ -1,111 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading Sermon Details...</title>
-  <meta name="description" content="View full details about this sermon from Victorious Army Revival Movement">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="sermon-detail.css">
+  <!-- ... SEO meta tags ... -->
+  <style>
+    .sermon-detail-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .sermon-header {
+      margin-bottom: 30px;
+    }
+    
+    .sermon-thumbnail {
+      width: 100%;
+      height: 400px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      background-color: #f0f0f0; /* Placeholder color */
+    }
+    
+    .sermon-meta {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+      color: #666;
+    }
+    
+    .sermon-description {
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+    
+    .sermon-actions
+    padding: 20px 0;
+    }
+    
+    .watch-youtube-btn {
+      display: inline-block;
+      background: #FF0000;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .back-to-feed {
+      display: inline-block;
+      background: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <nav style="padding: 1rem; background: #f5f5f5;">
-    <a href="index.html">🏠 Home</a> | 
-    <a href="index.html#sermons">🎬 TikTok Feed</a> |
-    <a href="sermon.html">📚 All Sermons</a>
-  </nav>
-
-  <main id="sermonDetailContainer" style="max-width: 800px; margin: 0 auto; padding: 20px;">
-    <div class="loading">Loading sermon details...</div>
-  </main>
+  <div class="sermon-detail-container">
+    <header class="sermon-header">
+      <h1 id="sermonTitle">Loading...</h1>
+      <div class="sermon-meta" id="sermonMeta"></div>
+    </header>
+    
+    <div class="sermon-thumbnail" id="sermonThumbnail"></div>
+    
+    <div class="sermon-description" id="sermonDescription"></div>
+    
+    <div class="sermon-actions">
+      <a href="#" id="youtubeLink" class="watch-youtube-btn" target="_blank" style="display: none;">
+        📺 Watch Full on YouTube
+      </a>
+      <a href="sermon.html" class="back-to-feed">
+        ← Back to Sermon Feed
+      </a>
+    </div>
+  </div>
 
   <script type="module">
-    import { api } from "./src/api.js";
-    import { el } from "./src/utils.js";
+    import { api } from "./src/js/api.js";
     
     async function loadSermonDetail() {
       const params = new URLSearchParams(window.location.search);
       const sermonId = params.get('id');
       
       if (!sermonId) {
-        document.getElementById('sermonDetailContainer').innerHTML = `
-          <div style="text-align: center; padding: 40px;">
-            <h2>No Sermon Selected</h2>
-            <p>Return to the <a href="index.html#sermons">sermon feed</a> to select a sermon.</p>
-          </div>
-        `;
+        window.location.href = 'sermon.html';
         return;
       }
       
       try {
         const sermon = await api.get(`/sermons/${sermonId}`);
         
-        // Set page title
-        document.title = `${sermon.title} - Full Details | Victorious Army Revival Movement`;
+        // Update page
+        document.getElementById('sermonTitle').textContent = sermon.title;
+        document.title = `${sermon.title} - Sermon Details`;
         
-        // Render detailed view
-        const container = document.getElementById('sermonDetailContainer');
-        container.innerHTML = `
-          <article class="sermon-detail-article">
-            <header>
-              <h1>${sermon.title}</h1>
-              <div class="sermon-meta">
-                <span>👤 ${sermon.speaker || 'Unknown Speaker'}</span>
-                <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
-                <span>⏱️ ${formatDuration(sermon.duration_seconds)}</span>
-                <span>👁️ ${sermon.view_count || 0} views</span>
-              </div>
-            </header>
-            
-            <div class="sermon-media">
-              <img src="${sermon.thumbnail_url || 'default-thumb.jpg'}" 
-                   alt="${sermon.title}"
-                   style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 8px;">
-              
-              ${sermon.youtube_url ? `
-                <div style="margin-top: 20px; text-align: center;">
-                  <a href="${sermon.youtube_url}" target="_blank" 
-                     style="display: inline-block; background: #FF0000; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: bold;">
-                    📺 Watch Full Sermon on YouTube
-                  </a>
-                </div>
-              ` : ''}
-            </div>
-            
-            <section class="sermon-description">
-              <h2>Description</h2>
-              <p>${sermon.description || 'No description available.'}</p>
-            </section>
-            
-            <section class="sermon-scriptures">
-              <h2>📖 Scripture References</h2>
-              <div id="scriptureReferences">
-                ${sermon.bible_verses && Array.isArray(sermon.bible_verses) 
-                  ? sermon.bible_verses.map(verse => `<p class="bible-verse">${verse}</p>`).join('')
-                  : '<p>No scripture references provided.</p>'}
-              </div>
-            </section>
-            
-            <section class="sermon-actions">
-              <h2>Actions</h2>
-              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="shareSermon()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                  🔗 Share This Sermon
-                </button>
-                <button onclick="window.history.back()" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                  ← Back to Feed
-                </button>
-              </div>
-            </section>
-          </article>
+        // Meta info
+        const meta = document.getElementById('sermonMeta');
+        const duration = formatDuration(sermon.duration);
+        meta.innerHTML = `
+          <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
+          <span>⏱️ ${duration}</span>
+          ${sermon.size_mb ? `<span>💾 ${sermon.size_mb.toFixed(1)} MB</span>` : ''}
         `;
         
+        // Thumbnail or placeholder
+        const thumbnail = document.getElementById('sermonThumbnail');
+        if (sermon.thumbnail_url) {
+          thumbnail.style.backgroundImage = `url('${sermon.thumbnail_url}')`;
+        } else if (sermon.original_url) {
+          thumbnail.style.backgroundImage = `url('${sermon.original_url}')`;
+        } else {
+          // Placeholder with sermon title
+          thumbnail.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+          thumbnail.style.display = 'flex';
+          thumbnail.style.alignItems = 'center';
+          thumbnail.style.justifyContent = 'center';
+          thumbnail.style.color = 'white';
+          thumbnail.style.fontSize = '24px';
+          thumbnail.style.fontWeight = 'bold';
+          thumbnail.style.textAlign = 'center';
+          thumbnail.style.padding = '20px';
+          thumbnail.textContent = sermon.title.substring(0, 50) + (sermon.title.length > 50 ? '...' : '');
+        }
+        
+        // Description
+        const desc = document.getElementById('sermonDescription');
+        desc.textContent = sermon.description || 'No description available.';
+        
+        // YouTube link
+        const youtubeLink = document.getElementById('youtubeLink');
+        if (sermon.youtube_url) {
+          youtubeLink.href = sermon.youtube_url;
+          youtubeLink.style.display = 'inline-block';
+        }
+        
       } catch (error) {
-        console.error('Error loading sermon details:', error);
-        document.getElementById('sermonDetailContainer').innerHTML = `
-          <div style="text-align: center; padding: 40px; color: red;">
-            <h2>Error Loading Sermon</h2>
-            <p>Failed to load sermon details. Please try again.</p>
+        console.error('Error loading sermon:', error);
+        document.querySelector('.sermon-detail-container').innerHTML = `
+          <div style="text-align: center; padding: 50px;">
+            <h2>Sermon Not Found</h2>
+            <p>The sermon you're looking for doesn't exist or has been removed.</p>
+            <a href="sermon.html" class="back-to-feed">← Back to Sermon Feed</a>
           </div>
         `;
       }
@@ -113,27 +156,9 @@
     
     function formatDuration(seconds) {
       if (!seconds) return 'N/A';
-      const hrs = Math.floor(seconds / 3600);
-      const mins = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-      
-      if (hrs > 0) {
-        return `${hrs}h ${mins}m ${secs}s`;
-      }
-      return `${mins}m ${secs}s`;
-    }
-    
-    function shareSermon() {
-      const shareUrl = window.location.href;
-      if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          url: shareUrl
-        });
-      } else {
-        navigator.clipboard.writeText(shareUrl);
-        alert('Link copied to clipboard!');
-      }
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
     
     // Load on page load
@@ -141,3 +166,5 @@
   </script>
 </body>
 </html>
+    
+    
