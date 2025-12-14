@@ -1,91 +1,466 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns# video: https://ogp.me/ns/video#">
 <head>
-  <!-- ... SEO meta tags ... -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- =========================================== -->
+  <!-- DYNAMIC SEO META TAGS -->
+  <!-- =========================================== -->
+  <title id="pageTitle">Sermon Details | Victorious Army Revival Movement</title>
+  <meta name="description" id="pageDescription" content="Watch full sermon video with detailed information.">
+  <meta name="keywords" id="pageKeywords" content="sermon, video, teaching, Bible, Christian">
+  
+  <!-- =========================================== -->
+  <!-- CANONICAL URL -->
+  <!-- =========================================== -->
+  <link rel="canonical" id="canonicalUrl" href="">
+  
+  <!-- =========================================== -->
+  <!-- OPEN GRAPH / FACEBOOK (VIDEO TYPE) -->
+  <!-- =========================================== -->
+  <meta property="og:type" content="video.other">
+  <meta property="og:url" id="ogUrl" content="">
+  <meta property="og:title" id="ogTitle" content="Sermon Details">
+  <meta property="og:description" id="ogDescription" content="Watch full sermon video">
+  <meta property="og:image" id="ogImage" content="">
+  <meta property="og:video" id="ogVideo" content="">
+  <meta property="og:video:type" content="video/mp4">
+  <meta property="og:video:width" content="1280">
+  <meta property="og:video:height" content="720">
+  
+  <!-- =========================================== -->
+  <!-- TWITTER CARD (PLAYER TYPE) -->
+  <!-- =========================================== -->
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:site" content="@VictoriousArmy">
+  <meta name="twitter:title" id="twitterTitle" content="Sermon Details">
+  <meta name="twitter:description" id="twitterDescription" content="Watch full sermon video">
+  <meta name="twitter:image" id="twitterImage" content="">
+  <meta name="twitter:player" id="twitterPlayer" content="">
+  <meta name="twitter:player:width" content="1280">
+  <meta name="twitter:player:height" content="720">
+  
+  <!-- =========================================== -->
+  <!-- ADDITIONAL META TAGS -->
+  <!-- =========================================== -->
+  <meta name="author" content="Victorious Army Revival Movement">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="theme-color" content="#000000">
+  
+  <!-- =========================================== -->
+  <!-- STRUCTURED DATA (VIDEO OBJECT) -->
+  <!-- =========================================== -->
+  <script type="application/ld+json" id="structuredData"></script>
+  
+  <!-- =========================================== -->
+  <!-- FAVICONS -->
+  <!-- =========================================== -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
+  <!-- =========================================== -->
+  <!-- STYLESHEETS -->
+  <!-- =========================================== -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/sermon-tiktok.css">
+  
+  <!-- =========================================== -->
+  <!-- HLS.js FOR VIDEO STREAMING -->
+  <!-- =========================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.4/dist/hls.min.js" defer></script>
+  
+  <!-- =========================================== -->
+  <!-- INLINE CRITICAL CSS -->
+  <!-- =========================================== -->
   <style>
+    /* ========================================== */
+    /* CRITICAL CSS FOR DETAILS PAGE */
+    /* ========================================== */
+    :root {
+      --primary-color: #4CAF50;
+      --danger-color: #FF0000;
+      --dark-bg: #000000;
+      --card-bg: #121212;
+      --surface-bg: #1E1E1E;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B0B0B0;
+      --border-color: #333333;
+      --radius-medium: 12px;
+      --radius-large: 20px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    /* ========================================== */
+    /* SERMON DETAIL CONTAINER */
+    /* ========================================== */
     .sermon-detail-container {
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--dark-bg);
+      min-height: 100vh;
+    }
+    
+    /* ========================================== */
+    /* VIDEO PLAYER SECTION */
+    /* ========================================== */
+    .sermon-video-player {
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+    
+    .video-player-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      background: #000;
+    }
+    
+    #sermonVideoPlayer {
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
+      display: block;
+      background: #000;
+      object-fit: contain; /* Ensures full video is visible */
+    }
+    
+    /* ========================================== */
+    /* CONTENT SECTION */
+    /* ========================================== */
+    .sermon-content {
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
+      background: var(--dark-bg);
     }
     
     .sermon-header {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-color);
     }
     
-    .sermon-thumbnail {
-      width: 100%;
-      height: 400px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      background-color: #f0f0f0; /* Placeholder color */
+    #sermonTitle {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+      line-height: 1.3;
     }
     
     .sermon-meta {
       display: flex;
-      gap: 20px;
-      margin: 20px 0;
-      color: #666;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 15px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .sermon-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
     
     .sermon-description {
-      line-height: 1.6;
-      margin: 20px 0;
+      line-height: 1.8;
+      margin: 25px 0;
+      color: var(--text-secondary);
+      font-size: 16px;
+      white-space: pre-line;
     }
     
-    .sermon-actions
-    padding: 20px 0;
+    /* ========================================== */
+    /* ACTION BUTTONS */
+    /* ========================================== */
+    .sermon-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 30px 0;
+      padding: 20px 0;
+      border-top: 1px solid var(--border-color);
     }
     
     .watch-youtube-btn {
-      display: inline-block;
-      background: #FF0000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--danger-color), #CC0000);
       color: white;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: var(--radius-large);
       text-decoration: none;
-      font-weight: bold;
-      margin-right: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      min-width: 200px;
+    }
+    
+    .watch-youtube-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
     }
     
     .back-to-feed {
-      display: inline-block;
-      background: #4CAF50;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--primary-color), #45a049);
       color: white;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: var(--radius-large);
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      min-width: 200px;
     }
+    
+    .back-to-feed:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    /* ========================================== */
+    /* LOADING STATE */
+    /* ========================================== */
+    .loading-state {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--dark-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .loading-spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid var(--primary-color);
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* ========================================== */
+    /* ERROR STATE */
+    /* ========================================== */
+    .error-state {
+      text-align: center;
+      padding: 50px 20px;
+      background: var(--dark-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .error-state h2 {
+      color: #ff4444;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+    
+    .error-state p {
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      max-width: 500px;
+    }
+    
+    /* ========================================== */
+    /* MOBILE OPTIMIZATION */
+    /* ========================================== */
+    @media (max-width: 768px) {
+      .sermon-content {
+        padding: 15px;
+      }
+      
+      #sermonTitle {
+        font-size: 20px;
+      }
+      
+      .sermon-meta {
+        gap: 10px;
+        font-size: 12px;
+      }
+      
+      .sermon-description {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      
+      .sermon-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .watch-youtube-btn,
+      .back-to-feed {
+        width: 100%;
+        min-width: auto;
+        padding: 15px;
+        font-size: 14px;
+      }
+      
+      #sermonVideoPlayer {
+        max-height: 60vh;
+      }
+    }
+    
+    /* ========================================== */
+    /* TABLET OPTIMIZATION */
+    /* ========================================== */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .sermon-content {
+        max-width: 90%;
+        padding: 30px 20px;
+      }
+      
+      #sermonVideoPlayer {
+        max-height: 70vh;
+      }
+    }
+    
+    /* ========================================== */
+    /* ACCESSIBILITY */
+    /* ========================================== */
+    :focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
   </style>
 </head>
-<body>
-  <div class="sermon-detail-container">
-    <header class="sermon-header">
-      <h1 id="sermonTitle">Loading...</h1>
-      <div class="sermon-meta" id="sermonMeta"></div>
-    </header>
-    
-    <div class="sermon-thumbnail" id="sermonThumbnail"></div>
-    
-    <div class="sermon-description" id="sermonDescription"></div>
-    
-    <div class="sermon-actions">
-      <a href="#" id="youtubeLink" class="watch-youtube-btn" target="_blank" style="display: none;">
-        📺 Watch Full on YouTube
-      </a>
-      <a href="sermon.html" class="back-to-feed">
-        ← Back to Sermon Feed
-      </a>
-    </div>
-  </div>
 
+<body itemscope itemtype="https://schema.org/WebPage">
+  
+  <!-- ========================================== -->
+  <!-- LOADING STATE (INITIAL) -->
+  <!-- ========================================== -->
+  <div class="loading-state" id="loadingState" aria-live="polite" aria-label="Loading sermon details">
+    <div class="loading-spinner" aria-hidden="true"></div>
+    <p>Loading sermon details...</p>
+  </div>
+  
+  <!-- ========================================== -->
+  <!-- MAIN CONTENT (HIDDEN INITIALLY) -->
+  <!-- ========================================== -->
+  <main class="sermon-detail-container" id="mainContent" style="display: none;" role="main">
+    
+    <!-- VIDEO PLAYER SECTION -->
+    <div class="sermon-video-player" role="region" aria-label="Sermon video player">
+      <div class="video-player-container">
+        <video 
+          id="sermonVideoPlayer" 
+          controls 
+          playsinline 
+          preload="metadata"
+          aria-label="Sermon video player"
+          crossorigin="anonymous"
+        >
+          <!-- Video source will be dynamically added -->
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+    
+    <!-- CONTENT SECTION -->
+    <div class="sermon-content">
+      
+      <!-- SERMON HEADER -->
+      <header class="sermon-header">
+        <h1 id="sermonTitle" itemprop="headline">Sermon Title</h1>
+        <div class="sermon-meta" id="sermonMeta" itemprop="video" itemscope itemtype="https://schema.org/VideoObject">
+          <!-- Meta info will be dynamically added -->
+        </div>
+      </header>
+      
+      <!-- SERMON DESCRIPTION -->
+      <div class="sermon-description" id="sermonDescription" itemprop="description">
+        <!-- Description will be dynamically added -->
+      </div>
+      
+      <!-- ACTION BUTTONS -->
+      <div class="sermon-actions">
+        <a href="#" id="youtubeLink" class="watch-youtube-btn" target="_blank" rel="noopener noreferrer" style="display: none;">
+          <span aria-hidden="true">📺</span>
+          <span>Watch Full on YouTube</span>
+        </a>
+        <a href="sermon.html" class="back-to-feed">
+          <span aria-hidden="true">←</span>
+          <span>Back to Sermon Feed</span>
+        </a>
+      </div>
+      
+    </div>
+    
+  </main>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT MODULE -->
+  <!-- ========================================== -->
   <script type="module">
     import { api } from "./src/js/api.js";
     
+    // ===========================================
+    // MAIN LOADING FUNCTION
+    // ===========================================
     async function loadSermonDetail() {
       const params = new URLSearchParams(window.location.search);
       const sermonId = params.get('id');
@@ -96,75 +471,200 @@
       }
       
       try {
+        // Fetch sermon data
         const sermon = await api.get(`/sermons/${sermonId}`);
         
-        // Update page
-        document.getElementById('sermonTitle').textContent = sermon.title;
-        document.title = `${sermon.title} - Sermon Details`;
+        // Update page title and meta
+        updatePageMeta(sermon);
         
-        // Meta info
-        const meta = document.getElementById('sermonMeta');
-        const duration = formatDuration(sermon.duration);
-        meta.innerHTML = `
-          <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
-          <span>⏱️ ${duration}</span>
-          ${sermon.size_mb ? `<span>💾 ${sermon.size_mb.toFixed(1)} MB</span>` : ''}
-        `;
+        // Setup video player
+        setupVideoPlayer(sermon);
         
-        // Thumbnail or placeholder
-        const thumbnail = document.getElementById('sermonThumbnail');
-        if (sermon.thumbnail_url) {
-          thumbnail.style.backgroundImage = `url('${sermon.thumbnail_url}')`;
-        } else if (sermon.original_url) {
-          thumbnail.style.backgroundImage = `url('${sermon.original_url}')`;
-        } else {
-          // Placeholder with sermon title
-          thumbnail.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-          thumbnail.style.display = 'flex';
-          thumbnail.style.alignItems = 'center';
-          thumbnail.style.justifyContent = 'center';
-          thumbnail.style.color = 'white';
-          thumbnail.style.fontSize = '24px';
-          thumbnail.style.fontWeight = 'bold';
-          thumbnail.style.textAlign = 'center';
-          thumbnail.style.padding = '20px';
-          thumbnail.textContent = sermon.title.substring(0, 50) + (sermon.title.length > 50 ? '...' : '');
-        }
+        // Update content
+        updateContent(sermon);
         
-        // Description
-        const desc = document.getElementById('sermonDescription');
-        desc.textContent = sermon.description || 'No description available.';
-        
-        // YouTube link
-        const youtubeLink = document.getElementById('youtubeLink');
-        if (sermon.youtube_url) {
-          youtubeLink.href = sermon.youtube_url;
-          youtubeLink.style.display = 'inline-block';
-        }
+        // Hide loading, show content
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
         
       } catch (error) {
         console.error('Error loading sermon:', error);
-        document.querySelector('.sermon-detail-container').innerHTML = `
-          <div style="text-align: center; padding: 50px;">
-            <h2>Sermon Not Found</h2>
-            <p>The sermon you're looking for doesn't exist or has been removed.</p>
-            <a href="sermon.html" class="back-to-feed">← Back to Sermon Feed</a>
+        showErrorState();
+      }
+    }
+    
+    // ===========================================
+    // UPDATE PAGE META TAGS
+    // ===========================================
+    function updatePageMeta(sermon) {
+      // Page title
+      document.title = `${sermon.title} | Sermon Details`;
+      
+      // Update meta tags
+      document.querySelector('#pageTitle').textContent = `${sermon.title} | Sermon Details`;
+      document.querySelector('#pageDescription').setAttribute('content', sermon.description || 'Watch this inspiring sermon');
+      
+      // Open Graph meta
+      const pageUrl = `${window.location.origin}/sermon-detail.html?id=${sermon.id}`;
+      document.querySelector('#canonicalUrl').setAttribute('href', pageUrl);
+      document.querySelector('#ogUrl').setAttribute('content', pageUrl);
+      document.querySelector('#ogTitle').setAttribute('content', sermon.title);
+      document.querySelector('#ogDescription').setAttribute('content', sermon.description || 'Watch this inspiring sermon');
+      document.querySelector('#ogImage').setAttribute('content', sermon.thumbnail_url || '');
+      
+      // Twitter meta
+      document.querySelector('#twitterTitle').setAttribute('content', sermon.title);
+      document.querySelector('#twitterDescription').setAttribute('content', sermon.description || 'Watch this inspiring sermon');
+      document.querySelector('#twitterImage').setAttribute('content', sermon.thumbnail_url || '');
+      
+      // Structured data
+      updateStructuredData(sermon);
+    }
+    
+    // ===========================================
+    // SETUP VIDEO PLAYER
+    // ===========================================
+    function setupVideoPlayer(sermon) {
+      const videoPlayer = document.getElementById('sermonVideoPlayer');
+      const videoSources = [
+        sermon.hls_url,
+        sermon.mp4_url,
+        sermon.video_url,
+        sermon.original_url,
+        sermon.webm_url,
+        sermon.mov_url
+      ].filter(Boolean);
+      
+      if (videoSources.length > 0) {
+        // Set poster image
+        if (sermon.thumbnail_url) {
+          videoPlayer.poster = sermon.thumbnail_url;
+        }
+        
+        // Setup video source
+        if (videoSources[0].includes('.m3u8') && window.Hls && Hls.isSupported()) {
+          // HLS stream
+          const hls = new Hls();
+          hls.loadSource(videoSources[0]);
+          hls.attachMedia(videoPlayer);
+        } else {
+          // Direct video file
+          videoPlayer.src = videoSources[0];
+        }
+        
+        // Update Open Graph video tag
+        document.querySelector('#ogVideo').setAttribute('content', videoSources[0]);
+        document.querySelector('#twitterPlayer').setAttribute('content', videoSources[0]);
+      } else {
+        // No video source available
+        videoPlayer.innerHTML = `
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+            <p>Video not available</p>
+            ${sermon.youtube_url ? `<a href="${sermon.youtube_url}" style="color: #4CAF50; text-decoration: underline;">Watch on YouTube instead</a>` : ''}
           </div>
         `;
       }
     }
     
-    function formatDuration(seconds) {
-      if (!seconds) return 'N/A';
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    // ===========================================
+    // UPDATE CONTENT
+    // ===========================================
+    function updateContent(sermon) {
+      // Title
+      document.getElementById('sermonTitle').textContent = sermon.title;
+      
+      // Meta information
+      const meta = document.getElementById('sermonMeta');
+      const duration = formatDuration(sermon.duration);
+      meta.innerHTML = `
+        <meta itemprop="name" content="${sermon.title}">
+        <meta itemprop="description" content="${sermon.description || ''}">
+        <meta itemprop="thumbnailUrl" content="${sermon.thumbnail_url || ''}">
+        <meta itemprop="uploadDate" content="${sermon.created_at}">
+        <meta itemprop="duration" content="${duration}">
+        <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
+        <span>⏱️ ${duration}</span>
+        ${sermon.author ? `<span>👤 ${sermon.author}</span>` : ''}
+        ${sermon.size_mb ? `<span>💾 ${sermon.size_mb.toFixed(1)} MB</span>` : ''}
+      `;
+      
+      // Description
+      const desc = document.getElementById('sermonDescription');
+      desc.textContent = sermon.description || 'No description available.';
+      
+      // YouTube link
+      const youtubeLink = document.getElementById('youtubeLink');
+      if (sermon.youtube_url) {
+        youtubeLink.href = sermon.youtube_url;
+        youtubeLink.style.display = 'inline-flex';
+      }
     }
     
-    // Load on page load
+    // ===========================================
+    // UPDATE STRUCTURED DATA
+    // ===========================================
+    function updateStructuredData(sermon) {
+      const duration = formatDuration(sermon.duration);
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": sermon.title,
+        "description": sermon.description || "An inspiring sermon",
+        "thumbnailUrl": sermon.thumbnail_url || "",
+        "uploadDate": sermon.created_at,
+        "duration": duration,
+        "contentUrl": sermon.video_url || sermon.mp4_url || sermon.original_url || "",
+        "embedUrl": `${window.location.origin}/sermon-detail.html?id=${sermon.id}`,
+        "publisher": {
+          "@type": "Organization",
+          "name": "Victorious Army Revival Movement",
+          "alternateName": "Land of Mercy",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://victoriousarmyrevivalmovementchurch.netlify.app/logo.png"
+          }
+        },
+        "author": {
+          "@type": sermon.author ? "Person" : "Organization",
+          "name": sermon.author || "Victorious Army Revival Movement"
+        }
+      };
+      
+      document.getElementById('structuredData').textContent = JSON.stringify(structuredData, null, 2);
+    }
+    
+    // ===========================================
+    // SHOW ERROR STATE
+    // ===========================================
+    function showErrorState() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'none';
+      
+      document.body.innerHTML = `
+        <div class="error-state">
+          <h2>Sermon Not Found</h2>
+          <p>The sermon you're looking for doesn't exist or has been removed.</p>
+          <a href="sermon.html" class="back-to-feed">← Back to Sermon Feed</a>
+        </div>
+      `;
+    }
+    
+    // ===========================================
+    // UTILITY FUNCTIONS
+    // ===========================================
+    function formatDuration(seconds) {
+      if (!seconds || seconds === 0) return 'N/A';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `PT${mins}M${secs}S`;
+    }
+    
+    // ===========================================
+    // INITIALIZE ON PAGE LOAD
+    // ===========================================
     document.addEventListener('DOMContentLoaded', loadSermonDetail);
+    
   </script>
+  
 </body>
 </html>
-    
-    
