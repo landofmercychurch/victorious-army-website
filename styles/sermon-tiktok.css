@@ -220,90 +220,96 @@ body {
 /* ============================================================================
    ACTION BUTTONS (YouTube + Details - Split left/right)
    ============================================================================ */
+
+/* ============================================================================
+   ACTION BUTTONS (YouTube + Details - Split left/right)
+   ============================================================================ */
 .action-buttons {
   display: flex;
-  gap: 12px; /* Increased gap for better separation */
-  margin-top: 12px; /* Reduced from 15px to bring buttons up */
-  padding: 0 5px; /* Added side padding */
+  justify-content: space-between; /* ← THIS is key! */
+  gap: 12px;
+  margin-top: 12px;
+  padding: 0 5px;
+  width: 100%; /* Make sure it takes full width */
 }
 
 /* YouTube Button (LEFT) */
 .youtube-btn {
-  flex: 1;
+  flex: 0 1 calc(50% - 6px); /* Fixed: 50% width minus half the gap */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   background: linear-gradient(135deg, var(--danger-color), #CC0000);
   color: white;
-  padding: 10px 12px; /* Reduced padding */
+  padding: 10px 12px;
   border-radius: var(--radius-large);
   text-decoration: none;
   font-weight: 600;
-  font-size: 13px; /* Slightly smaller font */
+  font-size: 13px;
   transition: all var(--transition-medium);
   border: none;
   cursor: pointer;
-  min-height: 40px; /* Reduced from 44px */
-  max-width: 48%; /* Prevents buttons from being too wide */
-  white-space: nowrap; /* Prevents text wrapping */
+  min-height: 40px;
+  /* REMOVED: max-width: 48% */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .youtube-btn:hover {
-  transform: translateY(-1px); /* Smaller hover effect */
+  transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(255, 0, 0, 0.25);
 }
 
 /* Details Button (RIGHT) */
 .details-btn {
-  flex: 1;
+  flex: 0 1 calc(50% - 6px); /* Fixed: 50% width minus half the gap */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   background: linear-gradient(135deg, var(--primary-color), #45a049);
   color: white;
-  padding: 10px 12px; /* Reduced padding */
+  padding: 10px 12px;
   border-radius: var(--radius-large);
   text-decoration: none;
   font-weight: 600;
-  font-size: 13px; /* Slightly smaller font */
+  font-size: 13px;
   transition: all var(--transition-medium);
   border: none;
   cursor: pointer;
-  min-height: 40px; /* Reduced from 44px */
-  max-width: 48%; /* Prevents buttons from being too wide */
-  white-space: nowrap; /* Prevents text wrapping */
+  min-height: 40px;
+  /* REMOVED: max-width: 48% */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .details-btn:hover {
-  transform: translateY(-1px); /* Smaller hover effect */
+  transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(76, 175, 80, 0.25);
 }
 
 /* Mobile-specific adjustments */
 @media (max-width: 768px) {
   .action-buttons {
-    gap: 8px; /* Smaller gap on mobile */
-    margin-top: 10px; /* Even less top margin */
-    padding: 0 3px; /* Less side padding */
+    gap: 8px;
+    margin-top: 10px;
+    padding: 0 3px;
   }
   
   .youtube-btn,
   .details-btn {
-    padding: 8px 10px; /* Even smaller padding */
-    font-size: 12px; /* Smaller font on mobile */
-    min-height: 36px; /* Smaller height */
-    max-width: 49%; /* Slightly wider to use more space */
+    flex: 0 1 calc(50% - 4px); /* Adjust for smaller gap */
+    padding: 8px 10px;
+    font-size: 12px;
+    min-height: 36px;
   }
   
   .youtube-btn:hover,
   .details-btn:hover {
-    transform: none; /* Disable hover effect on mobile */
+    transform: none;
   }
 }
 
@@ -316,38 +322,14 @@ body {
   
   .youtube-btn,
   .details-btn {
+    flex: 0 1 calc(50% - 3px);
     padding: 6px 8px;
     font-size: 11px;
     min-height: 34px;
   }
   
-  /* Adjust button text for very small screens */
-  .youtube-btn::after {
-    content: "YouTube";
-  }
-  
-  .details-btn::after {
-    content: "Details";
-  }
-  
-  /* Hide icons on very small screens if needed */
-  @media (max-width: 360px) {
-    .youtube-btn,
-    .details-btn {
-      gap: 3px;
-    }
-    
-    .youtube-btn::after {
-      content: "YT";
-    }
-    
-    .details-btn::after {
-      content: "Info";
-    }
-  }
+  /* REMOVED the ::after content changes - they were wrong */
 }
-
-
 
 /* ============================================================================
    SIDE ACTION BUTTONS (Right side vertical)
