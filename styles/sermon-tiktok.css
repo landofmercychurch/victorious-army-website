@@ -1,4 +1,4 @@
-/* styles/sermon-tiktok.css - TIKTOK STYLE FEED */
+/* styles/sermon-tiktok.css - CLEAN ORGANIZED VERSION */
 :root {
   /* Color Palette */
   --primary-color: #4CAF50;
@@ -48,8 +48,10 @@ body {
 }
 
 /* ============================================================================
-   TIKTOK FEED CONTAINER
+   TIKTOK FEED LAYOUT
    ============================================================================ */
+
+/* Main Feed Container */
 .tiktok-feed {
   position: relative;
   width: 100%;
@@ -58,21 +60,17 @@ body {
   overflow: hidden;
 }
 
-/* ============================================================================
-   SERMON VIDEOS CONTAINER (Main scroll area)
-   ============================================================================ */
+/* Scrollable Videos Container */
 .sermon-videos {
   height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 80px; /* Space for bottom nav */
+  padding-bottom: 80px;
 }
 
-/* ============================================================================
-   INDIVIDUAL TIKTOK VIDEO CARD
-   ============================================================================ */
+/* Individual TikTok Video Card */
 .tiktok-video {
   position: relative;
   width: 100%;
@@ -83,16 +81,20 @@ body {
   overflow: hidden;
 }
 
-/* Video Container (70% of screen height) */
+/* ============================================================================
+   VIDEO SECTION
+   ============================================================================ */
+
+/* Video Container (Main Video Area) */
 .video-container {
   position: relative;
   width: 100%;
-  height: 85vh;
+  height: 85vh; /* Leaves space for content below */
   background: #000;
   overflow: hidden;
 }
 
-/* Video Thumbnail */
+/* Video Thumbnail (Shows before playing) */
 .video-thumbnail {
   position: absolute;
   top: 0;
@@ -112,7 +114,7 @@ body {
   opacity: 0.95;
 }
 
-/* Play Overlay Button */
+/* Play Button Overlay */
 .play-overlay {
   position: absolute;
   top: 50%;
@@ -139,20 +141,20 @@ body {
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* Video Element */
+/* Video Element (Actual Video Player) */
 .tiktok-video video {
   position: absolute;
   top: 0;
   left: 0;
-  width: 95%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   background: #000;
   display: none;
   z-index: 3;
 }
 
-/* Playing state */
+/* Playing State - Shows Video, Hides Thumbnail */
 .tiktok-video.playing .video-thumbnail {
   display: none;
 }
@@ -166,8 +168,10 @@ body {
 }
 
 /* ============================================================================
-   CONTENT OVERLAY (Bottom section with text and buttons)
+   CONTENT SECTION (Below Video)
    ============================================================================ */
+
+/* Content Overlay - Where text and buttons live */
 .content-overlay {
   position: absolute;
   bottom: 0;
@@ -201,7 +205,7 @@ body {
   -webkit-box-orient: vertical;
 }
 
-/* Meta Information */
+/* Meta Information (Date, Duration, Author) */
 .sermon-meta {
   display: flex;
   flex-wrap: wrap;
@@ -218,122 +222,79 @@ body {
 }
 
 /* ============================================================================
-   ACTION BUTTONS (YouTube + Details - Split left/right)
+   ACTION BUTTONS (YouTube + Details)
    ============================================================================ */
 
-/* ============================================================================
-   ACTION BUTTONS (YouTube + Details - Split left/right)
-   ============================================================================ */
+/* Container for both buttons */
 .action-buttons {
   display: flex;
-  justify-content: space-between; /* ← THIS is key! */
+  justify-content: space-between;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 15px;
   padding: 0 5px;
-  width: 100%; /* Make sure it takes full width */
+  width: 100%;
 }
 
-/* YouTube Button (LEFT) */
+/* YouTube Button - LEFT SIDE */
 .youtube-btn {
-  flex: 0 1 calc(50% - 6px); /* Fixed: 50% width minus half the gap */
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   background: linear-gradient(135deg, var(--danger-color), #CC0000);
   color: white;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border-radius: var(--radius-large);
   text-decoration: none;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   transition: all var(--transition-medium);
   border: none;
   cursor: pointer;
-  min-height: 40px;
-  /* REMOVED: max-width: 48% */
+  min-height: 44px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .youtube-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(255, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
 }
 
-/* Details Button (RIGHT) */
+/* Details Button - RIGHT SIDE */
 .details-btn {
-  flex: 0 1 calc(50% - 6px); /* Fixed: 50% width minus half the gap */
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   background: linear-gradient(135deg, var(--primary-color), #45a049);
   color: white;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border-radius: var(--radius-large);
   text-decoration: none;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   transition: all var(--transition-medium);
   border: none;
   cursor: pointer;
-  min-height: 40px;
-  /* REMOVED: max-width: 48% */
+  min-height: 44px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .details-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.25);
-}
-
-/* Mobile-specific adjustments */
-@media (max-width: 768px) {
-  .action-buttons {
-    gap: 8px;
-    margin-top: 10px;
-    padding: 0 3px;
-  }
-  
-  .youtube-btn,
-  .details-btn {
-    flex: 0 1 calc(50% - 4px); /* Adjust for smaller gap */
-    padding: 8px 10px;
-    font-size: 12px;
-    min-height: 36px;
-  }
-  
-  .youtube-btn:hover,
-  .details-btn:hover {
-    transform: none;
-  }
-}
-
-/* Very small screens */
-@media (max-width: 480px) {
-  .action-buttons {
-    gap: 6px;
-    margin-top: 8px;
-  }
-  
-  .youtube-btn,
-  .details-btn {
-    flex: 0 1 calc(50% - 3px);
-    padding: 6px 8px;
-    font-size: 11px;
-    min-height: 34px;
-  }
-  
-
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
 /* ============================================================================
-   SIDE ACTION BUTTONS (Right side vertical)
+   SIDE ACTION BUTTONS (Right side - Like, Comment, Share, Save)
    ============================================================================ */
+
 .side-actions {
   position: absolute;
   right: 20px;
@@ -345,7 +306,7 @@ body {
   z-index: 5;
 }
 
-/* Individual Action Button */
+/* Individual Side Action Button */
 .action-btn {
   width: 48px;
   height: 48px;
@@ -367,13 +328,13 @@ body {
   background: rgba(0, 0, 0, 0.8);
 }
 
-/* Action Icon */
+/* Side Action Icon */
 .action-btn .icon {
   font-size: 20px;
   margin-bottom: 2px;
 }
 
-/* Action Count */
+/* Side Action Count (Like count, etc) */
 .action-btn .count {
   font-size: 10px;
   font-weight: 500;
@@ -383,6 +344,7 @@ body {
 /* ============================================================================
    TIKTOK SWIPE GUIDE
    ============================================================================ */
+
 .tiktok-swipe-guide {
   position: fixed;
   bottom: 100px;
@@ -418,8 +380,9 @@ body {
 }
 
 /* ============================================================================
-   FEED CONTROLS (Refresh & Shuffle)
+   FEED CONTROLS
    ============================================================================ */
+
 .feed-controls {
   position: fixed;
   bottom: 20px;
@@ -429,7 +392,7 @@ body {
   z-index: 100;
 }
 
-/* Control Buttons */
+/* Control Buttons (Refresh, Shuffle, Search) */
 .refresh-btn,
 .shuffle-btn,
 .search-btn {
@@ -455,7 +418,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Search Button specific positioning */
+/* Search Button - Top Right */
 .search-btn {
   position: fixed;
   top: 20px;
@@ -466,6 +429,7 @@ body {
 /* ============================================================================
    LOADING INDICATOR
    ============================================================================ */
+
 .loading-indicator {
   position: fixed;
   bottom: 80px;
@@ -497,6 +461,7 @@ body {
 /* ============================================================================
    SEARCH OVERLAY
    ============================================================================ */
+
 .search-overlay {
   position: fixed;
   top: 0;
@@ -743,8 +708,9 @@ body {
 }
 
 /* ============================================================================
-   NOTIFICATION (For actions)
+   NOTIFICATION
    ============================================================================ */
+
 .notification {
   position: fixed;
   bottom: 20px;
@@ -777,6 +743,7 @@ body {
 /* ============================================================================
    ACCESSIBILITY
    ============================================================================ */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -801,12 +768,12 @@ body {
 /* Tablet & Smaller Desktop */
 @media (max-width: 1024px) {
   .video-container {
-    height: 65vh;
+    height: 70vh;
   }
   
   .side-actions {
     right: 15px;
-    bottom: 160px;
+    bottom: 170px;
   }
   
   .action-btn {
@@ -818,7 +785,7 @@ body {
 /* Mobile */
 @media (max-width: 768px) {
   .tiktok-feed {
-    height: calc(100vh - 60px); /* Account for browser UI */
+    height: calc(100vh - 60px);
   }
   
   .sermon-videos {
@@ -832,7 +799,7 @@ body {
   }
   
   .video-container {
-    height: 60vh;
+    height: 65vh;
   }
   
   .content-overlay {
@@ -858,19 +825,20 @@ body {
   }
   
   .action-buttons {
-    gap: 8px;
+    gap: 10px;
+    margin-top: 12px;
   }
   
   .youtube-btn,
   .details-btn {
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-size: 13px;
-    min-height: 40px;
+    min-height: 42px;
   }
   
   .side-actions {
     right: 10px;
-    bottom: 140px;
+    bottom: 150px;
     gap: 12px;
   }
   
@@ -906,26 +874,12 @@ body {
     top: 15px;
     right: 15px;
   }
-  
-  .search-container {
-    padding: 20px;
-  }
-  
-  .search-result-item {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .search-result-thumb {
-    width: 100%;
-    height: 150px;
-  }
 }
 
 /* Small Mobile Devices */
 @media (max-width: 480px) {
   .video-container {
-    height: 55vh;
+    height: 60vh;
   }
   
   .sermon-title {
@@ -939,16 +893,18 @@ body {
   }
   
   .action-buttons {
-    flex-direction: column;
+    gap: 8px;
   }
   
   .youtube-btn,
   .details-btn {
-    width: 100%;
+    padding: 8px 10px;
+    font-size: 12px;
+    min-height: 38px;
   }
   
   .side-actions {
-    bottom: 120px;
+    bottom: 130px;
     gap: 10px;
   }
   
@@ -976,7 +932,7 @@ body {
   }
   
   .video-container {
-    height: 50vh;
+    height: 55vh;
   }
   
   .sermon-description {
@@ -985,7 +941,7 @@ body {
   }
   
   .side-actions {
-    bottom: 100px;
+    bottom: 120px;
     gap: 8px;
   }
   
@@ -1003,27 +959,7 @@ body {
   }
 }
 
-/* Dark Mode Support (already dark by default) */
-@media (prefers-color-scheme: light) {
-  :root {
-    --dark-bg: #f5f5f5;
-    --card-bg: #ffffff;
-    --surface-bg: #f0f0f0;
-    --text-primary: #000000;
-    --text-secondary: #666666;
-    --border-color: #dddddd;
-  }
-  
-  .action-btn {
-    background: rgba(255, 255, 255, 0.8);
-  }
-  
-  .search-container {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-}
-
-/* Reduced Motion */
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1041,5 +977,11 @@ body {
   .notification {
     animation: none;
     opacity: 1;
+  }
+  
+  .youtube-btn:hover,
+  .details-btn:hover,
+  .action-btn:hover {
+    transform: none;
   }
 }
