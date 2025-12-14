@@ -86,7 +86,7 @@ body {
 /* Video Container (70% of screen height) */
 .video-container {
   position: relative;
-  width: 700%;
+  width: 70%;
   height: 90vh;
   background: #000;
   overflow: hidden;
