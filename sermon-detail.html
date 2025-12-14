@@ -3,262 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Dynamic meta will be set by JS -->
   <title>Loading Sermon...</title>
+  <meta name="description" content="Watch this inspiring sermon from Victorious Army Revival Movement">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="sermon-detail.css">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.4/dist/hls.min.js"></script>
 </head>
 <body>
-  <!-- Simple Navigation -->
-  <nav style="padding: 1rem; background: #f5f5f5;">
+  <nav>
     <a href="index.html">🏠 Home</a> | 
     <a href="sermon.html">📺 All Sermons</a>
   </nav>
 
-  <!-- Main Content -->
   <main id="sermonDetailContainer" class="sermon-detail-container">
     <div class="loading">Loading sermon...</div>
   </main>
 
-  <!-- Same footer as main site -->
   <footer>
     <p>&copy; 2025 Victorious Army Revival Movement</p>
   </footer>
 
   <script type="module">
-    import { api } from "./src/api.js";
-    import { el } from "./src/utils.js";
-    import { fetchSermonComments, postSermonComment } from "./src/commentsPublic.js";
-
-    async function loadSermonDetail() {
+    import { initSermonDetail } from "./src/js/sermons.js";
+    
+    document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
       const sermonId = params.get('id');
       
-      if (!sermonId) {
-        document.getElementById('sermonDetailContainer').innerHTML = 
-          '<p style="text-align:center; padding: 2rem;">No sermon selected.</p>';
-        return;
-      }
-
-      try {
-        const sermon = await api.get(`/sermons/${sermonId}`);
-        
-        // Set dynamic meta tags for SEO
-        document.title = `${sermon.title} - Victorious Army Revival Movement`;
-        
-        // Set Open Graph meta
-        const metaTags = [
-          { property: 'og:title', content: sermon.title },
-          { property: 'og:description', content: sermon.description || 'Watch this inspiring sermon' },
-          { property: 'og:image', content: sermon.thumbnail_url || 'default-thumbnail.jpg' },
-          { property: 'og:url', content: window.location.href },
-          { property: 'og:type', content: 'video.other' },
-          { name: 'twitter:card', content: 'summary_large_image' },
-          { name: 'twitter:title', content: sermon.title },
-          { name: 'twitter:description', content: sermon.description || 'Watch this inspiring sermon' },
-          { name: 'twitter:image', content: sermon.thumbnail_url || 'default-thumbnail.jpg' }
-        ];
-        
-        metaTags.forEach(tag => {
-          let meta = document.querySelector(`[${tag.property ? 'property' : 'name'}="${tag.property || tag.name}"]`);
-          if (!meta) {
-            meta = document.createElement('meta');
-            if (tag.property) meta.setAttribute('property', tag.property);
-            if (tag.name) meta.setAttribute('name', tag.name);
-            document.head.appendChild(meta);
-          }
-          meta.setAttribute('content', tag.content);
-        });
-
-        // Render sermon detail
-        const container = document.getElementById('sermonDetailContainer');
-        container.innerHTML = `
-          <div class="sermon-header">
-            <h1>${sermon.title}</h1>
-            <div class="sermon-meta">
-              <span>📅 ${new Date(sermon.created_at).toLocaleDateString()}</span>
-              ${sermon.speaker ? `<span>👤 ${sermon.speaker}</span>` : ''}
-            </div>
-          </div>
-          
-          <div class="video-container">
-            <div id="videoPlayer" class="video-player">
-              <!-- Video will be loaded here -->
-            </div>
-            <div class="video-controls">
-              <button id="playPauseBtn">⏯️ Play/Pause</button>
-              <button id="fullscreenBtn">🔲 Fullscreen</button>
-              <button id="shareBtn" class="share-btn">🔗 Share</button>
-              ${sermon.youtube_url ? `<a href="${sermon.youtube_url}" target="_blank" class="youtube-link">📺 Watch on YouTube</a>` : ''}
-            </div>
-          </div>
-          
-          <div class="sermon-description">
-            <h3>Description</h3>
-            <p>${sermon.description || 'No description available.'}</p>
-          </div>
-          
-          <!-- Comments Section (using your existing comments logic) -->
-          <div class="comments-section">
-            <h3>💬 Comments & Testimonies</h3>
-            <div id="commentsContainer"></div>
-          </div>
-          
-          <!-- Related Sermons -->
-          <div class="related-sermons">
-            <h3>📺 More Sermons</h3>
-            <div id="relatedSermons" class="related-grid"></div>
-          </div>
-        `;
-
-        // Load video player
-        setupVideoPlayer(sermon);
-        
-        // Load comments
-        loadComments(sermonId);
-        
-        // Load related sermons
-        loadRelatedSermons(sermonId);
-
-      } catch (error) {
-        console.error('Error loading sermon:', error);
-        document.getElementById('sermonDetailContainer').innerHTML = 
-          '<p style="text-align:center; padding: 2rem; color: red;">Failed to load sermon. Please try again.</p>';
-      }
-    }
-
-    function setupVideoPlayer(sermon) {
-      const videoPlayer = document.getElementById('videoPlayer');
-      const video = document.createElement('video');
-      video.controls = true;
-      video.style.width = '100%';
-      video.style.maxHeight = '70vh';
-      
-      videoPlayer.appendChild(video);
-      
-      const urls = sermon.urls || {};
-      
-      if (urls.hls_url && window.Hls && Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(urls.hls_url);
-        hls.attachMedia(video);
-      } else if (urls.mp4_url) {
-        video.src = urls.mp4_url;
-      } else if (sermon.video_url) {
-        video.src = sermon.video_url;
-      }
-      
-      // Add video controls
-      document.getElementById('playPauseBtn').addEventListener('click', () => {
-        if (video.paused) video.play();
-        else video.pause();
-      });
-      
-      document.getElementById('fullscreenBtn').addEventListener('click', () => {
-        if (video.requestFullscreen) video.requestFullscreen();
-        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-      });
-      
-      document.getElementById('shareBtn').addEventListener('click', () => {
-        shareSermon(sermon);
-      });
-    }
-
-    async function loadComments(sermonId) {
-      try {
-        const comments = await fetchSermonComments(String(sermonId));
-        const container = document.getElementById('commentsContainer');
-        
-        if (!Array.isArray(comments) || comments.length === 0) {
-          container.innerHTML = '<p>No comments yet. Be the first to share!</p>';
-          return;
-        }
-        
-        container.innerHTML = comments.map(comment => `
-          <div class="comment">
-            <strong>${comment.name || 'Guest'}:</strong>
-            <p>${comment.content}</p>
-            <small>${new Date(comment.created_at).toLocaleString()}</small>
-          </div>
-        `).join('');
-        
-        // Add comment form
-        const form = document.createElement('form');
-        form.className = 'comment-form';
-        form.innerHTML = `
-          <textarea placeholder="Share your testimony..." required></textarea>
-          <input type="text" placeholder="Your name (optional)">
-          <button type="submit">Post Comment</button>
-        `;
-        
-        form.onsubmit = async (e) => {
-          e.preventDefault();
-          const content = form.querySelector('textarea').value;
-          const name = form.querySelector('input').value || 'Guest';
-          
-          if (!content.trim()) return;
-          
-          try {
-            await postSermonComment({ sermon_id: sermonId, name, content });
-            // Refresh comments
-            loadComments(sermonId);
-            form.reset();
-          } catch (error) {
-            console.error('Error posting comment:', error);
-          }
-        };
-        
-        container.appendChild(form);
-        
-      } catch (error) {
-        console.error('Error loading comments:', error);
-      }
-    }
-
-    async function loadRelatedSermons(currentSermonId) {
-      try {
-        const sermons = await api.get('/sermons');
-        const related = sermons
-          .filter(s => s.id !== currentSermonId)
-          .slice(0, 3);
-        
-        const container = document.getElementById('relatedSermons');
-        
-        container.innerHTML = related.map(sermon => `
-          <div class="related-sermon">
-            <a href="sermon-detail.html?id=${sermon.id}">
-              <img src="${sermon.thumbnail_url || 'default-thumb.jpg'}" alt="${sermon.title}">
-              <h4>${sermon.title}</h4>
-              <p>${sermon.description?.substring(0, 100)}...</p>
-            </a>
-          </div>
-        `).join('');
-        
-      } catch (error) {
-        console.error('Error loading related sermons:', error);
-      }
-    }
-
-    function shareSermon(sermon) {
-      const shareUrl = `${window.location.origin}/sermon-detail.html?id=${sermon.id}`;
-      const shareText = `Watch: ${sermon.title}`;
-      
-      if (navigator.share) {
-        navigator.share({
-          title: sermon.title,
-          text: sermon.description,
-          url: shareUrl
-        });
+      if (sermonId) {
+        initSermonDetail(
+          document.getElementById('sermonDetailContainer'),
+          sermonId
+        );
       } else {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(shareUrl);
-        alert('Link copied to clipboard!');
+        document.getElementById('sermonDetailContainer').innerHTML = `
+          <div class="error">
+            <h2>No Sermon Selected</h2>
+            <p>Please select a sermon from the <a href="sermon.html">sermon library</a>.</p>
+          </div>
+        `;
       }
-    }
-
-    // Load sermon on page load
-    document.addEventListener('DOMContentLoaded', loadSermonDetail);
+    });
   </script>
 </body>
 </html>
