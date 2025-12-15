@@ -131,45 +131,47 @@ main, #sermonFeedContainer {
   position: fixed;
   top: 16px;
   right: 16px;
-
   z-index: 10000;
 
-  display: none; /* controlled by JS */
-  align-items: center;
-  gap: 6px;
+  /* FORCE SMALL SIZE */
+  height: 32px;
+  max-height: 32px;
+  width: auto;
 
-  padding: 10px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 12px;
+
   background: rgba(220, 0, 0, 0.95);
   color: #fff;
   text-decoration: none;
 
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
 
   border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
 
-  /* CRITICAL: no movement */
-  transform: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+
+  /* PREVENT STRETCHING */
+  top: 16px;
+  bottom: auto;
+  left: auto;
+
+  /* NO ANIMATION THAT AFFECTS SIZE */
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+  display: none; /* controlled by JS */
 }
 
 .youtube-btn:hover {
   background: rgba(255, 0, 0, 1);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.45);
 }
-
-/* ================= MOBILE TUNING ================= */
-@media (max-width: 768px) {
-  .youtube-btn {
-    top: 12px;
-    right: 12px;
-    font-size: 0.8rem;
-    padding: 8px 12px;
-  }
-}
-
 
 /* ================= COMMENTS BOX ================= */
 .comments-box {
