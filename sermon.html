@@ -99,6 +99,7 @@
     .nav-container {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 1rem 2rem;
     }
 
@@ -106,11 +107,18 @@
       display: flex;
       gap: 1rem;
       list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .nav-links a {
-      color: white;
+      color: var(--text-primary);
       text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-links a[aria-current="page"] {
+      text-decoration: underline;
     }
 
     .page-header {
@@ -126,6 +134,7 @@
     main {
       padding-top: 140px;
       height: 100vh;
+      overflow: hidden;
     }
 
     #sermonFeedContainer {
@@ -135,6 +144,8 @@
     .sermon-loading {
       text-align: center;
       margin-top: 40vh;
+      font-size: 1rem;
+      color: var(--text-primary);
     }
   </style>
 </head>
@@ -161,9 +172,7 @@
   <!-- ========================================== -->
   <header class="page-header">
     <h1>TikTok-Style Sermon Feed</h1>
-    <p>
-      Browse short sermon clips from Victorious Army Revival Movement.
-    </p>
+    <p>Browse short sermon clips from Victorious Army Revival Movement.</p>
   </header>
 
   <!-- ========================================== -->
@@ -171,11 +180,9 @@
   <!-- ========================================== -->
   <main>
     <div id="sermonFeedContainer" aria-live="polite">
-
       <div class="sermon-loading">
         <p>Loading inspiring sermons...</p>
       </div>
-
     </div>
   </main>
 
@@ -188,7 +195,6 @@
     document.addEventListener("DOMContentLoaded", () => {
       const container = document.getElementById("sermonFeedContainer");
       const loader = document.querySelector(".sermon-loading");
-
       if (loader) loader.remove();
       if (container) initSermonTikTokFeed(container);
     });
@@ -204,4 +210,4 @@
   </noscript>
 
 </body>
-</html> 
+</html>
