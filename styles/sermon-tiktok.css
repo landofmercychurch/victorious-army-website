@@ -145,8 +145,8 @@ main,
 /* ================= BLINKING YOUTUBE BUTTON ================= */
 .youtube-btn {
   position: fixed;
-  top: px;
-  right: 36px;
+  top: 60px;
+  right: 16px;
   z-index: 10000;
 
   height: 32px;
