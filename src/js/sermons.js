@@ -84,7 +84,7 @@ export async function initSermonTikTokFeed(container) {
     const card = el("div", "tiktok-video");
     card.dataset.id = sermon.id;
 
-    /* VIDEO */
+    /* VIDEO WRAPPER */
     const videoWrapper = el("div", "video-wrapper");
     const video = document.createElement("video");
     video.muted = true;
@@ -93,6 +93,8 @@ export async function initSermonTikTokFeed(container) {
     video.poster = sermon.thumbnail_url || "";
     video.setAttribute("webkit-playsinline", "true");
     video.style.objectFit = "cover";
+    video.style.width = "100%";
+    video.style.height = "100%";
     videoWrapper.appendChild(video);
 
     const urls = sermon.urls || {};
@@ -109,6 +111,7 @@ export async function initSermonTikTokFeed(container) {
     /* PLAY BUTTON */
     const playBtn = el("div", "play-btn");
     playBtn.textContent = "▶";
+    playBtn.style.display = "block"; // ensure visible initially
     playBtn.onclick = e => {
       e.stopPropagation();
       if (video.paused) {
@@ -129,7 +132,7 @@ export async function initSermonTikTokFeed(container) {
       <div class="sermon-desc">${sermon.description || ""}</div>
     `;
 
-    /* ACTIONS */
+    /* ACTION BUTTONS */
     const actions = el("div", "sermon-actions");
     actions.innerHTML = `
       <button class="like-btn">❤️</button>
@@ -207,7 +210,7 @@ export async function initSermonTikTokFeed(container) {
     }
     commentBtn.onclick = e => { e.stopPropagation(); openComments(); };
 
-    /* SHARE BUTTON: enhanced to share video thumbnail + link */
+    /* SHARE BUTTON */
     actions.querySelector(".share-btn").onclick = e => {
       e.stopPropagation();
       const shareData = {
@@ -216,14 +219,20 @@ export async function initSermonTikTokFeed(container) {
         url: `${location.origin}?sermon=${sermon.id}`
       };
 
-      // If supported, include thumbnail image in the share
       if (navigator.canShare && sermon.thumbnail_url) {
-        shareData.files = [new File([sermon.thumbnail_url], "thumbnail.jpg", { type: "image/jpeg" })];
+        // download thumbnail as blob
+        fetch(sermon.thumbnail_url)
+          .then(res => res.blob())
+          .then(blob => {
+            const file = new File([blob], "thumbnail.jpg", { type: blob.type });
+            shareData.files = [file];
+            navigator.share && navigator.share(shareData).catch(() => {});
+          });
+      } else {
+        navigator.share
+          ? navigator.share(shareData)
+          : navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
       }
-
-      navigator.share
-        ? navigator.share(shareData)
-        : navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
     };
 
     card.append(videoWrapper, overlay, actions);
@@ -239,7 +248,7 @@ export async function initSermonTikTokFeed(container) {
   }
 
   /* ===========================
-     AUTOPLAY + NEXT VIDEO + YT BUTTON
+     AUTOPLAY + NEXT VIDEO + OBSERVER
   =========================== */
   let currentVideoIndex = 0;
 
@@ -252,7 +261,14 @@ export async function initSermonTikTokFeed(container) {
 
       if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
         videos.forEach(v => v.video !== video && v.video.pause());
+
+        // Force layout before play to prevent zoom issue
+        video.pause();
+        video.currentTime = 0;
+        video.style.transform = "scale(1)";
+        video.offsetHeight;
         video.play().catch(() => {});
+
         playBtn.style.display = "none";
         currentVideoIndex = videos.findIndex(v => v.video === video);
 
@@ -277,7 +293,12 @@ export async function initSermonTikTokFeed(container) {
       const nextIndex = (i + 1) % videos.length;
       const nextVideo = videos[nextIndex].video;
       nextVideo.scrollIntoView({ behavior: "smooth" });
+
+      // force layout before play
+      nextVideo.style.transform = "scale(1)";
+      nextVideo.offsetHeight;
       nextVideo.play().catch(() => {});
+
       const nextPlayBtn = videos[nextIndex].card.querySelector(".play-btn");
       if (nextPlayBtn) nextPlayBtn.style.display = "none";
     };
