@@ -55,6 +55,7 @@ export async function initSermonTikTokFeed(container) {
   sermons.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   const feed = el("div", "sermon-videos");
+  feed.style.scrollBehavior = "smooth"; // smooth scrolling
   container.appendChild(feed);
 
   const videos = [];
@@ -141,7 +142,6 @@ export async function initSermonTikTokFeed(container) {
     /* LIKES */
     const likeBtn = actions.querySelector(".like-btn");
     const likeCountEl = actions.querySelector(".like-count");
-
     async function refreshLikes() {
       try {
         const res = await api.get(`/likes/count?type=sermon&sermon_id=${sermon.id}`);
@@ -150,13 +150,11 @@ export async function initSermonTikTokFeed(container) {
         likeCountEl.textContent = 0;
       }
     }
-
     likeBtn.onclick = async e => {
       e.stopPropagation();
       await api.post("/likes", { sermon_id: sermon.id });
       refreshLikes();
     };
-
     refreshLikes();
 
     /* COMMENTS */
@@ -176,13 +174,11 @@ export async function initSermonTikTokFeed(container) {
           <button type="submit">Post</button>
         </form>
       `;
-
       globalCommentsBox.style.display = "block";
       video.pause();
 
       let comments = await fetchSermonComments(String(sermon.id));
       if (!Array.isArray(comments)) comments = [];
-
       commentCountEl.textContent = comments.length;
 
       const list = globalCommentsBox.querySelector(".comment-list");
@@ -209,19 +205,25 @@ export async function initSermonTikTokFeed(container) {
         openComments();
       };
     }
+    commentBtn.onclick = e => { e.stopPropagation(); openComments(); };
 
-    commentBtn.onclick = e => {
-      e.stopPropagation();
-      openComments();
-    };
-
-    /* SHARE */
+    /* SHARE BUTTON: enhanced to share video thumbnail + link */
     actions.querySelector(".share-btn").onclick = e => {
       e.stopPropagation();
-      const url = `${location.origin}?sermon=${sermon.id}`;
+      const shareData = {
+        title: sermon.title,
+        text: sermon.description,
+        url: `${location.origin}?sermon=${sermon.id}`
+      };
+
+      // If supported, include thumbnail image in the share
+      if (navigator.canShare && sermon.thumbnail_url) {
+        shareData.files = [new File([sermon.thumbnail_url], "thumbnail.jpg", { type: "image/jpeg" })];
+      }
+
       navigator.share
-        ? navigator.share({ title: sermon.title, url })
-        : navigator.clipboard.writeText(url);
+        ? navigator.share(shareData)
+        : navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
     };
 
     card.append(videoWrapper, overlay, actions);
@@ -237,8 +239,10 @@ export async function initSermonTikTokFeed(container) {
   }
 
   /* ===========================
-     AUTOPLAY + GLOBAL YT UPDATE
+     AUTOPLAY + NEXT VIDEO + YT BUTTON
   =========================== */
+  let currentVideoIndex = 0;
+
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const card = entry.target;
@@ -250,6 +254,7 @@ export async function initSermonTikTokFeed(container) {
         videos.forEach(v => v.video !== video && v.video.pause());
         video.play().catch(() => {});
         playBtn.style.display = "none";
+        currentVideoIndex = videos.findIndex(v => v.video === video);
 
         if (sermon?.youtube_url) {
           floatingYT.href = sermon.youtube_url;
@@ -265,4 +270,16 @@ export async function initSermonTikTokFeed(container) {
   }, { threshold: 0.75 });
 
   videos.forEach(v => observer.observe(v.card));
+
+  // Auto-play next video when current ends
+  videos.forEach((v, i) => {
+    v.video.onended = () => {
+      const nextIndex = (i + 1) % videos.length;
+      const nextVideo = videos[nextIndex].video;
+      nextVideo.scrollIntoView({ behavior: "smooth" });
+      nextVideo.play().catch(() => {});
+      const nextPlayBtn = videos[nextIndex].card.querySelector(".play-btn");
+      if (nextPlayBtn) nextPlayBtn.style.display = "none";
+    };
+  });
 }
