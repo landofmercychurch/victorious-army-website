@@ -18,31 +18,34 @@ main, #sermonFeedContainer {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 50px; /* reduced height */
+  height: 40px; /* smaller nav */
   background: rgba(0,0,0,0.95);
   z-index: 1000;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 0.85rem; /* reduce text size */
 }
 
 .page-header {
   position: fixed;
-  top: 50px; /* directly under navigation */
+  top: 40px; /* below nav */
   width: 100%;
-  height: 50px; /* consistent small header */
+  height: 40px; /* minimal header */
   text-align: center;
   z-index: 900;
   background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  font-size: 0.85rem;
   padding: 0 8px;
 }
 
 main {
-  padding-top: 100px; /* nav + header combined */
-  height: calc(100vh - 100px);
+  padding-top: 80px; /* nav + header */
+  height: calc(100vh - 80px);
   overflow: hidden;
 }
 
@@ -133,7 +136,7 @@ main {
 /* ================= BLINKING YOUTUBE BUTTON ================= */
 .youtube-btn {
   position: fixed;
-  top: 110px; /* below header */
+  top: 90px; /* below nav + header */
   right: 16px;
   z-index: 10000;
   height: 32px;
@@ -191,5 +194,5 @@ main {
   .sermon-desc { font-size: 0.9rem; }
   .sermon-actions button { font-size: 1.3rem; padding: 6px; }
   .play-btn { font-size: 2.5rem; }
-  .youtube-btn { font-size: 0.7rem; height: 28px; top: 90px; }
+  .youtube-btn { font-size: 0.7rem; height: 28px; top: 70px; } /* adjust for small screens */
 }
